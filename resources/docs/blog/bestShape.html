@@ -1,0 +1,567 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="keywords" content="Eben,Kadile,Cowley,Mathematics,Math,4th,Dimension,4D,Platonic,Solids,Octaplex,24-Cell,Geometry" />
+    <link rel="stylesheet" type="text/css" href="../../style.css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+	tex2jax: {inlineMath: [["$", "$"],["\\(","\\)"]]},
+	errorSetting: {message: undefined}
+});
+</script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/mathjax/MathJax/2.7.6/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <title>
+        The Best Shape - Eben Kadile
+    </title>
+</head>
+
+<body>
+    <div class="heading">
+        <h1>Why the 24-cell is the Best Shape</h1>
+        <h2>How to construct platonic solids in 4D, and what happens when you do.</h2>
+        <h3>eben.kadile24@gmail.com</h3>
+        <br>
+    </div>
+    <div align="center" style="width:100%">
+        <a class="navItem" style="border-top-left-radius:15px;border-bottom-left-radius:15px;" href="../../../home.html">Home</a>
+        <a class="navItem" href="../../../Art.html">Art</a>
+        <a class="navItem" href="../../../Software.html">Software</a>
+        <a class="navItem" href="../../../Blog.html">Blog</a>
+        <a class="navItem" style="border-top-right-radius:15px;border-bottom-right-radius:15px;" href="../../../Research.html">Research</a>
+    </div>
+    <br>
+    <p class="textContent">
+        Jump to:<br>
+        <span style="margin-left:2em" /><a href="#Summary">Summary</a><br>
+        <span style="margin-left:2em" /><a href="#Platonic">Platonic Solids</a><br>
+        <span style="margin-left:2em" /><a href="#Schläfli">Schläfli Symbols and the Dual</a><br>
+        <span style="margin-left:2em" /><a href="#Rhombic">The Rhombic Dodecahedron</a><br>
+        <span style="margin-left:2em" /><a href="#4D_Platonic">4D Platonic Solids</a><br>
+        <span style="margin-left:2em" /><a href="#The_Animation">The Animation</a><br>
+        <span style="margin-left:2em" /><a href="#More_Dimensions">More Dimensions</a>
+    </p>
+    <br>
+    <p class="textContent" id="Summary">
+        <big><u><b>Summary</b></u></big>
+        <br><br>
+        The 24-cell is a marvelous shape which I have animated at the bottom of this article. It exists in 4
+        dimensional Euclidean space; it is Platonic, self-dual, space-tiling, and the only shape with all of these
+        properties that is >2 dimensional. It also happens to be <i>the only</i> Platonic solid that has neither
+        simplicial faces nor a dual with simplicial faces.
+    </p>
+    <p class="textContent" id="Platonic">
+        <big><u><b>Platonic Solids</b></u></big>
+        <br><br>
+        In 2 dimensions, a Platonic solid is defined as simply a convex regular polygon - that is, if you draw a line
+        segment between any two points inside the polygon it will exist strictly inside the polygon (convexity) and all
+        the edge lengths and angle measures of the polygon are equal (regularity).
+        <br><br>
+        In 3 dimensions, a Platonic solid is defined as a polyhedron (3D figure with polygonal faces) whose faces are
+        all the same Platonic polygon <i>and</i> the same number of edges join at each vertex (vertex transitivity).
+        Whereas there are infnitely many Platonic polygons (octagon, nonagon, decagon, 11-gon, etc.), there are only 5
+        Platonic solids. This is actually not too difficult to see; since we know what kind of polygonal faces we are
+        allowed to use we can just start trying to construct things.
+        <br><br>
+        If we start with the simplest regular polygon, the triangle, we notice that we can put 3 around a vertex, fold
+        into the next dimension, and then add a fourth to close the gap and make a <i>tetrahedron:</i>
+    </p>
+    <div align="center">
+        <img src="../../images/tetrahedron.png" class="projImg" />
+    </div>
+    <p class="textContent">
+        If we put 4 triangles around a vertex, fold into 3D space, do the same for another 4 triangles, then put them
+        together, we get an <i>octahedron</i>:
+    </p>
+    <div align="center">
+        <img src="../../images/octahedron.png" class="projImg" />
+    </div>
+    <p class="textContent">
+        If we put 5 triangles around a vertex, fold into 3D, do the same for another 5 triangles, then put a strip of
+        10 triangle between them, we get an <i>icosahedron</i>:
+    </p>
+    <div align="center">
+        <img src="../../images/icosahedron.png" class="projImg" />
+    </div>
+    <p class="textContent">
+        We can't do it with more than 5 triangles, because if we put 6 together we don't have any extra room between
+        them to fold into 3D space. If we put 3 squares around a vertex and fold into 3D space we can construct a cube:
+    </p>
+    <div align="center">
+        <img src="../../images/hexahedron.png" class="projImg" />
+    </div>
+    <p class="textContent">
+        Notice that we can't do it with any more than 3 squares for the same reason we can't do it with more than 5
+        triangles. Now if we put 3 pentagons together we get a <i>dodecahedron</i>:
+    </p>
+    <div align="center">
+        <img src="../../images/dodecahedron.png" class="projImg">
+    </div>
+    <p class="textContent">
+        We can't do the construction with more than 3 pentagons for the same reason as above. If we were to try the
+        construction with regular hexagons we would find ourselves without any room to fold, if we were to try it with
+        any polygon with a greater number of sides, they would overlap. Notice that the fact that the vertices of a
+        Platonic solid must all look the same implies that each number of each polygon around a vertex yields a unique
+        construction.
+    </p>
+    <p class="textContent" id="Schläfli">
+        <big><u><b>Schläfli Symbols and the Dual</b></u></big>
+        <br><br>
+        The Schläfli symbol of a Platonic polygon with $n$ sides is $\{n\}$. So an equilateral triangle is represented
+        by $\{3\}$, a square by $\{4\}$, etc.
+        <br><br>
+        Adding a second number to the list gives us the constructions we were talking about above. Specifically,
+        $\{n,m\}$ means a shape made of regular $n$-gons where $m$ faces meat at a vertex. You can easily see that the
+        Schläfli symbols of the solids presented above are $\{3,3\}$, $\{3,4\}$, $\{3,5\}$, $\{4,3\}$, and $\{5,3\}$,
+        respectively. You can also think of these symbols as representing tilings of the sphere that possess 3D
+        rotational symmetry - each face of one of the solids corresponds to a tile on the sphere.
+        <br><br>
+        The configurations of polygons which couldn't be folded also have Schläfli symbols: $\{3,6\}$ is 6 triangles
+        meating at a vertex, $\{6,3\}$ is 3 hexagons meeting at a vetex, and $\{4,4\}$ is 4 squares meeting at a
+        vertex. Since each of these configurations fit together without any room to fold and without any overlap, they
+        correspond to tilings of the plane. You can also talk about the configurations where two polygons overlap, each
+        of these correspond to a tiling of the <i>hyperbolic</i> plane.
+        <br><br>
+        You might have noticed some duality in the Schläfli symbols of the Platonic solids. If you have a polyhedron
+        and you construct a new polyhedron by placing a vertex at the center of every face and connecting vertices if
+        the faces were adjacent, you obtain the <i>dual</i> of that polyhedron. It's intuitive that, if the polyhedron
+        has a Schläfli symbol, the Schläfli symbol of the dual is the reverse of the symbol for the original (make sure
+        you're able to justify this to yourself).
+        <br><br>
+        Thus, we can see both visually and symbolically that the dual of the tetrahedron is the tetrahedron, the dual
+        of the octahedron is the cube, and the dual of the icosahedron is the dodecahedron. It's also easy to see that
+        every regular polygon is its own dual and that the dual of the dual of a polytope (the generalization of
+        polygons and polyhedra to any dimension) is itself.
+    </p>
+    <p class="textContent" id="Rhombic">
+        <big><u><b>The Rhombic Dodecahedron</b></u></big>
+        <br><br>
+        If we have a cube and we cut it into 6 square pyramids, each going from one face to the center of the cube,
+        then reflect the direction that each square pyramid is pointing across its square face, we get a rhombic
+        dodecahedron:
+    </p>
+    <div align="center">
+        <img class="projImg" src="../../images/rhombic.png" />
+    </div>
+    <p class="textContent">
+        It might be difficult to see how the construction that I described gives us this solid; I would recomend
+        checking out <a target="_blank" href="https://en.wikipedia.org/wiki/Rhombic_dodecahedron#/media/File:R1-cube.gif">this
+            excellent gif,</a> created by Wikipedia editor TED-43. <a target="_blank" href="3doro.de">His website</a>
+        is really cool.
+        <br><br>
+        The rhombic dodecahedron has many interesting properties. One is that each of its faces has point symmetry;
+        reflect the entire solid through the center of any of its faces and you will get the same solid, just
+        translated (this property makes it a <a target="_blank" href="https://en.wikipedia.org/wiki/Zonohedron">zonohedron</a>).
+        Another marvelous property is that it can tile all of 3D space. To see this, imagine a uniform tiling of 3D
+        space by identical cubes, remove half of the cubes to make a 3D checkerboard pattern, now construct a rhombic
+        dodecahedron out of each of the remaining cubes to fill all of space.
+        <br><br>
+        As you may have noticed, the rhombic dodecahedron is not Platonic. Not only are the faces irregular, the
+        pyramid vertices are the junction of 4 edges and the cube vertices are the junction of 3, so it isn't vertex
+        transitive.
+        <br><br>
+        To see why I brought up the rhombic dodecahdron, we need to go one dimension higher.
+    </p>
+    <p class="textContent" id="4D_Platonic">
+        <big><u><b>4D Platonic Solids</b></u></big>
+        <br><br>
+        We can begin constructing 4D Platonic solids the same way we constructed 3D Platonic solids, except instead of
+        putting polygons around a vertex we put solids around an edge.
+        <br><br>
+        If we put 3 tetrahedra around an edge, fold into the 4th dimension, then add 2 more tetrahedra we get a
+        4-simplex, the 4D analogue of the tetrahedron. Its Schläfli symbol is $\{3,3,3\}$ (The last number in the
+        symbol is the number of 3D solids around an edge).
+        <br><br>
+        If we put 4 tetrahedra around an edge and fold into 4D, then do the same thing 3 more times and put them
+        together, we get an orthoplex, or 4D cross-polytope, the 4D analogue of the octahedron. Its Schläfli symbol is
+        $\{3,3,4\}$.
+        <br><br>
+        If we put 5 tetrahedra around an edge, fold into 4D, then do the same thing 119 more times and put them all
+        together we get the polytope called the 600-cell. This one is pretty difficult to visualize, I'd direct you to
+        <a target="_blank" href="https://en.wikipedia.org/wiki/600-cell">the wikipedia</a> if you want to see what its
+        3D projections look like. It's Schläfli symbol is $\{3,3,5\}$.
+        <br><br>
+        If we put 3 cubes around an edge and fold into 4D, we can make a tesseract. This one is pretty easy to
+        visualize, its net is just a 3D cross of cubes. It's Schläfli symbol is $\{4,3,3\}$.
+        <br><br>
+        If we put 3 dodecahedra around an edge, fold into 4D, then do the same 39 more times and put them all together,
+        we get a <a target="_blank" href="https://en.wikipedia.org/wiki/120-cell">120-cell</a>, the dual of the
+        600-cell. The Schläfli symbol is $\{3,3,5\}$.
+        <br><br>
+        Finally, if we take the tesseract and we perform the same construction that we used to get the rhombic
+        dodecahedron - that is, we make a cubic pyramid going from each face to the center and then invert it - we get
+        the 24-cell. We can check that the vertices will all look the same: every pyramid vertex will have 8 edges
+        going to the 8 vertices of one of the faces, and every vertex of the cube will be connected to 4 cube vertices
+        and 4 pyramid vertices for a total of 8. We can also check that the faces are regular: if the vertices of the
+        cube are $(\pm 1,\pm 1,\pm 1,\pm 1)$ then each vertex is 2 away from the origin and 2 away from its neighbors;
+        the cubic pyramids that we make will have square pyramid faces with equilateral triangle faces, so when we
+        perform the reflections we will get equilateral octahedra as faces of the 24-cell! Indeed, if we put 3
+        octahedra around an edge then fold we will be able to make a 24-cell; this is why the 24-cell is sometimes
+        called an octaplex, short for octahedral complex. Thus, the Schläfli symbol of the 24-cell is $\{3,4,3\}$,
+        meaing it is self-dual! This is the only self-dual Platonic solid except for the simplex (and polygons). Aside
+        from being both Platonic and self-dual, it tiles 4D space for the same reason the rhombic dodecahedron tiles 3D
+        space!
+        <br><br>
+        By the way, using the construction we employed for the rhombic dodecahedron and 24-cell, we can see that the
+        24-cell is also 8 orthoplexes put together. Thus, the orthoplex also tiles space!
+    </p>
+    <p class="textContent" id="The_Animation">
+        <big><u><b>The Animation</b></u></big>
+        <br><br>
+        Because the tips of the pyramids that are attached to the faces of the tessearact are the vertices of an
+        orthoplex, it is very easy to render an octaplex, orthoplex, and tesseract all with the same code.
+        <br><br>
+        Each of the polytopes is rendered as an orthographic projection of its edges. If we had 4 primary colors, I
+        could communicate to you all 4 coordinates of each of the vertices of the polytope via its color. Unfortunately
+        we have only 3 primary colors, but since each polytope is convex and compact all the vertices lie on a 3-sphere
+        embedded in $\mathbb{R}^4$. This is convenient because it means we can use <a target="_blank" href="https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection">Lambert-Azimuthal
+            projection</a> to take the vertex from a position in 4D space to a position in rgb space (which happens to
+        preserve volume until we scale it down to actually fit in the correct range for the colors). The actual color
+        of a pixel is a linear interpolation between the colors of two vertices based on the distance from the pixel to
+        the orthographic projections of each of the vertices.
+        <br><br>
+        In 3 dimensions, it's easy to understand why specifying a rotation about the origin takes 3 parameters: 2 to
+        choose the axis and 1 to choose the angle. In higher dimensions, it becomes necessary to note that rotations
+        actually occur in planes - in 3D, a plane through the origin specifies an axis through the origin, which isn't
+        true in higher dimensions. There is another way to think about this: there are three planes we can make using
+        three axes, and any rotation can be decomposed into a rotation through each plane. In 4D, we have all of the
+        planes we had in 3D plus 3 new ones that we get by combining the new axis with each of the old ones for a total
+        of 6 degrees of rotational freedom. 2 of the degrees of freedom are controlled by the mouse (hover over the
+        animation) and the other 4 are specified by time and each of the sliders. The rotations are computed using 4D
+        Euler angles since using quaternions in this context would make for somewhat unintuitive sliders.
+        <br><br>
+        Click "play" to display the animation, click the image to toggle the interactivity on and off.
+    </p>
+    </p>
+    <div align="center">
+        <canvas id="canvas" onmousemove="readMouse(event)" onclick="interactive=!interactive" style="border-radius:5px;width:1336px;" />
+    </div>
+    <div align="center">
+        <button type="button" id="pause">Play</button>
+        <br>
+        <input type="range" min="-10" max="10" value="1" id="velocity1"></input>
+        <p id="val1" class="input">Velocity 1 = 0.1</p>
+        <br>
+        <input type="range" min="-10" max="10" value="2" id="velocity2"></input>
+        <p id="val2" class="input">Velocity 2 = 0.2</p>
+        <br>
+        <input type="range" min="-10" max="10" value="3" id="velocity3"></input>
+        <p id="val3" class="input">Velocity 3 = 0.3</p>
+        <br>
+        <input type="range" min="-10" max="10" value="4" id="velocity4"></input>
+        <p id="val4" class="input">Velocity 4 = 0.4</p>
+        <button type="button" id="octaplex">Octaplex</button>
+        <button type="button" id="orthoplex">Orthoplex</button>
+        <button type="button" id="tesseract">Tesseract</button>
+    </div>
+    <br><br>
+    <p class="textContent" id="More_Dimensions">
+        <big><u><b>More Dimensions</b></u></big>
+        <br><br>
+        In order to construct Platonic solids in dimension 5, we need to use the Platonic solids of dimension 4.
+        Specifically, we need to be able to put at least 3 of the same 4-polytope around a 2-dimensional facet. This
+        means that the angle between the faces of the polytope must be $< \frac{2\pi}{3}$. Unfortunately, this is only
+            the case for the tesseract and 4-simplex. In 5 dimensions, you can make a 5-cube by putting 3 4-cubes
+            around a 2-face. You can make a 5-simplex by putting 3 4-simplices around a 2-face, and a 5-orthoplex by
+            putting 4 4-simplices around a 2-face. This is the case in all higher dimensions as well; the only Platonic
+            solids are the simplex, <i>measure polytope</i> (hypercube), and <i>cross polytope</i>
+            (orthoplex/octahedron analogue).
+            <br><br>
+            Note that the simplex is always self-dual, and that the measure polytope is always dual to the cross
+            polytope. The simplex and the cross-polytope have simplices as faces; this makes it apparent that the
+            24-cell, since it has octahedral faces and is self-dual, is the only Platonic solid that has neither
+            simplicial faces nor a dual with simplicial faces
+    </p>
+    <script src="../../scripts/three.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script id="vs" , type="x-shader/x-vertex">
+        void main() {
+	  gl_Position = vec4(position, 1.0);
+	}
+</script>
+    <script id="fs" type="x-shader/x-fragment">
+        uniform int mode;
+
+    uniform vec2 res;
+    uniform vec2 m;
+    uniform float time;
+
+    uniform mat4 rotation;
+
+    //cube verts
+    #define h1 vec2(0.5, -0.5)
+
+    #define v1 h1.xxxx
+    #define v2 h1.yxxx
+    #define v3 h1.xyxx
+    #define v4 h1.xxyx
+    #define v5 h1.xxxy
+    #define v6 h1.yyxx
+    #define v7 h1.xyyx
+    #define v8 h1.xxyy
+    #define v9 h1.yxxy
+    #define v10 h1.xyxy
+    #define v11 h1.yxyx
+    #define v12 h1.yyyx
+    #define v13 h1.yyxy
+    #define v14 h1.yxyy
+    #define v15 h1.xyyy
+    #define v16 h1.yyyy
+
+    //pyramid verts
+    #define h2 vec3(1, -1, 0)
+
+    #define v17 h2.xzzz
+    #define v18 h2.yzzz
+    #define v19 h2.zxzz
+    #define v20 h2.zyzz
+    #define v21 h2.zzxz
+    #define v22 h2.zzyz
+    #define v23 h2.zzzx
+    #define v24 h2.zzzy
+
+    mat4 rot(float wx, float wy, float wz, float xy, float xz, float yz){
+        mat4 result = mat4(cos(wx), 0, 0, -sin(wx),
+                           0, 1, 0, 0,
+                           0, 0, 1, 0,
+                           sin(wx), 0, 0, cos(wx)
+                           );
+        result *= mat4(1, 0, 0, 0,
+                       0, cos(wy), 0, -sin(wy),
+                       0, 0, 1, 0,
+                       0, sin(wy), 0, cos(wy)
+                       );
+        result *= mat4(1, 0, 0, 0,
+                       0, 1, 0, 0,
+                       0, 0, cos(wz), -sin(wz),
+                       0, 0, sin(wz), cos(wz)
+                       );
+        result *= mat4(cos(xy), -sin(xy), 0, 0,
+                       sin(xy), cos(xy), 0, 0,
+                       0, 0, 1, 0,
+                       0, 0, 0, 1
+                       );
+        result *= mat4(cos(xz), 0, -sin(xz), 0,
+                       0, 1, 0, 0,
+                       sin(xz), 0, cos(xz), 0,
+                       0, 0, 0, 1
+                       );
+        result *= mat4(1, 0, 0, 0,
+                       0, cos(yz), -sin(yz), 0,
+                       0, sin(yz), cos(yz), 0,
+                       0, 0, 0, 1
+                       );
+        return result;
+    }
+
+    vec3 drawSegment(vec2 p, vec4 vertex1, vec4 origin1, vec4 vertex2, vec4 origin2){
+        float d = distance(vertex1.xy, vertex2.xy);
+        float d1 = distance(p, vertex1.xy);
+        float d2 = distance(p, vertex2.xy);
+
+        if(abs(d - d1 - d2) < 0.0001)
+            return mix(0.5 + origin1.xyz*inversesqrt(2.0 - 2.0*origin1.w), 0.5 + origin2.xyz*inversesqrt(2.0 - 2.0*origin2.w), d1/d);
+        else return vec3(0);
+    }
+
+    vec3 render(vec2 fragCoord){
+        vec3 color = vec3(0);
+
+        vec2 xy = (2.0*fragCoord - res)/res.y;
+
+        //mat4 rotation = rot(m.x, m.y, speed1*time, speed2*time, speed3*time, speed4*time);
+
+        vec4 c1 = rotation*v1;
+        vec4 c2 = rotation*v2;
+        vec4 c3 = rotation*v3;
+        vec4 c4 = rotation*v4;
+        vec4 c5 = rotation*v5;
+        vec4 c6 = rotation*v6;
+        vec4 c7 = rotation*v7;
+        vec4 c8 = rotation*v8;
+        vec4 c9 = rotation*v9;
+        vec4 c10 = rotation*v10;
+        vec4 c11 = rotation*v11;
+        vec4 c12 = rotation*v12;
+        vec4 c13 = rotation*v13;
+        vec4 c14 = rotation*v14;
+        vec4 c15 = rotation*v15;
+        vec4 c16 = rotation*v16;
+
+        vec4 p1 = rotation*v17;
+        vec4 p2 = rotation*v18;
+        vec4 p3 = rotation*v19;
+        vec4 p4 = rotation*v20;
+        vec4 p5 = rotation*v21;
+        vec4 p6 = rotation*v22;
+        vec4 p7 = rotation*v23;
+        vec4 p8 = rotation*v24;
+
+        //hypercube edges
+        if(mode == 0 || mode == 1){
+            color += drawSegment(xy, c1, v1, c2, v2);
+            color += drawSegment(xy, c1, v1, c3, v3);
+            color += drawSegment(xy, c1, v1, c4, v4);
+            color += drawSegment(xy, c1, v1, c5, v5);
+
+            color += drawSegment(xy, c2, v2, c6, v6);
+            color += drawSegment(xy, c2, v2, c9, v9);
+            color += drawSegment(xy, c2, v2, c11, v11);
+
+            color += drawSegment(xy, c3, v3, c6, v6);
+            color += drawSegment(xy, c3, v3, c7, v7);
+            color += drawSegment(xy, c3, v3, c10, v10);
+
+            color += drawSegment(xy, c4, v4, c7, v7);
+            color += drawSegment(xy, c4, v4, c8, v8);
+            color += drawSegment(xy, c4, v4, c11, v11);
+
+            color += drawSegment(xy, c5, v5, c8, v8);
+            color += drawSegment(xy, c5, v5, c9, v9);
+            color += drawSegment(xy, c5, v5, c10, v10);
+
+            color += drawSegment(xy, c6, v6, c12, v12);
+            color += drawSegment(xy, c6, v6, c13, v13);
+
+            color += drawSegment(xy, c7, v7, c12, v12);
+            color += drawSegment(xy, c7, v7, c15, v15);
+
+            color += drawSegment(xy, c8, v8, c14, v14);
+            color += drawSegment(xy, c8, v8, c15, v15);
+
+            color += drawSegment(xy, c9, v9, c13, v13);
+            color += drawSegment(xy, c9, v9, c14, v14);
+
+            color += drawSegment(xy, c10, v10, c13, v13);
+            color += drawSegment(xy, c10, v10, c15, v15);
+
+            color += drawSegment(xy, c11, v11, c12, v12);
+            color += drawSegment(xy, c11, v11, c14, v14);
+
+            color += drawSegment(xy, c16, v16, c12, v12);
+            color += drawSegment(xy, c16, v16, c13, v13);
+            color += drawSegment(xy, c16, v16, c14, v14);
+            color += drawSegment(xy, c16, v16, c15, v15);
+        }
+
+        //additional 24-cell edges
+        if(mode == 0){
+            color += drawSegment(xy, p1, v1, c1, v1);
+            color += drawSegment(xy, p1, v1, c3, v3);
+            color += drawSegment(xy, p1, v1, c4, v4);
+            color += drawSegment(xy, p1, v1, c5, v5);
+            color += drawSegment(xy, p1, v1, c7, v7);
+            color += drawSegment(xy, p1, v1, c8, v8);
+            color += drawSegment(xy, p1, v1, c10, v10);
+            color += drawSegment(xy, p1, v1, c15, v15);
+
+            color += drawSegment(xy, p2, v2, c2, v2);
+            color += drawSegment(xy, p2, v2, c6, v6);
+            color += drawSegment(xy, p2, v2, c9, v9);
+            color += drawSegment(xy, p2, v2, c11, v11);
+            color += drawSegment(xy, p2, v2, c12, v12);
+            color += drawSegment(xy, p2, v2, c13, v13);
+            color += drawSegment(xy, p2, v2, c14, v14);
+            color += drawSegment(xy, p2, v2, c16, v16);
+
+            color += drawSegment(xy, p3, v3, c1, v1);
+            color += drawSegment(xy, p3, v3, c2, v2);
+            color += drawSegment(xy, p3, v3, c4, v4);
+            color += drawSegment(xy, p3, v3, c5, v5);
+            color += drawSegment(xy, p3, v3, c8, v8);
+            color += drawSegment(xy, p3, v3, c9, v9);
+            color += drawSegment(xy, p3, v3, c11, v11);
+            color += drawSegment(xy, p3, v3, c14, v14);
+
+            color += drawSegment(xy, p4, v4, c3, v3);
+            color += drawSegment(xy, p4, v4, c6, v6);
+            color += drawSegment(xy, p4, v4, c7, v7);
+            color += drawSegment(xy, p4, v4, c10, v10);
+            color += drawSegment(xy, p4, v4, c12, v12);
+            color += drawSegment(xy, p4, v4, c13, v13);
+            color += drawSegment(xy, p4, v4, c15, v15);
+            color += drawSegment(xy, p4, v4, c16, v16);
+
+            color += drawSegment(xy, p5, v5, c1, v1);
+            color += drawSegment(xy, p5, v5, c2, v2);
+            color += drawSegment(xy, p5, v5, c3, v3);
+            color += drawSegment(xy, p5, v5, c5, v5);
+            color += drawSegment(xy, p5, v5, c6, v6);
+            color += drawSegment(xy, p5, v5, c9, v9);
+            color += drawSegment(xy, p5, v5, c10, v10);
+            color += drawSegment(xy, p5, v5, c13, v13);
+
+            color += drawSegment(xy, p6, v6, c4, v4);
+            color += drawSegment(xy, p6, v6, c7, v7);
+            color += drawSegment(xy, p6, v6, c8, v8);
+            color += drawSegment(xy, p6, v6, c11, v11);
+            color += drawSegment(xy, p6, v6, c12, v12);
+            color += drawSegment(xy, p6, v6, c14, v14);
+            color += drawSegment(xy, p6, v6, c15, v15);
+            color += drawSegment(xy, p6, v6, c16, v16);
+
+            color += drawSegment(xy, p7, v7, c1, v1);
+            color += drawSegment(xy, p7, v7, c2, v2);
+            color += drawSegment(xy, p7, v7, c3, v3);
+            color += drawSegment(xy, p7, v7, c4, v4);
+            color += drawSegment(xy, p7, v7, c6, v6);
+            color += drawSegment(xy, p7, v7, c7, v7);
+            color += drawSegment(xy, p7, v7, c11, v11);
+            color += drawSegment(xy, p7, v7, c12, v12);
+
+            color += drawSegment(xy, p8, v8, c5, v5);
+            color += drawSegment(xy, p8, v8, c8, v8);
+            color += drawSegment(xy, p8, v8, c9, v9);
+            color += drawSegment(xy, p8, v8, c10, v10);
+            color += drawSegment(xy, p8, v8, c13, v13);
+            color += drawSegment(xy, p8, v8, c14, v14);
+            color += drawSegment(xy, p8, v8, c15, v15);
+            color += drawSegment(xy, p8, v8, c16, v16);
+        }
+
+        //orthoplex edges
+        else if(mode == 2){
+            color += drawSegment(xy, p1, v1, p3, v3);
+            color += drawSegment(xy, p1, v1, p4, v4);
+            color += drawSegment(xy, p1, v1, p5, v5);
+            color += drawSegment(xy, p1, v1, p6, v6);
+            color += drawSegment(xy, p1, v1, p7, v7);
+            color += drawSegment(xy, p1, v1, p8, v8);
+
+            color += drawSegment(xy, p2, v2, p3, v3);
+            color += drawSegment(xy, p2, v2, p4, v4);
+            color += drawSegment(xy, p2, v2, p5, v5);
+            color += drawSegment(xy, p2, v2, p6, v6);
+            color += drawSegment(xy, p2, v2, p7, v7);
+            color += drawSegment(xy, p2, v2, p8, v8);
+
+            color += drawSegment(xy, p3, v3, p5, v5);
+            color += drawSegment(xy, p3, v3, p6, v6);
+            color += drawSegment(xy, p3, v3, p7, v7);
+            color += drawSegment(xy, p3, v3, p8, v8);
+
+            color += drawSegment(xy, p4, v4, p5, v5);
+            color += drawSegment(xy, p4, v4, p6, v6);
+            color += drawSegment(xy, p4, v4, p7, v7);
+            color += drawSegment(xy, p4, v4, p8, v8);
+
+            color += drawSegment(xy, p5, v5, p7, v7);
+            color += drawSegment(xy, p5, v5, p8, v8);
+
+            color += drawSegment(xy, p6, v6, p7, v7);
+            color += drawSegment(xy, p6, v6, p8, v8);
+        }
+
+        return color;
+    }
+
+    void main(){
+        gl_FragColor = vec4(render(gl_FragCoord.xy), 1);
+    }
+</script>
+    <script type="text/javascript" , src="../../scripts/displayBestShape.js"></script>
+</body>
+
+</html>

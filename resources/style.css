@@ -1,0 +1,162 @@
+body {
+  background-color: black;
+}
+
+div.heading {
+  line-height: 0.45;
+}
+
+h1 {
+  color: rgb(183,193,179);
+  font-family: "Roboto";
+  font-size: 64px;
+  line-height: 40px;
+}
+
+h2 {
+  color: rgb(200,210,200);
+  font-family: "Roboto";
+  font-size: 32px;
+  line-height: 20px;
+}
+
+h3 {
+  color: rgb(183,193,179);
+  font-family: "Roboto";
+  font-size: 12px;
+}
+
+img.me {
+  border-radius: 5px;
+  width: 650px;
+  margin-right:10px;
+  overflow: hidden;
+  float: left;
+}
+
+.home {
+  font-family: roboto;
+  color: rgb(230,240,230);
+  font-size: 24px;
+  padding-left: 4em;
+  padding-right: 4em;
+}
+
+a.navItem {
+  font-size: 20px;
+  width:18%;
+  background-color: rgb(26,30,40);
+  border-style: solid;
+  border-width: 3px;
+  border-color: rgb(140,160,180);
+  display: inline-block;
+  text-align: center;
+}
+
+a:link {
+  font-family: "Roboto";
+  color: white;
+}
+
+a:visited {
+  color: rgb(175,175,175);
+}
+
+.textContent {
+  text-align: left;
+  background-color: rgb(75,75,75);
+  color: rgb(240,240,240);
+  font-family: "Roboto";
+  font-size: 20px;
+  padding: 20px;
+  line-height: 115%;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  margin-left: 120px;
+  margin-right: 120px;
+}
+
+.helper {
+  padding-left: 10px;
+}
+
+.module {
+  background-color: rgb(100,100,100);
+  color: white;
+  font-family: "Roboto";
+  font-size: 24px;
+}
+
+.input {
+  color: white;
+}
+
+.code {
+  background-color: rgb(100,100,100);
+  display: block;
+  margin: auto;
+}
+
+.fst {
+  margin: 4em;
+}
+
+.snd {
+  margin: 8em;
+}
+
+.projImg {
+  height: 420px;
+  width: 720px;
+  border-radius: 5px;
+}
+
+.julia {
+  height: 840px;
+  width: 1440px;
+  border-radius: 10px;
+}
+
+canvas {
+  height: 432px;
+  width: 668px;
+  border-radius: 5px;
+}
+
+@media screen and (max-width: 1084px) {
+  .textContent {
+    margin-right: 80px;
+    margin-left: 80px;
+  }
+  .helper {
+    padding-left: 0px;
+  }
+  a.navItem {
+    line-height: 100px;
+    height: 100px;
+    width: 15%;
+    font-size: 24px;
+  }
+  h1 {
+    line-height: 65px;
+  }
+  h2 {
+    font-size: 25px;
+    line-height: 30px;
+  }
+  img.me {
+    width: 100%;
+    float: none;
+  }
+}
+
+input[type=range] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20%;
+  height: 32px;
+  background: #444444;
+  border-radius: 16px;
+}

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+        <meta charset="utf-8" />
+        <meta name="keywords" content="Eben,Kadile,Cowley,Graphics,Mathematics,Math,Functional,Programming,Computer,Science,Monads" />
+        <link rel="stylesheet" type="text/css" href="../../style.css" />
+        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+        <script type="text/x-mathjax-config">
+                MathJax.Hub.Config({ tex2jax: {inlineMath: [["$", "$"],["\\(","\\)"]]}, errorSetting: {message: undefined} });
+    </script>
+        <script type="text/javascript" src="https://cdn.rawgit.com/mathjax/MathJax/2.7.6/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <title>
+                Monads in Minutes - Eben Kadile
+        </title>
+</head>
+
+<body>
+        <div class="heading">
+                <h1>Monads in Minutes</h1>
+                <h2>What are monads and why are they used?</h2>
+                <h3>eben.kadile24@gmail.com</h3>
+                <br>
+        </div>
+        <div align="center" style="width:100%">
+                <a class="navItem" style="border-top-left-radius:15px;border-bottom-left-radius:15px;" href="../../../home.html">Home</a>
+                <a class="navItem" href="../../../Art.html">Art</a>
+                <a class="navItem" href="../../../Software.html">Software</a>
+                <a class="navItem" href="../../../Blog.html">Blog</a>
+                <a class="navItem" style="border-top-right-radius:15px;border-bottom-right-radius:15px;" href="../../../Research.html">Research</a>
+        </div>
+        <br>
+        <p class="textContent">
+                Jump to:<br>
+                <span style="margin-left:2em" /><a href="#Introduction">Introduction</a><br>
+                <span style="margin-left:2em" /><a href="#Why_Need">Why do we Need Monads?</a><br>
+                <span style="margin-left:2em" /><a href="#Monad_Laws">The Monad Laws</a><br>
+                <span style="margin-left:2em" /><a href="#Examples">Examples</a><br>
+                <span style="margin-left:2em" /><a href="#Category_Theory">Category Theory</a>
+        </p>
+        <br>
+        <p class="textContent" id="Introduction">
+                <u><big><b>Introduction</big></b></u>
+                <br><br>
+                I'd like to preface this article by explaining why I think many people find monads confusing. In the
+                context of programming, a monad is not fundamentally unlike an interface; it's just that the functions
+                that a monad must implement (and perhaps the properties that the functions must satisfy) seem alien at
+                first. Many examples of a certain monad in action can be given, but they all seem unrelated, which can
+                be confusing. It's ultimately the existence of these <i>many</i> examples that makes monads such a
+                critical idea - it turns out that many useful notions of computation (<a target="_blank" href="https://core.ac.uk/download/pdf/21173011.pdf">to
+                        use Moggi's terminology</a>) can be encoded in a pure functional language as monads.
+                <br><br>
+                In other words: I think you think monads are confusing because you are looking for a motivation for the
+                definition, but the usefulness of the definition comes <i>after</i> we start applying it.
+                <br><br>
+                A pure functional program is simply a composition of functions. That is, a sequence of functions whose
+                domains and codomains match up so that input can be passed through consecutive functions. A pure
+                imperative program is a sequence of commands for the retrieval and manipulation of data. It's difficult
+                to see how commands like this could be composed in the way pure functions can be. A monad is a special
+                kind of operator on types that allows us to compose imperative actions in the same way that we do
+                functions. This is why monads are important - they allow us to do things like achieve side effects,
+                monitor state, and throw exceptions in a pure functional language.
+                <br><br>
+                It's best to know a little bit about Haskell syntax before reading this article. If you know any other
+                functional language you can probably catch on pretty easily. The only Haskell features that pop up are
+                lambdas, pattern matching, and type signatures. If you're totally new to Haskell, I would recommend
+                checking out <a target="_blank" href="http://book.realworldhaskell.org/">Real World Haskell</a> or
+                Miran Lipovača's <a target="_blank" href="http://learnyouahaskell.com/">Learn You a Haskell for Great
+                        Good!</a>
+                </p>
+                <p class="textContent" id="Why_Need">
+                <u><big><b>Why do we Need Monads?</big></b></u>
+                <br><br>
+                Monads answer the question of how to get imperative behavior in a pure functional language. What
+                distinguishes functional behavior from imperative behavior? In a pure functional language the only
+                thing you can actually do is compose and
+                apply functions, where functions are always look-up tables that don't change and do nothing but return
+                a value whenever they are passed an argument of the correct type. Just like in all forms of
+                programming, it is common to solve a problem by
+                composing many functions, each of which solves part of the problem and is more understandable to the
+                programmer. Most compilers for imperative languages aren't optimized for this sort of behavior in its
+                purest form, which always uses recursion
+                instead of loops. Imperative programs are sometimes written as a sequence of commands; each one without
+                any input or output. A crude example:
+                <br><br>
+                <code>
+                        void main() {<br>
+                        <span style="margin:2em" />getInput();<br>
+                        <span style="margin:2em" />processInput();<br>
+                        <span style="margin:2em" />printOutput();<br>
+                        }
+                </code>
+                <br><br> You could of course make <code>processInput()</code> a pure function, bind the input to a
+                variable, pass that variable to your new pure function, and then print out the result. However, the act
+                of getting input and printing output are
+                still side effects. They can't be composed like ordinary functions. This doesn't mean there isn't any
+                way to compose them at all. Let's take a look at the defintion of a monad in Haskell:
+                <br><br>
+                <code>
+                        class Monad m where<br>
+                        return :: a -> m a<br>
+                        (>>=)<span style="margin:1.1em" />:: m a -> (a -> m b) -> m b<br>
+                        (>>)<span style="margin:1.6em" />:: m a -> m b -> m b
+                </code>
+                <br><br>
+                What the first line of this declaration is saying is that there exists a class called <code>Monad</code>
+                whose instances, <code>m</code>, act as wrappers for an arbitrary type <code>a</code>. Below the
+                declaration is a number of functions
+                which this wrapper must implement. So it's kind of like an interface in object oriented programming.
+                <br><br>
+                The first function that our monad, <code>m</code>, must implement is called <code>return</code>, not at
+                all to be confused with the return statement in imperative programming. The type signature for this
+                function says that it goes from the arbitrary type <code>a</code> into the <i>monadic value</i> of that
+                type, <code>m a</code>, i.e. the monad wrapping that type. This is like the generic constructor that
+                classes/structs/objects have in object-oriented programming. That is to say, every monad must have at
+                least one type constructor. We'll get into what exactly is special about return when I talk about the
+                constraints that these functions must satisfy.
+                <br><br>
+                The next weird looking function is called the bind operator. Looking at it's type signature, we see
+                that it takes in <code>m a</code>, followed by a function from <code>a</code> to <code>m b</code>, and
+                then outputs something in <code>m b</code>. What could that be useful for? Well, let's return to the
+                example of the imperative program with side effects, there is a monad called <code>IO</code>, which
+                deals with input/output actions, there is a value in <code>IO String</code> called <code>getLine</code>,
+                which secretly holds the value of the string that a user enters at the console. There is also a
+                function <code>putStrLn</code> with type <code>String -> IO ()</code> that simply takes a string as
+                input and outputs a monad action that prints it to the console. Recall that () is the type of tuples
+                that wrap no values - i.e. the type with only one element. Then I could write a Haskell program that
+                looks like this:
+                <br><br>
+                <code>
+                        main = getLine >>= putStrLn . processInput
+                </code>
+                <br><br> In this case, <code>processInput</code> must be a function that takes any string to a string.
+                The "." represents the composition of <code>processInput</code> and <code>putStrLn</code>. So this
+                program executes the action of getting the input from the console, the bind operator then unwraps it
+                and sends it to a function that processes it and then prints the output to the console. I like to think
+                of the <code> >>=</code> symbol as squeezing the value out of the monadic value and then injecting it
+                into the function on the right. Regardless of metaphor, what we've done is compose imperative actions
+                even though they don't output values! This may look very alien and non-imperative, but Haskell has
+                something called "do notation" that can be used to make particularly long sequences of monad actions
+                more readable.
+                <br><br>
+                Finally, <code>>></code> gives us a way to compose arbitrarily many monad actions of different types
+                (the monad must remain the same but the type that it wraps can be different for each of the actions
+                being composed), without having to explicitly unwrap any data. This means that <code>>></code> can
+                literally be read as "and then do" in code. For example:
+                <br><br>
+                <code>
+                        main = (getLine >>= putStrLn . processInput) >> main
+                </code>
+                <br><br>
+                Is the exact same program that we constructed before except that it repeats itself every time after
+                printing. I like to think of the <code>>></code> symbol as an arrow telling the program where to go
+                next.
+                </p>
+                <p class="textContent" id="Monad_Laws">
+                <u><big><b>The Monad Laws</big></b></u>
+                <br><br>
+                You can't just make any old parametrized type that implements functions with the above type signatures
+                and call it a monad. You could in Haskell, GHC doesn't check that an instance of <code>Monad</code>
+                obeys these rules; that would be extrmely difficult, so its up to the programmer. If you wrote an
+                instance of <code>monad</code> that didn't satisfy the properties described below then it wouldn't be a
+                monad by the mathematical definition and it probably wouldn't be as useful as an actual monad. For a
+                monad to be a monad it's functions have to satisfy the following "monad laws:"
+                <br><br> Left Identity: <code>return a >>= f = f a</code><br> Right Identity: <code>m >>= return = m</code><br>
+                Associativity: <code>(m >>= f) >>= g = m >>= (\x -> f x >>= g)</code>
+                <br><br> These requirements are a lot simpler than they appear. The first one says that if we wrap up a
+                value using <code>return</code>, then we want <code>>>=</code> to be able to unwrap that same value and
+                feed it to the next function. The second
+                condition says something similar it just looks more strange because there aren't any non-monadic values
+                in the definition. It says that if <code>>>=</code> unwraps a value and feeds it to <code>return</code>,
+                then we'll get the same wrapped
+                value back. Hopefully it makes sense that both of these things would be something desirable for a
+                default type constructor, which is basically what <code>return</code> is.
+                <br><br>
+                As for the associativity condition, since function composition is a associative, i.e. <code>(f . g) . h
+                        = f . (g . h)</code>, we desire the same thing to be true when we compose imperative actions.
+                The left side of the equation represents feeding the value inside <code>m</code> into <code>f</code> <i>and
+                        then</i> feeding the result into <code>g</code>; the right side of the equation represents
+                first constructing a function (the lambda) that takes <code>x</code> then feeds it into <code>f</code>
+                then into <code>g</code> and then feeding the value inside <code>m</code> into this lambda. The
+                associativity condition ensures that these two ways of feeding the value inside <code>m</code> through
+                the functions are the same.
+                </p><p class="textContent" id="Examples">
+                <u><big><b>Examples</big></b></u>
+                <br><br> The example that I've already brought up is the <code>IO</code> monad. IO stands for
+                Input/Output, so it's role is pretty self-exaplantory - monad actions get compiled to input/output
+                actions.
+                <br><br> Another common example of a monad that isn't often referred to as a monad is <code>[a]</code>,
+                the type of lists with elements from <code>a</code>. Here's what the monad functions look like for
+                lists:
+                <br><br>
+                <code>
+                        return x = [x]<br>
+                        xs >>= f = concat (map f xs)<br>
+                        xs >> ys = ys
+                </code>
+                <br><br>
+                <code>return</code> simply takes a value and makes a list that contains only that value. The bind
+                operator maps the function onto the list that is passed to it, which makes a list of lists, and then
+                <code>concat</code> flattens that list. The
+                then operator simply returns the second list. This may seem useless, but its not quite useless. In
+                functional programming the great thing about the type of lists is that it is an instance of <code>Functor</code>.
+                This is the typeclass which gives us the <code>map</code> function for lists, which takes a list and a
+                function and applies the function to every element of the list. It turns out that the monad structure
+                of the list type isn't completely essential for applications, but <code>map</code> can be written in
+                terms of <code>>>=</code> and <code>return</code> (how?).
+                <br><br>
+                <code>Maybe a</code> is a type that is probably less familiar to object-oriented programmers but it's
+                not at all difficult to understand:
+                <br><br>
+                <code>
+                        Maybe a = Just a | Nothing
+                </code>
+                <br><br> This means that <code>Maybe a</code>, for some type <code>a</code>, is either a box called
+                <code>Just</code> with a value from <code>a</code> inside it or it's a box called <code>Nothing</code>
+                with nothing inside it. This wrapper for types is excellent for representing computations that could
+                fail. Here's how it works as a monad:
+                <br><br>
+                <code>
+                        return x <span style="margin:3em" />= Just x<br>
+                        Nothing >>= f = Nothing<br>
+                        Just x >>= f <span style="margin:0.5em" />= f x<br>
+                        Nothing >> _ <span style="margin:0.5em" />= Nothing<br>
+                        Just _ >> m <span style="margin:1em" />= m
+                </code>
+                <br><br> In practice, the use of this type's monad functionality is extremely useful. Imagine this, you
+                have an important function, <code>foo :: String -> Maybe String</code>, and it's broken into steps:
+                <br><br>
+                <code>foo = stepThree . stepTwo . stepOne</code>.
+                <br><br> But the failure that causes the output to be <code>Nothing</code> could happen at any step,
+                i.e.:
+                <br><br>
+                <code>
+                        stepOne <span style="margin:1.2em" />:: String -> Maybe MyType<br>
+                        stepTwo <span style="margin:1.2em" />:: MyType -> Maybe [Int]<br>
+                        stepThree :: [Int] <span style="margin:0.6em" />-> Maybe String
+                </code>
+                <br><br> So since the domains and ranges don't match up, <code>foo = stepThree . stepTwo . stepOne</code>
+                would actually cause a type error. What we can do, however, is say
+                <br><br><code>foo = \x -> stepOne x >>= stepTwo >>= stepThree</code><br><br> And huzzah! We have a way
+                of composing computations that could fail without having to manually unwrap the value for each step!
+                <br><br> I want to conclude this section by mentioning that if the metaphor of >>= unwrapping the value
+                in its first argument and injecting that value into the function that is its second argument, that's
+                okay. The <a target="_blank" href="https://hackage.haskell.org/package/base-4.10.1.0/docs/Control-Monad.html"><code>Control.Monad</code></a>
+                library provides a few variations of the bind operator:
+                <br><br><code>
+                        (=<<) :: (a -> m b) -> m a -> m b
+                                <br>
+                                (>=>) (a -> m b) -> (b -> m c) -> a -> m c
+                </code><br><br> The first operator can be thought of as if its "lifting" a function <code>a -> m b</code>
+                to a function <code>m a -> m b</code>. And the second operator could be thought of as a literal
+                composition of functions, so we can rewrite our
+                important functions like so:
+                <br><br>
+                <code>foo = stepOne >=> stepTwo >=> stepThree</code>
+                </p><p class="textContent" id="Category_Theory">
+                <u><big><b>Category Theory</big></b></u>
+                <br><br>
+                Everything that I've covered so far should allow you to effectively use monads as a programmer. But
+                there is more to the definition of a monad. I'm assuming you're familiar with basic categry theoretic
+                terminology from this point on.
+                If you aren't, I'd recommend Bartosz Milewski's online book <a target="_blank" href="https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface">Category
+                        Theory for Programmers</a>, which has lots of C++ examples, or his
+                <a target="_blank" href="https://www.youtube.com/watch?v=I8LbkfSSR58&list=PLbgaMIhjbmEnaH_LTkxLI7FMa2HsnawM_">YouTube
+                        series</a>, which makes more use of Haskell.
+                <br><br>
+                The first thing we should discuss is monoids. Monoids are usually formulated in terms of sets.
+                Specifically, a monoid is a set $S$ with an operation $(\cdot) : S \times S \rightarrow S$ and $1\in S$
+                such that $$\forall s\in S \quad 1\cdot
+                s = s \cdot 1 = s$$ $$\forall a,b,c\in S \quad (a\cdot b)\cdot c = a \cdot (b\cdot c)$$ One familiar
+                example of a monoid is the type of lists of any data structure. That is, the identity, $1$, is the
+                empty list and the binary operation is concatenation.
+                Another example of interest is the set of all functions from a given set to itself; the identity is the
+                identity function and the operation is composition of functions.
+                <br><br>
+                In category theory however, we don't like talking about sets. We want to construct a monoid based on
+                the morphisms of some category. The first thing we have to do is define a monoidal category. A monoidal
+                category $\mathbb{C}$ is one
+                with a bifunctor, called the tensor product, $\otimes : \mathbb{C}\rightarrow \mathbb{C} \rightarrow
+                \mathbb{C}$ and an "identity object," $I$, such that $\forall A,\, B, \, C\in Ob(\mathbb{C})$ there is
+                an isomorphism $\alpha_{A,B,C} : (A \otimes
+                B)\otimes C \rightarrow A\otimes (B\otimes C)$ (associativity) as well as isomorphisms $\lambda_A :
+                I\otimes A \rightarrow A$ (left identity), and $\, \rho_A : A\otimes I \rightarrow A$ (right identity).
+                <br><br>
+                We can generalize the idea of a monoid categorically by defining a <i>monoid in a monoidal category</i>.
+                A monoid in the monoidal category $\mathbb{C}$ is an object $M$ in $\mathbb{C}$ with a morphism $\mu:
+                M\otimes M \rightarrow M$ and
+                another morphism $\eta: I \rightarrow M$. These morphisms must satisfy the following "coherence
+                conditions:" $$\mu \circ (id_M\otimes \mu) \circ \alpha_{M, M, M} = \mu \circ (\mu \otimes id_M)$$
+                $$\mu \circ (id_M \otimes \eta) = \lambda_M$$ $$\mu
+                \circ (\eta \otimes id_M) = \rho_M$$ Recall that $\alpha$ is an isomorphism that "reassociates" the
+                tensor product, so the first condition is analogous to associativity. The second and third conditions
+                are left identity and right identity, respectively.
+                The meaning of these conditions is made much more clear with diagrams, something I do not have but that
+                <a href="https://en.wikipedia.org/wiki/Monoid_(category_theory)">Wikipedia does</a>. If one assumes
+                that the underlying category is the category
+                of sets, with $\otimes$ being the Cartesian product and $I$ being a set with one element, then the
+                original algebraic defintion of a monoid is recovered.
+                <br><br>
+                But again, sets are boring. What's another example of a monoidal category? The category of endofunctors
+                on some category $\mathbb{C}$. $\otimes$ is identified as the composition of endofunctors (which, like
+                the composition of all morphisms,
+                is associative) and the identity object is $id_{\mathbb{C}}$ - the identity endofunctor. So what would
+                a monoid in this category look like? Well, it would be an endofunctor $T$ with a natural tranformation
+                $\mu:T\circ T \rightarrow T$ and another
+                natural transformation $\eta : id_{\mathbb{C}} \rightarrow T$ that satisfy the conditions for a monoid;
+                that's what a monad is!
+                <br><br>
+                For a monad, the coherence conditions are as follows: $$\mu \circ T \eta = \mu \circ \eta T = id_T$$
+                $$\mu \circ T \mu = \mu \circ \mu T$$ In this case, the left and right identity morphisms, $\lambda_T$
+                and $\rho_T$, are the identity
+                on $T$. $\, (T\eta)_x=T(\eta_x)$ and $(\eta T)_x = \eta_{T\, x}$. Likewise for $T\mu$ and $\mu T$.
+                <br><br> But wait how could any of that possibly relate to all the programming? To see, let's make a
+                Haskell type class:
+                <br><br>
+                <code>
+                        class MyMonad M where<br>
+                        <span style="margin:2em" />fun :: (a -> b) -> (M a -> M b)<br>
+                        <span style="margin:2em" />mu<span style="margin:1.2em" />:: M (M a) -> M a<br>
+                        <span style="margin:2em" />eta :: a -> M a<br>
+                </code>
+                <br>
+                <code>fun</code> is the endofunctor itself. The endofunctor is acting on the category of all Haskell
+                types. A functor acts on both objects (types) and morphisms (functions). When the functor acts on a
+                morphism $f$ it yields a morphism whose domain is the functor acting on the domain of $f$, likewise for
+                the codoamin. This explains the type signature of the first function in our class. The others shouldn't
+                be too difficult to understand as they are equivalent to $\mu:M\circ M \rightarrow M$ and $\eta :
+                id_{\mathbb{C}} \rightarrow M$. The difference is that in the category-theoretic notation we consider
+                the endofunctor as acting on the entire category but in Haskell notation we are considering it as
+                acting on a particular object.
+                <br><br> We also demand that these functions satisfy the above conditions for a monad. In Haskell,
+                these can be written like so:
+                <br><br>
+                <code>
+                        eta . f = fun f . eta<br>
+                        nu . fun (fun f) = fun f . nu
+                </code>
+                <br><br> Now that we have that set up, let's show that it's equivalent to the definition of monad in
+                Haskell. Haskell monads are actually called Kleisli triples in Category theory, so let's call our next
+                class that:
+                <br><br>
+                <code>
+                        class KleisliTriple T where<br>
+                        <span style="margin:2em" />ret :: a -> T a<br>
+                        <span style="margin:2em" />>>== :: T a -> (a -> T b) -> T b
+                </code>
+                <br><br> Notice that the <i>then</i> operator, <code> >></code> is not defined in a Kleisli triple.
+                That's because it actually has the following default implementation:
+                <br><br>
+                <code>
+                        m1 >> m2 = m1 >>= (\_ -> m2)
+                </code>
+                <br><br> The <code>KleisliTriple</code> class must satisfy the "monad laws" discussed earlier in the
+                article. Now all that's left to do is the following:
+                <br><br>
+                <code>
+                        instance KleisliTriple t => MyMonad t where<br>
+                        <span style="margin:2em" />fun f m = m >>== (ret . f)<br>
+                        <span style="margin:2em" />eta = ret<br>
+                        <span style="margin:2em" />mu m = m >>== id<br>
+                        <br>
+                        instance MyMonad t => KleisliTriple t where<br>
+                        <span style="margin:2em" />ret = eta<br>
+                        <span style="margin:2em" />m >>== f = mu (fun f m)
+                </code>
+                <br><br> One can verify that if the conditions for either instance are assumed, the conditions for the
+                other follow. I won't show that here since I think its a useful exercise for the reader. Once that's
+                been done, however, you've proven that
+                Haskell monads are monoids on the category of endofunctors on the underlying category of Haskell types!
+        </p>
+</body>
+
+</html>

@@ -1,0 +1,350 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="keywords" content="Eben,Kadile,Cowley,Graphics,Mathematics,Math,Physics,Special,Relativity,Geometry" />
+	<link rel="stylesheet" type="text/css" href="../../style.css" />
+	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+	<script type="text/x-mathjax-config">
+		MathJax.Hub.Config({
+	tex2jax: {inlineMath: [["$", "$"],["\\(","\\)"]]},
+	errorSetting: {message: undefined}
+});
+</script>
+	<script type="text/javascript" src="https://cdn.rawgit.com/mathjax/MathJax/2.7.6/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+	<title>
+		Special Relativity - Eben Kadile
+	</title>
+</head>
+
+<body>
+	<div class="heading">
+		<h1>Special Relativity - A Mathematical Approach</h1>
+		<h2>Mathematically understanding how and why the effects of special relativity arise.</h2>
+		<h3>eben.kadile24@gmail.com</h3>
+		<br>
+	</div>
+	<div align="center" style="width:100%">
+		<a class="navItem" style="border-top-left-radius:15px;border-bottom-left-radius:15px;" href="../../../home.html">Home</a>
+		<a class="navItem" href="../../../Art.html">Art</a>
+		<a class="navItem" href="../../../Software.html">Software</a>
+		<a class="navItem" href="../../../Blog.html">Blog</a>
+		<a class="navItem" style="border-top-right-radius:15px;border-bottom-right-radius:15px;" href="../../../Research.html">Research</a>
+</div>
+	<br>
+	<p class="textContent">
+		Jump to:<br>
+		<span style="margin-left:2em" /><a href="#Summary">Summary</a><br>
+		<span style="margin-left:2em" /><a href="#Hyperbolae">Hyperbolae</a><br>
+		<span style="margin-left:2em" /><a href="#Postulates">The Postulates of Relativity</a><br>
+		<span style="margin-left:2em" /><a href="#Lorentz">Lorentz Transformations</a><br>
+		<span style="margin-left:2em" /><a href="#Mobius">Relationship with Mobius Transformations (and more Fun with Mobius Transformations)</a>
+	</p>
+	<br>
+	<p class="textContent" id="Summary">
+		<big><u><b>Summary</b></u></big>
+		<br><br>
+		Rotations in the plane preserve a circle, and rotations in space preserve a sphere. It turns out that the postulates
+		of relativity tell us that the coordinate transformation between two inertial reference frames preserves a
+		hyperboloid. These transformations are sometimes refered as <i>hyperbolic rotations</i>; the first illustration below
+		demonstrates the two dimensional version. The are a variety of algebraic structures that can be used to describe
+		these transformations, one of them being quotients of linear functions over the complex numbers. The geometric
+		objects that arise from these functions look quite interesting, and can be seen in the last illustration.
+		</p><p class="textContent" id="Hyperbolae">
+		<big><u><b>Hyperbolae</b></u></big>
+		<br><br>
+		Let's start out by talking about a curve in the plane given by $x^2 - y^2 = 1$. Let's try and parametrize it with
+		respect to a parameter $t$. The most common way to parametrize this curve is as follows:
+		$$x(t)=\cosh(t)=\frac{e^t+e^{-t}}{2}$$
+		$$y(t)=\sinh(t)=\frac{e^t-e^{-t}}{2}$$
+		There are a few things that come in handy with this parametrization. The first is that it's the unique solution to
+		$$x'(t)=y(t)$$
+		$$y'(t)=x(t)$$
+		Such that $x(0)=1$ and $y(0)=0$. Additionally,
+		$$y(a+b)=x(a)y(b)+x(b)y(a)$$
+		$$x(a+b)=x(a)x(b)+y(a)y(b)$$
+		These last two properties are of interest because it means that for any real $\zeta$
+		$$
+		\left( \begin{array}{ccc}
+		\cosh(\zeta) & \sinh(\zeta) \\
+		\sinh(\zeta) & \cosh(\zeta) \end{array} \right)
+
+		\left( \begin{array}{ccc}
+		\cosh(t) \\
+		\sinh(t) \end{array} \right)
+		=
+		\left( \begin{array}{ccc}
+		\cosh(t)\cosh(\zeta)+\sinh(t)\sinh(\zeta) \\
+		\sinh(t)\cosh(\zeta)+\sinh(\zeta)\cosh(t) \end{array} \right)
+		=
+		\left( \begin{array}{ccc}
+		\cosh(t+\zeta) \\
+		\sinh(t+\zeta) \end{array} \right)
+		$$
+		This last property is key when describing the geometry of 1+1 dimensional spacetime (note that m+n dimensions means m
+		spatial dimensions and n temporal dimensions). Let's see how we can generalize it for a curve
+		$\frac{x^2}{a^2}-\frac{y^2}{b^2}=1$. The parametrization for this curve is $(a\cosh (t),\, b\sinh (t))$. Thus,
+		$$
+		\left( \begin{array}{ccc}
+		\cosh(\zeta) & \sinh(\zeta) \\
+		\sinh(\zeta) & \cosh(\zeta) \end{array} \right)
+
+		\left( \begin{array}{ccc}
+		a\cosh(t) \\
+		b\sinh(t) \end{array} \right)
+		=
+		\left( \begin{array}{ccc}
+		a(\cosh(t)\cosh(\zeta)+\sinh(t)\sinh(\zeta)) \\
+		b(\sinh(t)\cosh(\zeta)+\sinh(\zeta)\cosh(t)) \end{array} \right)
+		=
+		\left( \begin{array}{ccc}
+		a\cosh(t+\zeta) \\
+		b\sinh(t+\zeta) \end{array} \right)
+		$$
+		The same can be shown for $\frac{y^2}{a^2}-\frac{x^2}{b^2}$. This means that the matrix above is a linear
+		transformation that preserves hyperbolae the same way rotations preserve circles. This is why this type of
+		transformation is called a "hyperbolic rotation." In a minute you'll find out why a transformation like this is
+		useful for describing spacetime. For now, here's a way to visualize the transformations:
+		<br>
+	</p>
+	<div align="center">
+		<canvas id="canvas" onmousemove="readmouse(event)" style="border-radius:5px;width:1336px;" />
+	</div>
+	<p id="zeta" class="input" align="center">ζ=0</p>
+	<br>
+	<p class="textContent">
+		On the left is the image of a square grid under a hyperbolic rotation, and on the right is the image of a square grid
+		under an ordinary rotation. As you can see, any vertex of the grid that starts on the circle stays on the circle for
+		the ordinary rotation. This is what is meant by "rotations preserve a circle." The same thing can be seen for the
+		hyperbola on the grid that is being hyperbolically rotated.
+		</p><p class="textContent" id="Postulates">
+		<big><b><u>The Postulates of Relativity</u></b></big>
+		<br><br>
+		The first postulate of relativity, called the principle of relativity, states that all inertial reference frames are
+		equivalent. Specifically, a reference frame is just a coordinate system and an inertial reference frame is one that
+		is stationary or moving at a constant velocity. What is meant by equivalence in this case is that the laws of physics
+		don't change when you switch between these reference frames. To be more explicit, let's define a reference frame with
+		coordinates $(x,\, y,\, z,\, t)$. Let's say that this is an inertial reference frame and let's define another
+		inertial reference frame with coordinates $(x',\, y',\, z',\, t')$. If we wrap up the coordinates into 4 dimensional
+		vectors, $u$ and $u'$ respectively, the relations between these vectors must be of the following form:
+		$$u'=Au+b$$
+		$A$ is a matrix which encodes the stretching, reflection/rotation and <i>motion</i> that one must undergo to get from
+		$u$ to $u'$. Notice that by the word <i>motion</i> I don't mean translation. Think about the vector
+		$$
+		\left( \begin{array}{ccc}
+		A_{00} \\
+		A_{10} \\
+		A_{20} \\
+		A_{30} \end{array} \right)
+		$$
+		$A_{00}$ will be multiplied by $t$ in the expression for $t'$, we can think of it as a scaling factor between the two
+		ways of measuring time. Specifically, for every 1 tick of a clock in the $u$ reference frame, there will be $A_{00}$
+		ticks of a clock in the $u'$ reference frame. The other components of the vector will also be multiplied by $t$ but
+		to give spatial quantities, thus we can think of these elements as representing the velocity of the origin of $u'$ in
+		the coordinates of $u$. The other elements of this matrix encode the stretching and rotation/reflection one must
+		undergo to switch between frames. The vector $b$ represents a translation between the coordinate systems, i.e. the
+		displacement between them at $t=0$.
+		<br><br>
+		So how do we determine what this transformation actually is? That's where the second postulate comes in, called <i>the
+			invariance of c</i>. What it says is basically in the title: the speed of light is the same in all inertial
+		reference frames. How can we interpret this mathematically? Say we have a ray of light that travels a displacement
+		$\Delta r$ in the amount of time $\Delta t$. Then we have
+		$$c\Delta t = \Delta r$$
+		$$\rightarrow c^2 \Delta t^2 = \Delta r^2$$
+		$$\rightarrow c^2 \Delta t^2 - \Delta r^2=0$$
+		Where $c$ is the speed of light. The same holds for any inertial reference frame, i.e. $c^2 \Delta t'^2 - \Delta
+		r'^2=0$. The reason for the squaring of each displacement is that in $n$ dimensions
+		$$\Delta r = \sqrt{\Delta x_1^2 + \Delta x_2^2 +...+\Delta x_n^2}$$
+		Dealing with the square root is annoying so instead we square it and deal with $\Delta x_1^2 + \Delta x_2^2 +...+
+		\Delta x_n^2$.
+		<br><br>
+		Returning to 1+1 dimensions, if we take these equations to the limit as the interval goes to zero, we get
+		$$c^2 d t^2 - d r^2=0$$
+		$$c^2 d t'^2 - d r'^2=0$$
+		The left hand side of the first equation is called $ds^2$, the line element, and that of the second equation is
+		$ds'^2$. Since both expressions are of the same degree as polynomials, we can deduce that $ds^2=kds'^2$ for some
+		function $k$. Since spacetime is homogenous (the same at all positions) and isotropic (the same in all directions)
+		the only thing $k$ can depend on is the relative speed of the reference frames. If we introduce a third reference
+		frame with line element $ds''^2$ and $v_0$ is the velocity of $ds'$ moving away from $ds$, $\, v_1$ is the velocity
+		between $ds$ and $ds''$, and $v_2$ is the velocity between $ds'$ and $ds''$ (here I've used the line elements of the
+		reference frames, $ds$, $ds'$, and $ds''$, to denote the reference frames themselves) then
+		$$ds^2=k(v_0)ds'^2 \quad ds^2=k(v_1)ds''^2 \quad ds'^2=k(v_2)ds''^2$$
+		$$\rightarrow \quad k(v_0)=\frac{k(v_1)}{k(v_2)}$$
+		Note that $v_0$ can be deduced given the magnitudes of $v_1$ and $v_2$ and the angle between them. However, $k$ does
+		not depend on direction (meaning it doesn't depend on angle) so the expression $\frac{k(v_1)}{k(v_2)}$ also doesn't
+		depend on angle. It follows that $k$ is constant and, from the equation above, is equal to 1. This means that
+		$$ds^2=ds'^2$$
+		$$\rightarrow c^2 dt^2 - dr^2=c^2dt'^2 - dr'^2$$
+		</p><p class="textContent" id="Lorentz">
+		<big><b><u>Lorentz Transformations</u></b></big>
+		<br><br>
+		Since $c^2 dt^2 - dr^2=c^2dt'^2 - dr'^2$ is true for any two reference frames, what we're looking for is an affine
+		transformation that preserves $c^2 dt^2 - dr^2$.$\,$ All translations trivially preserve this expression, since we
+		can rewrite it as $\lim_{t_1\rightarrow t_2,r_1\rightarrow r_2} c^2(t_1 - t_2)^2 - (r_1 - r_2)^2\,$ (in 1+1
+		dimensional spacetime). One can verify that adding any vector $\langle t_0,\, r_0 \rangle$ to both $\langle t_1,\,
+		r_1\rangle$ and $\langle t_2,\, r_2\rangle$ will result in the same expression. So the question becomes, what kind of
+		<i>linear transformations</i> preserve $ds^2$? And we already know the answer to this! Any matrix of the form
+		$$
+		\left( \begin{array}{ccc}
+		\cosh(\zeta) & \sinh(\zeta) \\
+		\sinh(\zeta) & \cosh(\zeta) \end{array} \right)
+		$$
+		Will preserve $ds^2$ when it acts on $\langle dt,\, dr \rangle$. We call this group of matrices the group of <i>Lorentz
+			transformations</i> or <i>Lorentz group</i> for 1+1 dimensional spacetime.
+		<br><br>
+		So how is $\zeta$ detrmined? Long story short, $\zeta=\tanh^{-1} \frac{v}{c}$ where $v$ is the speed of one reference
+		frame relative to the other, $c$ is the speed of light and $\tanh^{-1}$ is the inverse function of $\tanh$, which is
+		defined as $\frac{\sinh(t)}{\cosh(t)}$. This can be verified by performing the matrix multiplication on $\langle
+		dt,\, dr \rangle$, setting it equal to $ds^2$, regrouping terms, estabilishing what must equal zero and solving. I'll
+		leave this as an exercise for the reader. I also recommend solving for the actual elements of the matrix in terms of
+		relative velocity and the speed of light, and trying to figure out how the effects of length contraction and time
+		dilation arise.
+		<br><br>
+		The only thing that I've done so far that was in more than 1+1 dimensions was justify why we squared $\Delta t$ and
+		$\Delta r$ when deriving the invariant interval. Let's look at what the invariant interval would be for our 3+1
+		dimensional spacetime:
+		$$ds^2=c^2dt^2-dx^2-dy^2-dz^2$$
+		What kind of transformations preserve $-dx^2-dy^2-dz^2$? Well, setting that expression equal to a (negative) constant
+		yields the equation of a sphere (neglecting the fact that they're infinitesmals). So the transformations that
+		preserve that part of the expression will be 3D rotations or reflections. Since two reflections is a rotation and an
+		arbitrary reflection is a rotation composed with a set reflection, we can think of this <i>subgroup</i> of Lorentz
+		transformations as having two <i>connected components</i>: one that is the group of all 3D rotations, and one that is
+		any 3D rotation after some given reflection. 3D rotations have 3 degrees of freedom so we can say that both of these
+		components are 3-dimensional. However, let's not forget the $dt^2$ term. Transformations that mess with time are
+		hyperbolic rotations in 4 dimensions (which preserve hyperboloids instead of hyperbolae). The hyperbolic rotation is
+		determined by the 3-velocity of the two reference frames; meaning they have 3 degrees of freedom. This means that the
+		group of Lorentz transformations of 3+1 dimensional spacetime is 6 dimensional and has two connected components.
+		<br><br>
+		You might be thinking "great, but how do I do calculations?" That's fine, but I think the calculations involved are
+		extremely cumbersome. It's nice to take a step back and think of everything topologically, even though the
+		interpretation I've presented here is highly non-rigorous.
+		</p><p class="textContent" id="Mobius">
+		<big><b><u>Relationship with Mobius Transformations (and more Fun with Mobius Transformtations)</u></b></big>
+		<br><br>
+		This part of the article doesn't have anything to do with the physical phenomena involved in special relativity, as
+		far as I know. Nonetheless, the connections we can draw with seemingly disparate topics in math are interesting.
+		<br><br>
+		The space in which the effects of special relativity take place, where hyperbolic rotations are isometries, is called
+		Minkowski space. Minkowski space is $\mathbb{R}^4$ with a quadratic form $Q(v)$. That is, $Q$ is a function that acts
+		on points in the space and allows us to have a notion of square distance, also known as <i>quadrance</i>. In 3D
+		Euclidean space $Q(v)=v_1^2+v_2^2+v_3^2$ due to the Pythagorean theorem. However, in Minkowski space
+		$$Q(v)=v_0^2-v_1^2-v_2^2-v_3^2$$
+		This way, if we want to calculate $\Delta s^2$ between two events $u$ and $v$ it is simply $Q(u-v)$ This allows us to
+		write a vector in Minkowski space in the following way:
+		$$v=
+		\left( \begin{array}{ccc}
+		v_0+v_1 & v_2 + iv_3 \\
+		v_2 - iv_3 & v_0-v_1 \end{array} \right)$$
+		It can be easily verified that the determinant of this matrix is the quadratic form on Minkowski space. If $P$ is a
+		matrix in the special linear group SL(2, C), i.e. a complex 2x2 matrix with determinant 1, and $P^\star$ is the
+		conjugate transpose of $P$ then
+		$$\det(PvP^\star)=\det(v)$$
+		This action of $P$ on $v$ gives rise to a <i>homomorphism</i> from SL(2, C) to the subgroup of Lorentz
+		transformations that don't include reflections. A homomorphism, by the way, just means that if we have another
+		matrix, $Q\in SL(2,\, \mathbb{C})$ then the action $PQvQ^\star P^\star$ is equivalent to the action of $P$ as a
+		Lorentz transformation after the action of $Q$ as a Lorentz transformation. This homomorphism maps any transformation
+		composed with a reflection to just the bare transformation, and all other transformations are mapped to themselves.
+		This means that the <i>kernel</i>, the elements that get mapped to the identity, are the identity itself and the
+		reflection. Linear algebra and group theory tell us that quotienting a group by a kernel will yield a group that is
+		isomorphic to the codomain of the homomorphism. In this case, quotienting by the kernel is saying we don't care about
+		the sign of the determinant (recall that negative determinants mean reflections are involved) so what we get is
+		called the <i>projective special linear group</i>, $PSL(2, \mathbb{C})$, which is the group of all non-zero
+		determinant complex matrices where we don't care about determinant. In other words, if $P$ is an invertible complex
+		2x2 matrix and we're considering it as an element of $PSL(2, \mathbb{C})$ then $\forall a\neq 0 \quad aP=P$.
+		<br><br>
+		So what is this all leading up to? Think about functions of a complex variable of the form
+		$$f(z)=\frac{az+b}{cz+d}$$
+		These are called Mobius transformations, they can be represented by a matrix like this:
+		$$
+		\left( \begin{array}{ccc}
+		a & b \\
+		c & d \end{array} \right)$$
+		Notice that multiplying this matrix by any non-zero scalar will yield the same Mobius transformation. Also, the
+		Mobius transformation is invertible if and only if $ad-bc\neq 0$. Thus, there is a natural isomorphism between the
+		group of Mobius transformations and PSL(2, C). Therefore, the Mobius group and the Lorentz group without reflections
+		are isomorphic!
+		<br><br>
+		What's so exciting about that? Aside from the fact that the two types of transformations seem entirely unrelated
+		initially, certain finite subgroups of the Mobius group have very interesting behavior. Specifically, if we let the
+		subgroups act on the complex plane and look at which points have non-chaotic orbits, we get a certain type of
+		fractal:
+	</p>
+	<div align="center">
+		<a target="_blank" href="https://www.shadertoy.com/view/4dsBDn">
+			<img class="projImg" src="../../images/kleinianFractal.png" />
+		</a>
+	</div>
+	<p class="textContent">
+		called an Apollonian Gasket. These can also be constructed starting with three circles each touching the other two
+		and drawing circles that are tangent to at least three others!
+		<br><br>
+		The lesson: never think of any ideas in math as being unrelated.
+	</p>
+	<script src="../../scripts/three.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<script id="vs" , type="x-shader/x-vertex">
+		void main() {
+	  gl_Position = vec4(position, 1.0);
+	}
+</script>
+	<script id="fs" type="x-shader/x-fragment">
+		uniform float rapidity;
+uniform vec2 res;
+
+const float pi2 = 2.0 * atan(1.0);
+const float sqrt2 = inversesqrt(0.5);
+
+float dHyperbola(vec2 v){
+    float xy = inversesqrt(v.y/v.x);
+    vec2 hPoint = vec2(xy, 1.0/xy);
+    return distance(v, hPoint);
+}
+
+float dCircle(vec2 v){
+	return abs(sqrt(dot(v,v)) - 1.0);}
+
+float atanh(float x){return 0.5*log((1.0 + x)/(1.0 - x));}
+
+float cosh(float x){return 0.5*(exp(x) + exp(-x));}
+
+float sinh(float x){return 0.5*(exp(x) - exp(-x));}
+
+void main()
+{
+	if(gl_FragCoord.x < 664.0){
+		vec2 p = (2.0*(gl_FragCoord.xy + vec2(330, 0)) - res)/res.y;
+	  vec2 v2 = vec2(cosh(rapidity), sinh(rapidity));
+	  mat2 transform = mat2(v2.x, v2.y, v2.y, v2.x);
+	  vec2 tp = p*transform;
+	  tp *= 10.0;
+	  vec2 ip = floor(tp);
+		if(abs(ip.x - tp.x) < 0.1 || abs(ip.y - tp.y) < 0.1) gl_FragColor.rgb = vec3(1);
+		else gl_FragColor.rgb = vec3(0);
+	  p *= mat2(sqrt2, -sqrt2, sqrt2, sqrt2);
+	  if(p.x < 0.0 && p.y < 0.0) p = -p;
+	  if(dHyperbola(p) < .05) gl_FragColor = vec4(1, 0, 0, 1);
+		gl_FragColor.a = 1.0;
+	}
+	else if (gl_FragCoord.x > 672.0){
+		vec2 p = (2.0*(gl_FragCoord.xy - vec2(330, 0)) - res)/res.y;
+		vec2 v2 = cos(vec2(rapidity, rapidity - pi2));
+		mat2 transform = mat2(v2.x, -v2.y, v2.y, v2.x);
+		vec2 tp = p*transform;
+		tp *= 10.0;
+		vec2 ip = floor(tp);
+		if(abs(ip.x - tp.x) < 0.1 || abs(ip.y - tp.y) < 0.1) gl_FragColor.rgb = vec3(1);
+		else gl_FragColor.rgb = vec3(0);
+		if(dCircle(p) < .02) gl_FragColor = vec4(1, 0, 0, 1);
+		//gl_FragColor = vec4(dCircle(p));
+		gl_FragColor.a = 1.0;
+	}
+	else {
+		gl_FragColor = vec4(0,0,0,1);
+	}
+}
+</script>
+	<script type="text/javascript" , src="../../scripts/displayLorentzBoost.js"></script>
+</body>
+
+</html>

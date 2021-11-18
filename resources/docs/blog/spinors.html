@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="keywords" content="Eben,Kadile,Cowley,Mathematics,Math,Rotation,Group,Spinor,Spinors" />
+    <link rel="stylesheet" type="text/css" href="../../style.css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+	tex2jax: {inlineMath: [["$", "$"],["\\(","\\)"]]},
+	errorSetting: {message: undefined}
+
+});
+</script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/mathjax/MathJax/2.7.6/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <title>
+        Spinors Demystified - Eben Kadile
+    </title>
+</head>
+
+<body>
+    <div class="heading">
+        <h1>Spinors Demystified</h1>
+        <h2>Rotations represented as vectors.</h2>
+        <h3>eben.kadile24@gmail.com</h3>
+        <br>
+    </div>
+    <div align="center" style="width:100%">
+        <a class="navItem" style="border-top-left-radius:15px;border-bottom-left-radius:15px;" href="../../../home.html">Home</a>
+        <a class="navItem" href="../../../Art.html">Art</a>
+        <a class="navItem" href="../../../Software.html">Software</a>
+        <a class="navItem" href="../../../Blog.html">Blog</a>
+        <a class="navItem" style="border-top-right-radius:15px;border-bottom-right-radius:15px;" href="../../../Research.html">Research</a>
+    </div>
+    <br>
+    <p class="textContent">
+        Jump to:<br>
+        <span style="margin-left:2em" /><a href="#Summary">Summary</a><br>
+        <span style="margin-left:2em" /><a href="#Lie">Lie Groups</a><br>
+        <span style="margin-left:2em" /><a href="#GA">Geometric Algebra</a><br>
+        <span style="margin-left:2em" /><a href="#Spin">Spin and Pin</a><br>
+        <span style="margin-left:2em" /><a href="#Physics">Relation to Physics</a>
+    </p>
+    <p class="textContent" id="Summary">
+        <big><b><u>Summary</u></b></big>
+        <br><br>
+        Spinors very roughly correspond to rotations of a vector space with a quadratic form (a function for
+        determining square magnitude of a vector). A certain type of spinor is used to represent matter in particle
+        physics. That may sound strange, but it turns out that two instances of spinors are the familiar complex
+        numbers and quaternions. The framework that they arise in, geometric algebra, allows for the concise
+        representation of rotations and reflections in indefinitely many dimensions. The exact way that spinors relate
+        to rotations allows us to deduce interesting topological facts about the rotation groups of 3D and 4D space.
+        </p><p class="textContent" id="Lie">
+        <u><big><b>Lie Groups</big></b></u>
+        <br><br>
+        A set $S$ with an operation $*$ is a group if and only if for any $a,\, b,\, c \in S$ we have that
+        $$a*b\in S$$
+        $$(a*b)*c=a*(b*c)$$
+        $$\exists e\in S \, : \, e*a=a*e=a$$
+        $$\exists a^{-1}\in S \, : \, a*a^{-1}=a^{-1}*a=e$$
+        <br><br>
+        These conditions are referred to as closure, associativity, identity, and inverse, respectively.
+        <br><br>
+        For a Lie group, the set $S$ is equipped with a geometric structure such that multiplication and inversion are
+        smooth functions. Informally, if $a\in S$ then the functions $f,\, g,\, h:S\rightarrow S$ where $f(x)=a*x$,
+        $\,g(x)=x*a$, and $\, h(x)=x^{-1}$ then $f$, $g$, and $h$ have derivatives of all orders.
+        <br><br>
+        If you're new to abstract algebra, you're probably thinking "What? The derivative of $ax$ is $a$ and the
+        derivative of $\frac{1}{x}$ is $-\frac{1}{x^2}$." This is true, the non-zero reals with multiplication is our
+        first example of a Lie group. The non-zero part is important because the inverse has to be defined for all
+        elements of the group, $0^{-1}$ is undefined on the real numbers.
+        <br><br>
+        Another straightforward example of a Lie group is the real numbers with addition. That is, $S$ is $\mathbb{R}$
+        and $*$ is $+$. The identity in this case is $0$, so we have $x^{-1}=-x$, which has derivative $-1$, and for
+        some real $a$ we have $f(x)=x+a$ which has derivative $1$.
+        <br><br>
+        Just as a smooth curve in the plane has a tangent line and a smooth surface in space has a tangent plane, a Lie
+        group can be thought of as a <i>tangent space</i>. The tangent lines of a curve are all fundamentally the same
+        vector space, as is with the tangent planes of a surface. The specific algebraic structure we are going to talk
+        about can be thought of as the tangent space at the identity element of the group. This tangent space is
+        referred to as the <i>Lie algebra</i> of the given Lie group. The essential connection between the Lie algebra
+        and the Lie group is the existence of an <i>exponential map</i>, $\exp$, going from the Lie algebra to the
+        component of the manifold containg the identity element and satisfying $\exp(x+y)=\exp(x)\exp(y)$. This map
+        could be thought of as a function which takes a vector in the tangent space of the identity and bends it onto
+        our manifold - this visualization makes it clear why the codomain of the exponential map must be the identity
+        component.
+        <br><br>
+        For example, the non-zero reals under multiplication are disconnected. The group has two components: the
+        negatives and positives. The positives are the identity component because they contain the identity, $1$. Thus,
+        the Lie algebra is $\mathbb{R}$ and the exponential map is simply exponentiation because $e^x$ takes a real
+        number, outputs a positive real, and satisfies the exponentiation property. We will also find that the natural
+        extension of exponentiation, base $e$, to the complex numbers and qauternions functions as an exponential map
+        in the Lie theoretic sense. In all the examples of matrix Lie groups that I'm aware of, it is true that the
+        exponential map is the matrix exponential.
+        </p><p class="textContent" id="GA">
+        <u><big><b>Geometric Algebra</big></b></u>
+        <br><br>
+        The Lie groups that are of interest in this article can be represented with an under-rated concept in math
+        called geometric algebra. Geometric algebra refers to the <i>Clifford algebra</i> of a Euclidean space. I lean
+        towards the use of the term "geometric algebra" because most of my examples are Euclidean, but I talk about the
+        Clifford algebra of spacetime at the end of the article.
+        <br><br>
+        Recall that for $u,v\in \mathbb{R}^3$
+        $$u\times v = |u||v|\sin(\theta)\hat{n}$$
+        where $|v|$ is the magnitude of $v$, $\theta$ is the angle between the vectors, and $\hat{n}$ is a unit vector
+        determined by the right-hand rule. From this it can be derived that the magnitude of the cross product is the
+        area of the parallelogram formed by the two vectors.
+        <br><br>
+        There is an operator, $\wedge$, called the wedge product, that generalizes the cross product to any dimension.
+        In $\mathbb{R}^2$ we can think of $u\wedge v$ as an oriented parallelogram - one whose sides are given by each
+        of the vectors and whose orientation is clockwise if $v$ is clockwise from $u$ and anticlockwise otherwise.
+        This kind of object is called a <i>bivector</i>. If we pick an orthonormal basis for the plane, $e_1$ and
+        $e_2$, then all bivectors are spanned simply by $e_1 \wedge e_2$. To see this, all we need is the following
+        simple set of rules:
+        <br><br>
+        $$e_i \wedge e_i = 0$$
+        $$e_i \wedge e_j = -e_j \wedge e_i$$
+        $$e_i \wedge (e_j \wedge e_k) = e_i \wedge e_j + e_i \wedge e_k$$
+        $$e_i\wedge (e_j\wedge e_k)=(e_i\wedge e_j)\wedge e_k$$
+        And multiplication of anything with any scalar behaves nicely, to be concise. Note that these rules can be
+        applied to an orthonormal basis for any Euclidean space. Now let's continue with the 2-dimensional example and
+        wedge $ae_1 + be_2$ with $ce_1+de_2$:
+        $$(ae_1 + be_2) \wedge (ce_1+de_2)$$
+        $$=ae_1\wedge (ce_1 + de_2) + be_2\wedge(ce_1+de_2)$$
+        $$=ae_1\wedge ce_1 + ae_1\wedge de_2 + be_2\wedge ce_1 + be_2\wedge de_2$$
+        $$=0 + ade_1 \wedge e_2 + bce_2\wedge e_1 + 0$$
+        $$=ade_1\wedge e_2 - bce_1\wedge e_2$$
+        $$=(ad-bc)e_1\wedge e_2$$
+        Thus, we see that when we wedge 2 vectors in $\mathbb{R}^2$ we get the signed area of the parallelogram that
+        they form times $e_1\wedge e_2$ - the orientation that I mentioned earlier is encapsulated by the sign.
+        <br><br>
+        For $v_1,v_2,...,v_n\in\mathbb{R}^n$, $v_1\wedge v_2,\wedge . . . \wedge v_n$ will be $Ve_1\wedge e_2\wedge . .
+        .\wedge e_n$ where $V$ is the hypervolume of the n-parallelotope formed by the vectors and the $e_i$ form an
+        orthonormal basis for $\mathbb{R}^n$.
+        <br><br>
+        The geometric product was invented by William Kingdon Clifford and is denoted $uv$ for $u,v\in\mathbb{R}^n$. It
+        is defined by
+        $$uv=u \wedge v + u \cdot v$$
+        You're probably thinking "but $\wedge$ yields a bivector and $\cdot$ yields a scalar," which is true. In a
+        geometric algebra, you can add objects together even if they don't have the same <i>grade</i>. For example,
+        $3+e_2+2e_1e_3-5e_4e_5e_6$ is a valid element of the geometric algebra of $\mathbb{R}^6$. $3$ is of grade 0, a
+        scalar, $e_2$ is of grade 1, a vector, $2e_1e_3$ is of grade 2, a bivector, etc.
+        <br><br>
+        This is all probably starting to seem very contrived, so let's see an example of the geometric product in
+        action:
+        $$(e_1e_2)^2=e_1e_2e_1e_2=-e_1e_2e_2e_1=-e_2e_2=-1$$
+        Notice that I've used the fact that the geometric product of a unit vector with itself is $1$ (because the
+        wedge product is zero and the dot product is 1). So why did I choose this example? Since $e_1e_2$ squares to
+        $-1$, it can be identified as the imaginary unit! Indeed, it can be verified by following the rules for
+        geometric multiplication that
+        $$(a+be_1e_2)(c+de_1e_2)=ad - bc + (ac + bd)e_1e_2$$
+        Which is complex multiplication. Notice that this expression uses only objects of even grade. The complex
+        numbers are therefore what's referred to as the <i>even sub-algebra</i> of the geometric algebra of
+        $\mathbb{R}^2$. We are allowed to say <i>sub-algebra</i> instead of just sub-space because the sub-set isn't
+        just closed under addition, but also geometric multiplication. That is, the product of two elements of an even
+        grade will always have an even grade (this is easily verified).
+        <br><br>
+        Elements of even sub-algebras of geometric algebras (or more generally, Clifford algebras) are referred to as
+        <i>spinors</i>.
+        <br><br>
+        Before talking about why geometric algebra is so useful I also need to introduce the geometric inverse. If $A$
+        is a multivector, a geometric product of vectors, $a_1a_2...a_i$ then its <i>reverse</i>, $A^\dagger$, is
+        $a_ia_{i-1}...a_1$. For example, if
+        $$A=e_1(e_2+e_3)(e_4-e_5)$$
+        then,
+        $$A^\dagger = (e_4-e_5)(e_2+e_3)e_1=-e_1(e_2+e_3)(e_4-e_5)$$
+        The reverse can be extended to any element of the algebra by declaring linearity: $(a+b)^\dagger=a^\dagger +
+        b^\dagger$. The point of the reverse is that $AA^\dagger$ is a scalar. This means that the quantity
+        $$A^{-1}=\frac{A^\dagger}{AA^\dagger}$$
+        is well-defined, and that it is the <i>right</i> multiplicative inverse of $A$. This means $AA^{-1}=1$. The
+        expression for the inverse may seem familiar because it is the same as the inverse of a complex number with the
+        exception that the conjugate, $A^*$, is used instead of the reverse, $A^\dagger$ (The definitions are the same
+        if the complex numbers are considered as the even sub-algebra of the geometric algebra of $\mathbb{R}^2$).
+        <br><br>
+        The geometric inverse of a vector is useful because it allows us to easily write down the parallel and
+        perpendicular components of a vectors with respect to each other. If we have a vector $v$ and a non-zero vector
+        $m$ then $v$ can be written in the form $v_{\perp m}+v_{||m}$. That is, the sum of the perpendicular and
+        parallel components. The equations for these components are as follows:
+        $$v_{\perp m}=(v \wedge m)m^{-1}$$
+        $$v_{||m}=(v\cdot m)m^{-1}$$
+        I'll leave the full verification to the reader but it should be intuitive because the bivector components of
+        the wedge product correspond to the vector components of the cross product, whose magnitude is related to the
+        sine of the angle between the vectors, and $v\cdot m= |v||m|\cos\theta$, as usual.
+        <br><br>
+        If $v'$ is the reflection of $v$ across the hyperplane orthogonal to $m$ then
+        $$v'=v_{\perp m} - v_{|| m}$$
+        $$= (v \wedge m)m^{-1} - (v\cdot m)m^{-1}$$
+        $$=-(m \wedge v + m \cdot v)m^{-1}$$
+        $$=-mvm^{-1}$$
+        Which is a very nice, concise way of representing a reflection.
+        <br><br>
+        Rotations are where things start to get really interesting. If you have two vectors, reflecting across both of
+        the hyperplanes orthogonal to each of the vectors is equivalent to a rotation through the plane spanned by the
+        two vectors by twice the angle between the vectors. Say the vectors are unit and named $r$ and $s$. Then
+        reflecting $v$ across $r$'s hyperplane followed by $s$'s is the following:
+        $$v'=-s(-rvr^{-1})s^{-1}$$
+        $$=s(rvr^{-1})s^{-1}$$
+        $$=(sr)v(sr)^{-1}$$
+        $$=(sr)v(rs)$$
+        Note that the last step here is justified by the fact that the vectors are unit, their inverse is equal to
+        their reverse. Continuing with the derivation:
+        $$=(s\cdot r + s\wedge r)v(r\cdot s + r\wedge s)$$
+        $$=(s\cdot r + s\wedge r)v(s\cdot r - s\wedge r)$$
+        Now, let's let $e_1$ and $e_2$ be orthonormal vectors that span the same plane as $r$ and $s$ and are oriented
+        the same way. Continuing:
+        $$=(\cos\theta + \sin\theta e_1e_2)v(\cos\theta - \sin\theta e_1e_2)$$
+        Where $\theta$ is the angle between $r$ and $s$. And now the good part:
+        $$v'=e^{\theta e_1e_2}ve^{-\theta e_1e_2}$$
+        This is simply Euler's formula, and it works because $(e_1e_2)^2=-1$! Note that this is a rotation of $v$ by
+        $2\theta$, because it is a composition of two reflections. If we want to rotate $v$ by $\theta$ through a plane
+        given by a unit bivector $I$, the formula is:
+        $$v'=e^{I\frac{\theta}{2}}ve^{-I\frac{\theta}{2}}$$
+        And that's a rotation!
+        <br><br>
+        Some important terms that I want to introduce here: For any invertible element of a geometric algebra $r$ and
+        arbitrary element $v$, $rvr^{-1}$ is referred to as <i>conjugation</i> of $v$ by $r$. The expression
+        $e^{I\frac{\theta}{2}}$ is refferred to as a <i>rotor</i>, and this term can be used to mean any multivector
+        conjugating a vector.
+        <br><br>
+        If you're familiar with the quaternions, you probably noticed that the rotation formula here is exactly the
+        same for one with quaternions, except that $I$ should represent a unit vector in the direction of the axis of
+        rotation. Remember that in 3D space a unit vector corresponds to a unit bivector (because every line through
+        the origin corresponds to a plane through the origin). This means the quaternions are the even sub-algebra of
+        the geometric algebra of $\mathbb{R}^3$. The real part is the scalar part and the imaginary part is the
+        bivector part. This means that quaternions could be referred to as the spinors of three dimensional space.
+        </p><p class="textContent" id="Spin">
+        <big><u><b>Spin and Pin</b></u></big>
+        <br><br>
+        The expression above for the rotation of a vector descibes a <i>simple</i> rotation, that is, a rotation
+        through a plane. In two and three dimensions, all rotations are simple rotations, this is not so in higher
+        dimensions. If $r$ and $s$ are rotors through different planes,
+        $$rsvs^{-1}r^{-1}=(rs)v(rs)^{-1}$$
+        is a <i>compound</i> rotation with rotor $rs$ that can not be described as a rotation through a single plane.
+        Note that since a simple rotor is a scalar plus a bivector, an element of the even sub-algebra, every rotor, a
+        product of simple rotors, is an element of the even sub-algebra.
+        <br><br>
+        A multivector $s$ in the geometric algebra of $\mathbb{R}^n$ such that $ss^\dagger=\pm 1$ is an element of the
+        <i>Pin(n)</i> group. Conjugation by an element in the Pin group will be a number of reflections. If $s$ has an
+        odd number of vector factors, conjugation is a reflection, and otherwise it is a rotation. We can also consider
+        a subgroup of Pin, called <i>Spin</i>, in which all elements are even. Conjugation by elements of this group
+        will always correspond to a rotation.
+        <br><br>
+        You're probably familiar with the groups O(n) and SO(n). If not, O(n) is the group of all matrices, $A$, such
+        that $AA^T=I$. This is equivalent to saying that the columns of $A$ form an orthonormal basis. This tells us
+        that the determinant of the matrix is always $\pm 1$, because the determinant is the wedge of all the columns.
+        The determinant will be $1$ if the corresponding transformation preserves orientation (rotations) and will be
+        $-1$ if the transformation flips orientation (reflections). SO(n) is the subgroup of O(n) such that all
+        matrices have determinant $1$. All elements oh O(n) correspond to a unique rotation/reflection and all the
+        elements of SO(n) correspond to a unique rotation. However, the rotor $r$, in Spin or Pin, corresponds to the
+        same transformation as $-r$, it's simple to verify. This means that there are continuous maps
+        $$Pin(n) \rightarrow O(n)$$
+        $$Spin(n) \rightarrow SO(n)$$
+        such that there are always two elements in the groups on the left that get mapped to the same element in the
+        groups on the right. This kind of continuous map is called a <i>double covering</i>.
+        <br><br>
+        It's important to note that for n=2 there is not just a double covering but also an isomorphism. This can be
+        verified by algebraically manipulating the rotation formula for two dimensions to get it to be the rotation of
+        a complex number. This is important because the rotation group of complex numbers is the group of unit complex
+        numbers which is, geometrically, a circle. No non-trivial loop on a circle can be continuously contracted to a
+        point.
+        <br><br>
+        Due to some topological considerations somewhat beyond the scope of this article, every loop in Spin(n) can be
+        continuously contracted to a point, this property is known as <i>simple connectedness</i>. Thus, Spin(n) for
+        n>2 is simply connected. We know that it is also a covering space of SO(n), and the additional property of
+        simple connectedness means that Spin(n) is referred to as a <i>universal cover</i> of SO(n).
+        <br><br>
+        We know that quaternions are the spinors of $\mathbb{R}^3$, so Spin(3) is the group of unit quaternions. This
+        tells us something interesting about the topology of SO(3), the group of rotations in 3D space. The unit
+        quaternions are geometrically a 3-sphere, and the double covering takes antipodes of a sphere and glues them
+        together. All lines through the origin of four dimensional space intersect this 3-sphere at exactly one pair of
+        antipodes. This means that the rotation group SO(3) is topologically equivalent to the space of lines through
+        the origin of 4D space, which is known as <i>real projective space</i>.
+        <br><br>
+        Remember that when we composed two simple rotations in the expression $(rs)v(rs)^{-1}$, $r$ and $s$ were both
+        of the form $e^{\frac{\theta}{2}I}$ where $I$ is the wedge of two orthonormal vectors spanning the plane of
+        rotation. When the rotors are multiplied together, the bivector exponents will be added. This tells us is that
+        the Lie algebra of the spin group is the space of all bivectors and that the exponential map is ordinary
+        exponentiation. Equivalently, the space of all imaginary quaternions is the Lie algebra of the group of unit
+        quaterions; just as the imaginary numbers are the Lie algebra of the group of unit complex numbers.
+        <br><br>
+        An interesting note that doesn't really have to do with the quaternions as a spinor algebra is that rotations
+        in 4D can always be represented using left and right quaternion multiplication. The first step is to define an
+        <i>isoclinic</i> rotation as a rotation of $\mathbb{R}^4$ that can be decomposed into two rotations of equal
+        angle across perpendicular 2-planes. If we assign an orientation to each of the hyperplanes then a rotation by
+        $\theta$ through the first plane and by $-\theta$ through the second hyperplane is referred to as
+        right-isoclinic; if both the angles have the same sign then the rotation is referred to as left-isoclinic. It
+        turns out that all 4D rotations can be decomposed into a right and left isoclinic rotation. In fact, if we take
+        a vector $v\in\mathbb{R}^4$ and consider it as a quaternion, and $p$ and $q$ are unit quaternions, $pv$ is a
+        left-sioclinic rotation of $v$ and $vq$ is a right-isoclinic rotation of $v$. We can obtain the pair of
+        orthogonal hyperplanes from the quaternion, $q$, by making one plane out of the real line and the line given by
+        the imaginary part. We can also obtain the rotation angle by taking the inverse cosine of the real part. I
+        encourage you to check out <a target="_blank" href="https://en.wikipedia.org/wiki/Rotations_in_4-dimensional_Euclidean_space#Isoclinic_decomposition">the
+            wikipedia</a> for more information on the algebra behind this decomposition.
+        <br><br>
+        Note that the rotation $(-p)v(-q)$ is the same as $pvq$. Since the group of unit quaternions is homeomorphic to
+        $S^3$, the 3-sphere, this means that SO(4) is topologically the same as $S^3 \times S^3 /\mathbb{Z}_2$ where
+        $\mathbb{Z}_2$ is $\{(1,1),(-1,-1)\}$ under component-wise multiplication. Since, as discussed above, $SO(3)$
+        is homeomorphic to $S^3/\mathbb{Z}_2'$ where $\mathbb{Z}_2'=\{1,-1\}$, we can perform a substitution:
+        $$SO(4)=(SO(3)\times \mathbb{Z}_2')\times (SO(3)\times \mathbb{Z}_2')/\mathbb{Z}_2$$
+        Performing a somewhat informal cancellation with the isomorphic $\mathbb{Z}_2$ and $\mathbb{Z}_2'$:
+        $$SO(4)=SO(3)\times SO(3)\times \mathbb{Z}_2$$
+        Revealing an unexpectedly simple connection between 3D and 4D rotations! Note that I went from talking about
+        topological to algebraic isomorphisms without really saying much about it. I encourage you to verify that the
+        above is indeed a group isomorphism.
+        </p><p class="textContent" id="Physics">
+        <big><b><u>Relation to Physics</u></b></big>
+        <br><br>
+        In the summary I said that all of this can be done for any vector space with a quadratic form. Spacetime is
+        $\mathbb{R}^4$ equipped with the following quadratic form:
+        $$Q(x)=x_0^2-x_1^2-x_2^2-x_3^2$$
+        Where $x_0$ is time and $x_{i>0}$ is space. See my <a target="_blank" href="specialRelMath.html">special
+            relativity article</a> for a justification of this. The procedure for setting up spacetime's Clifford
+        algebra is as follows, choose an orthogonal basis of $\mathbb{R}^4$: $\gamma^0$, $\gamma^1$, $\gamma^2$, and
+        $\gamma^3$. The multiplication works like so,
+        $$(\gamma^i)^2=Q(\gamma^i)$$
+        $$\gamma^i\gamma^j=-\gamma^j\gamma^i$$
+        If we make the basis orthonormal and align it with the coordinates for the quadratic form then we have
+        $\gamma_0^2=1$ and $\gamma_i^2=-1$. These are exactly the relations imposed on the Dirac $\gamma$ matrices! In
+        fact, the Dirac equation:
+        $$(i\partial_\mu\gamma^\mu-m)\psi=0$$
+        has the same meaning regardless of whether the $\gamma$'s are thought of as vectors in the Clifford algebra of
+        spacetime or as matrices. The difference is that if we think of them as matrices, the solution will be in the
+        form:
+        $$\psi=
+        \begin{pmatrix}
+        w \\
+        x \\
+        y \\
+        z \end{pmatrix}$$
+        Where all the entries are complex (meaning there is a total of 8 real numbers encoded in the solution). On the
+        other hand, if we think of the $\gamma$'s as vectors, the solution will be in the form:
+        $$\psi=a+b\gamma^0\gamma^1+c\gamma^0\gamma^2+d\gamma^0\gamma^3+e\gamma^1\gamma^2+f\gamma^1\gamma^3+g\gamma^2\gamma^3+h\gamma_0\gamma_1\gamma_2\gamma_3$$
+        Notice that, either way, we get the same number of reals defining the solution. You may think that the first
+        notation is better because its more concise, but keep in mind that, the same way conjugating by spinors of
+        Euclidean space gives us rotations and reflections, conjugating by $\gamma$'s conveniently gives us Lorentz
+        transformations. It also makes referring to fermion fields as "spinors" much more intuitive.
+        <br><br>
+        On the topic of physics, it's also worth noting that the symmetry groups of the electromagnetic and weak forces
+        are U(1)=Spin(2) and SU(2)=Spin(3), respectively. One might be tempted to draw a link between these forces and
+        2D and 3D rotations; don't. Thanks to the <a target="_blank" href="https://en.wikipedia.org/wiki/Coleman%E2%80%93Mandula_theorem">Coleman-Mandula
+            theorem</a> we know that the connection is merely coincidental.
+    </p>
+</body>
+
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="keywords" content="Eben,Kadile,Cowley,Graphics,Mathematics,Math,Julia,Set,Complex,Analysis,Dynamics,Quadratic,Map,Digital,Art,Gallery" />
+    <link rel="stylesheet" type="text/css" href="../../style.css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+	tex2jax: {inlineMath: [["$", "$"],["\\(","\\)"]]},
+	errorSetting: {message: undefined}
+});
+</script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/mathjax/MathJax/2.7.6/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <title>
+        Julia Set Gallery - Eben Kadile
+    </title>
+</head>
+
+<body>
+    <div class="heading">
+        <h1>Julia Set Gallery</h1>
+        <h2>A compilation of Julia sets.</h2>
+        <h3>eben.kadile24@gmail.com</h3>
+    </div>
+    <br>
+    <div align="center" style="width:100%">
+        <a class="navItem" style="border-top-left-radius:15px;border-bottom-left-radius:15px;" href="../../../home.html">Home</a>
+        <a class="navItem" href="../../../Art.html">Art</a>
+        <a class="navItem" href="../../../Software.html">Software</a>
+        <a class="navItem" href="../../../Blog.html">Blog</a>
+        <a class="navItem" style="border-top-right-radius:15px;border-bottom-right-radius:15px;" href="../../../Research.html">Research</a>
+    </div>
+    <br>
+    <p class="textContent">
+        Julia sets are one of the most well-known and beautiful class of fractals. I explain a little bit of the mathematics at the bottom of this page. For now, check out this video for a visual intuition of how a Julia set is formed (feel free to skip ahead):
+    </p>
+    <div align="center">
+        <iframe width="784" height="438" src="https://www.youtube.com/embed/A7aYaQq9NOE" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <p class="textContent">
+        A while ago, one of my friends told me that I should create a gallery of the Julia sets that I've created over the years. I think there are several colorations here that everyone will enjoy!
+        <br><br>
+        <big><b><u>Quadratic Julias</u></b></big>
+        </p>
+        <div align="center">
+            <img class="julia" src="../../images/julia1.png">
+            <br><br>
+            <img class="julia" src="../../images/julia2.png">
+            <br><br>
+            <img class="julia" src="../../images/julia3.png">
+            <br><br>
+            <img class="julia" src="../../images/julia4.png">
+            <br><br>
+            <img class="julia" src="../../images/julia5.png">
+            <br><br>
+            <img class="julia" src="../../images/julia6.png">
+            <br><br>
+            <img class="julia" src="../../images/julia7.png">
+            <br><br>
+            <img class="julia" src="../../images/julia8.png">
+            <br><br>
+            <img class="julia" src="../../images/julia9.png">
+            <br><br>
+            <img class="julia" src="../../images/julia10.png">
+            <br><br>
+            <img class="julia" src="../../images/julia11.png">
+            <br><br>
+            <img class="julia" src="../../images/julia12.png">
+            </div>
+            <br>
+            <p class="textContent">
+                <big><b><u>Cubic Julias</u></b>
+            </p>
+            <div align="center">
+            <img class="julia" src="../../images/julia13.png">
+            <br><br>
+            <img class="julia" src="../../images/julia14.png">
+            <br><br>
+            <img class="julia" src="../../images/julia15.png">
+            <br><br>
+            <img class="julia" src="../../images/julia16.png">
+            <br><br>
+            <img class="julia" src="../../images/julia17.png">
+            <br><br>
+            <img class="julia" src="../../images/julia18.png">
+            <br><br>
+            <img class="julia" src="../../images/julia19.png">
+            <br><br>
+            <img class="julia" src="../../images/julia20.png">
+        </div>
+        <p class="textContent">
+            <big><b><u>Julia Sets for Various Rational Functions</u></b>
+        </p>
+        <div align="center">
+        <img class="julia" src="../../images/julia21.png">
+        <br><br>
+        <img class="julia" src="../../images/julia22.png">
+        <br><br>
+        <img class="julia" src="../../images/julia23.png">
+        <br><br>
+        <img class="julia" src="../../images/julia24.png">
+        </div>
+        <p class="textContent">
+            And now you can make your own Julia sets by dragging your mouse across the image of the Mandelbrot set! (values near the boundary are especially interesting).
+        </p>
+        <div align="center">
+        <canvas style="height:672px;width:1152px" id="julia"></canvas>
+        <p style="color:white;font-size:20px" id="cval">c = 0</p>
+        <canvas style="height:420px;width:720px" onmousedown="update=true;readMouse(event);" onmouseup="update=false;" onmousemove="readMouse(event);" id="mandelbrot"></canvas>
+        </div>
+        <p class="textContent">
+            So, what are Julia sets and how did I render them?
+            <br><br>
+            Here, $\mathbb{C}$ is the set of complex numbers and $\hat{\mathbb{C}}=\mathbb{C}\cup\{\infty\}$ is the Riemann sphere. Fix some $c\in\mathbb{C}$ and define $f_c:\hat{\mathbb{C}}\rightarrow\hat{\mathbb{C}}$ by $f_c(z)=z^2+c$.
+            <br><br>
+            The <b>quadratic Julia set</b> for the parameter $c$ is the set of all $z\in\mathbb{C}$ such that the sequence $z_n=f^n_c(z)$ <i>does not</i> converge to $\infty$. More generally, the Julia set of a function $g:\hat{\mathbb{C}}\rightarrow\hat{\mathbb{C}}$ is the set of all $z$ such that $g^n(z)$ does not converge to $\infty$.
+            <br><br>
+            For quadratic Julia sets, we can prove an interesting property that is useful for rendering them. Suppose $|c| < 2$ and $|z| > 2$, then
+            $$|f_c(z)| = |z^2+c| \geq |z|^2-|c| = |z|(|z|-\frac{|c|}{|z|})$$
+            By the assumptions on $|c|$ and $|z|$, $|z|-\frac{|c|}{|z|} > 1$. So, $|f_c(z)| > |z|$. This means that if there exists an $N$ such that $|f^N_c(z)| > 2$ then the sequence $f^n_c(z)$ converges to $\infty$.
+            <br><br>
+            This is precisely how the quadratic Julia sets are rendered! For each $z$ (whose real and imaginary parts correspond to the coordinates of the pixel), apply $f_c$ up to $M$ times (for fixed $M\in\mathbb{N}$) and find the smallest $N\in\mathbb{N}$ such that $|f^N_c(z)| > 2$. If such and $M$ is found, that pixel escapes to infinity and is colored black. If it is not found, I color the pixel based on where $f^N_c(z)$ is.
+            <br><br>
+            The <b>Mandelbrot set</b> (pictured in black-and-white below all the Julia sets) is defined similary; it is the set of all $c\in\mathbb{C}$ such that the sequence $c_n=f^n_c(0)$ does not converge to $\infty$. Suppose that $|c| < 2$ and $\exists N\in\mathbb{N}$ such that $|c_N| > 2$, then
+            $$|c_{N+1}|=|f_c(c_N)|=|c_N^2 + c| \geq |c_N|^2-|c|=|c_N|(|c_N|-\frac{c}{c_N})$$
+            By the assumptions on $|c_N|$ and $|c|$, $|c_N|-\frac{c}{c_N} > 1$. So, $|c_{N+1}| > |c_N|$. Thus, by induction, we see that if $c_n$ ever falls outside the disk of radius 2, it must converge to $\infty$. This result is similar to the one we derived for Julia sets and can be used for rendering the Mandelbrot set in a a similar way.
+            <br><br>
+            There are a lot of interesting geometrical properties of both the Mandelbrot set and the quadratic Julia sets. There are also very interesting ways in which they relate to each other. For example, you might have noticed while playing with the above demo that the Julia set of $f_c$ for $c$ inside the Mandelbrot set is always connected, and the Julia set for a parameter outside the Mandelbrot set is always disconnected. There is a lot of interesting theory behind this fact, having to do with the study of <i>branch coverings</i>, and I encourage you to investigate it.
+            <br><br>
+            Relating back to the intuition provided by the video at the top of the page, if the $c$ value which we translate by it outside the Mandelbrot set then each time the evolving Julia set gets reflected, twice the number of components are born. This means that if we keep iterating to infinity with a parameter outside the Mandelbrot set, we will in fact get the <a target="_blank" href="https://en.wikipedia.org/wiki/Cantor_set">Cantor set</a>.
+        </p>
+        <script src="../../scripts/three.min.js"></script>
+        <script id="vs" type="glsl">
+          void main() {
+            gl_Position = vec4(position, 1.0);
+          }
+        </script>
+        <script id="mshader" type="glsl">
+            uniform vec2 res;
+            uniform vec2 m;
+
+            vec2 csqr(vec2 z){return vec2(z.x*z.x - z.y*z.y, 2.0*z.x*z.y);}
+
+            vec3 mandelbrot(vec2 z){
+                vec2 result = z;
+                for(int i = 0; i < 20; i++){
+                    result = csqr(result);
+                    result += z;
+                    if(dot(result, result) > 4.0) return vec3(1);
+                }
+                return vec3(0);
+            }
+
+            void main(){
+                gl_FragColor = vec4(0);
+                vec2 xy = 1.125*(2.0*gl_FragCoord.xy - res)/res.y;
+                gl_FragColor.rgb = mandelbrot(xy);
+                if(distance(xy, m) < 0.02) gl_FragColor = vec4(1, 0, 0, 0);
+	        }
+        </script>
+        <script id="jshader" type="glsl">
+            uniform vec2 res;
+            uniform vec2 c;
+
+            const float pi = 4.0*atan(1.0);
+
+            vec2 csqr(vec2 z){return vec2(z.x*z.x - z.y*z.y, 2.0*z.x*z.y);}
+
+            vec3 julia(vec2 z){
+                for(int i = 0; i < 120; i++){
+                    z = csqr(z);
+                    z += c;
+                    if(dot(z, z) > 4.0) return vec3(z, float(i));
+                }
+                return vec3(z, 100);
+            }
+
+            vec3 getCol(vec3 n){
+                float s = 0.08*(4.0 - length(n.xy)) + n.z;
+                if(n.z == 100.0) return vec3(0);
+                float arg = 0.02*pi*s;
+                vec3 col = sin(vec3(arg - 0.5*pi, arg - pi, arg - 0.666666*pi))*0.5 + 0.5;
+                return col*col;
+            }
+
+            vec3 render(vec2 coords){
+                vec2 p = 1.25*(2.0*coords - res)/res.y;
+                vec3 col = getCol(julia(p));
+                return pow(col, vec3(0.4545));
+            }
+
+            void main(){
+                gl_FragColor = vec4(0, 0, 0, 1);
+                for(int i = 0; i < 2; i++){
+                    for(int j = 0; j < 2; j++){
+                        gl_FragColor.rgb += render(gl_FragCoord.xy + vec2(i, j));
+                    }
+                }
+                gl_FragColor *= 0.25;
+	        }
+        </script>
+        <script src="../../scripts/renderMandelbrot.js"></script>
+        <script src="../../scripts/renderJulia.js"></script>
+</body>

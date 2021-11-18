@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="keywords" content="Eben,Kadile,Cowley,Graphics,Mathematics,Math,Digital,Art,Hopf,Fibration" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="../../style.css" />
+  <!--link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"-->
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+  	  tex2jax: {inlineMath: [["$", "$"],["\\(","\\)"]]},
+	    errorSetting: {message: undefined}
+    });
+  </script>
+  <script type="text/javascript" src="https://cdn.rawgit.com/mathjax/MathJax/2.7.6/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <script>
+    interactive = true;
+  </script>
+  <title>
+    Brieskorn Varieties - Eben Kadile
+  </title>
+</head>
+
+<body>
+  <div class="heading">
+    <h1>Brieskorn Varieties</h1>
+    <h2>Jellyfish from dimension 6.</h2>
+    <h3>eben.kadile24@gmail.com</h3>
+  </div>
+  <br>
+  <div align="center" style="width:100%">
+    <a class="navItem" style="border-top-left-radius:15px;border-bottom-left-radius:15px;" href="../../../home.html">Home</a>
+    <a class="navItem" href="../../../Art.html">Art</a>
+    <a class="navItem" href="../../../Software.html">Software</a>
+    <a class="navItem" href="../../../Blog.html">Blog</a>
+    <a class="navItem" style="border-top-right-radius:15px;border-bottom-right-radius:15px;" href="../../../Research.html">Research</a>
+  </div>
+  <br>
+  <div align="center">
+  <canvas id="canvas" onmousemove="if(interactive) readMouse(event);" onclick="interactive = !interactive" style="height:668px;width:972px" />
+  </div>
+  <div align="center">
+    <button type="button" id="pause" align="center">Pause</button>
+  </div>
+  <br>
+  <div align="center">
+    <input type="range" min="-99" max="99" value="1" id="orientation0"></input>
+    <input type="range" min="-99" max="99" value="2" id="orientation1"></input>
+    <input type="range" min="-99" max="99" value="3" id="orientation2"></input>
+    <br>
+    <input type="range" min="-99" max="99" value="4" id="orientation3"></input>
+    <input type="range" min="-99" max="99" value="5" id="orientation4"></input>
+    <input type="range" min="-99" max="99" value="6" id="orientation5"></input>
+    <br>
+    <input type="range" min="-99" max="99" value="7" id="orientation6"></input>
+    <input type="range" min="-99" max="99" value="8" id="orientation7"></input>
+    <input type="range" min="-99" max="99" value="9" id="orientation8"></input>
+    <br><br>
+    <input type="range" min="-99" max="99" value="0" id="offset0"></input>
+    <input type="range" min="-99" max="99" value="0" id="offset1"></input>
+    <input type="range" min="-99" max="99" value="0" id="offset2"></input>
+    <br>
+    <input type="range" min="-99" max="99" value="0" id="offset3"></input>
+    <input type="range" min="-99" max="99" value="0" id="offset4"></input>
+    <input type="range" min="-99" max="99" value="0" id="offset5"></input>
+    <br><br>
+    <input type="range" min="100" max="500" value="300" id="zoom"></input>
+  </div>
+  <p class="textContent">
+    Click the image to disable camera rotation. An older version of this doodle can be found <a href="https://www.shadertoy.com/view/WtcGRj">here</a> and an <i>even older</i> version can be found <a href="https://www.shadertoy.com/view/MttyzH">here</a>.
+    <br><br>
+    <big><u>What the Heck is this Thing and Why are There an Ungodly Number of Sliders?</u></big>
+    <br><br>
+    A Brieskorn variety is the locus of points in $z\in \mathbb{C}^n$ satisfying
+    $$\sum_{i=1}^n z^{p_i}=0$$
+    Where $\{p_i\}$ is a set of positive pairwise coprime integers. Why do these things matter? It turns out that taking the intersection of a Brieskorn variety with a small (2n-1)-sphere centered at the origin will yield a manifold with the same homology groups as the standard sphere. In high dimensions, this intersection sometimes turns out to be a manifold which is homeomorphic but not diffeomorphic to a standard sphere. If $n=3$ and our exponents are 2, 3, 5 we get the Poincare dodecahedral space. For other triples of exponents, we get examples of 3-manifolds which have the geometry of the universal cover of $SL(2,\mathbb{C})$.
+    <br><br>
+    At this point I have enough geometrical knowledge to know what these statements mean, but not <i>why</i> they are true. That's why I decided to make this visualization (though, admittedly, it turned out to me more of an aesthetic endeavor than an intellectual one).
+    <br><br>
+    The scheme I use to visualize this structure is fairly straightforward. First of all, $n=3$ and our exponents are 7,8,9. We aren't visualizing the entire thing, only a 3D cross section (most of the sliders are for selecting this cross section). A general way of rendering level-sets of scalar function $f$ is to treat the function $\frac{f}{||\nabla f||}$ as a distance field and raymarch it. Here, we take
+    $$f(z)=\Bigg|\sum_i z^{p_i}\Bigg|$$
+    This function will be zero exactly when $z$ is in the Brieskorn variety, so I conjecture that raymarching $\frac{f}{||\nabla f||}$ will result in a shape at least somewhat-similar to the Brieskorn variety. Given the 3-plane which we want to intersect the variety with, this gives us a recipe to visualize that intersection. But how do we go about selecting that 3-plane?
+    <br><br>
+    Initially, in the two shaders I have linked at the top, I had the orientation of the 3-plane fixed and I just translated it around a bit with the interactivity. What I noticed which I thought was very odd was that the structure appearing on the screen always had the symmetry group which was the dihedral group on $p_1$ vertices. Eventually, I discovered that if you change the orientation of the plane which is intersecting the variety, you get new symmetry based on the rest of the exponents!
+    <br><br>
+    This made me realize that I wanted to be able to explore all possible 3-planes that could intersect the structure. This requires a huge number of parameters, seeing as the dimension of the <a href="https://en.wikipedia.org/wiki/Grassmannian" target="_blank">Grassmannian</a> $Gr(k,m)$ is $k(m-k)$. Recall from earlier that we had the complex dimension $n=3$, implying the real dimension of the ambient space is $m=6$, and the dimension of our k-planes is $k=3$ so we have 9 total parameters to describe a point in the Grassmannian $Gr(3,6)$. The way I obtain the exact 3-plane from the slider values is by orthonormalizing a triangular matrix filled with the slider values (the values must first be exponentiated to make sure we get a wide range of planes after normalization, but this is the basic idea). The 6 sliders below that simply correspond to a 6-vector which translates the 3-plane around in $\mathbb{C}^3$. The bottom slider simply zooms the camera in and out.
+  </p>
+  <script src="../../scripts/three.min.js"></script>
+  <script type="glsl" id="vs">
+        void main() {
+            gl_Position = vec4(position, 1.0);
+        }
+  </script>
+  <script type="glsl" id="fs">
+        uniform vec2 m;
+        uniform vec2 res;
+        uniform float time;
+
+        uniform vec3 proj11;
+        uniform vec3 proj12;
+        uniform vec3 proj21;
+        uniform vec3 proj22;
+        uniform vec3 proj31;
+        uniform vec3 proj32;
+
+        uniform vec3 offset1;
+        uniform vec3 offset2;
+
+        uniform float zoom;
+
+        #define far 50.0
+        #define close 0.02
+        #define steps 60
+        #define light vec3(1)
+
+        #define pretty_colors
+
+        //rodolphito's code----------------------------------
+
+        vec3 r(vec3 v, vec2 r){
+            vec4 t = sin(vec4(r, r + 1.5707963268));
+            float g = dot(v.yz, t.yw);
+            return vec3(v.x * t.z - g * t.x,
+                        v.y * t.w - v.z * t.y,
+                        v.x * t.x + g * t.z);
+        }
+
+        //Complex+Quaternion+Octonion+Sedenion code
+        //use with attribution (c) Rodol 2018
+        //https://www.shadertoy.com/view/ldGyR3
+
+        vec4 pi = vec4(0,2,4,8)*atan(1.0);
+
+        // (1,i)
+        vec2 creal(float a){return vec2(a,0);}
+        float csl (vec2 z){return dot(z,z);}
+        float cl  (vec2 z){return sqrt(csl(z));}
+        float csil(vec2 z){return z.y*z.y;}
+        float cil (vec2 z){return z.y;}
+        float carg(vec2 z){return atan(cil(z),z.x);}
+        vec2 cconj(vec2 z){z.x=-z.x;return-z;}
+        vec2 cmul (vec2 z,float b){return z*b;}
+        vec2 cmul (vec2 a,vec2 b){return mat2(a,-a.y,a.x)*b;}
+        vec2 csqr (vec2 z){return vec2(z.x*z.x-z.y*z.y,2.0*z.y*z.x);}
+        vec2 ccube(vec2 z){return vec2(z.x*z.x-3.0*z.y*z.y,3.0*z.x*z.x-z.y*z.y)*z;}
+        vec2 cinv (vec2 z){return cconj(z)/csl(z);}
+        vec2 cdiv (vec2 a,vec2 b){return cmul(a,cinv(b));}
+        vec2 cexp (vec2 z){float l=cil(z);return sin(l+pi.yx)*exp(z.x);}
+        vec2 clog (float x){return vec2(log(abs(x)),pi.z*step(0.0,x));}
+        vec2 cpow (float a,vec2 z){float l=cil(z);return sin(l+pi.yx)*pow(a,z.x);}
+        vec2 cpow (vec2 z,float n){return pow(csl(z),n*0.5)*sin(carg(z)*n+pi.yx);}
+        vec2 cpow (vec2 a,vec2 b){return cmul(cpow(csl(a),0.5*b),cexp(carg(a)*b));}
+
+        //all must be integers greater than 1
+        //for the intersection w/ 5-sphere to be a homology sphere, they must be coprime
+        const ivec3 exponents = ivec3(7, 8, 9);
+
+        vec2 polynomial(mat3 z){
+            vec2 result = vec2(0);
+            for(int i = 0; i < 3; i++)
+                result += cpow(z[i].xy, float(exponents[i]));
+            return result;
+        }
+
+        mat3 cgradient(mat3 z){
+            mat3 result = mat3(vec3(0), vec3(0), vec3(0));
+            for(int i = 0; i < 3; i++)
+                result[i].xy = float(exponents[i])*cpow(z[i].xy, float(exponents[i]) - 1.0);
+            return result;
+        }
+
+        vec3 calcNormal(mat3 z){
+            mat3 grad = cgradient(z);
+            return normalize(vec3(length(grad[0].xy), length(grad[1].xy), length(grad[2].xy)));
+        }
+
+        //distance to the variety should be the magnitude of the polynomial
+        //normalized by its complex gradient
+        float sdVariety(mat3 z){
+            vec2 poly = polynomial(z);
+            mat3 grad = cgradient(z);
+            float lgrad = length(grad[0].xy) + length(grad[1].xy) + length(grad[2].xy);
+            return length(poly/lgrad);
+        }
+
+        float sdSphere(mat3 z, float radius){
+            float d = 0.0;
+            for(int i = 0; i < 3; i++) d += dot(z[i].xy, z[i].xy);
+            d = sqrt(d);
+            return d - radius;
+        }
+
+        mat3 transpose(mat3 m) {
+            return mat3(m[0][0], m[1][0], m[2][0],
+                        m[0][1], m[1][1], m[2][1],
+                        m[0][2], m[1][2], m[2][2]);
+        }
+
+        mat3 transform(vec3 p) {
+            mat3 top = transpose(mat3(proj31, proj21, proj11));
+            mat3 bottom = transpose(mat3(proj32, proj22, proj12));
+            vec3 first = top*p;
+            vec3 second = bottom*p;
+            return mat3(vec3(first.x, first.y, 0), vec3(first.z, second.x, 0), vec3(second.y, second.z, 0));
+        }
+
+        vec3 render(vec3 ro, vec3 rd) {
+            mat3 p = transform(ro);
+            p[0].xy += offset1.xy;
+            p[1].xy += vec2(offset1.z, offset2.x);
+            p[2].xy += offset2.yx;
+            mat3 dir = transform(rd);
+
+            float t = 0.0;
+            bool hit = false;
+            for(int i = 0; i < steps; i++){
+                float d = sdVariety(p);
+                if(d < close){hit = true; break;}
+                p += d*dir;
+                t += d;
+                if(t > far) break;
+            }
+
+            if(hit){
+                vec3 color = 0.5 + 0.5*sin(6.0*vec3(offset1.x, offset1.y, offset2.x) + vec3(0.12453, 1.8374, 2.83894));
+                color = pow(color, vec3(0.2));
+                vec3 normal = calcNormal(p);
+                #ifdef pretty_colors
+                return (0.5 + 0.5*normal)*color;
+                #else
+                return max(0.4, -dot(light, normal))*color;
+                #endif
+            }
+            else return vec3(0);
+        }
+
+        void main(){
+            vec2 xy = (2.0*gl_FragCoord.xy - res)/res.y;
+            vec3 ro = vec3(0, 0, -zoom);
+            vec3 rd = normalize(vec3(xy, 2));
+            ro = r(ro, 4.0*m);
+            rd = r(rd, 4.0*m);
+            gl_FragColor = vec4(render(ro, rd), 1);
+        }
+  </script>
+  <script type="text/javascript" , src="../../scripts/displayBrieskorn.js"></script>
+</body>
+
+</html>

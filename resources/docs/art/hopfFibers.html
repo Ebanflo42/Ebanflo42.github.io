@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="keywords" content="Eben,Kadile,Cowley,Graphics,Mathematics,Math,Digital,Art,Hopf,Fibration" />
+  <link rel="stylesheet" type="text/css" href="../../style.css" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+	tex2jax: {inlineMath: [["$", "$"],["\\(","\\)"]]},
+	errorSetting: {message: undefined}
+});
+</script>
+  <script type="text/javascript" src="https://cdn.rawgit.com/mathjax/MathJax/2.7.6/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <title>
+    Hopf Fibers - Eben Kadile
+  </title>
+</head>
+
+<body>
+  <div class="heading">
+    <h1>Hopf Fibers</h1>
+    <h2>Fun with quaternions.</h2>
+    <h3>eben.kadile24@gmail.com</h3>
+  </div>
+  <br>
+  <div align="center" style="width:100%">
+    <a class="navItem" style="border-top-left-radius:15px;border-bottom-left-radius:15px;" href="../../../home.html">Home</a>
+    <a class="navItem" href="../../../Art.html">Art</a>
+    <a class="navItem" href="../../../Software.html">Software</a>
+    <a class="navItem" href="../../../Blog.html">Blog</a>
+    <a class="navItem" style="border-top-right-radius:15px;border-bottom-right-radius:15px;" href="../../../Research.html">Research</a>
+  </div>
+  <br>
+  <div align="center">
+    <canvas id="canvas" onmousemove="readMouse(event)" style="height:668px;width:972px" />
+  </div>
+  <div align="center">
+    <button type="button" id="pause" align="center">Pause</button>
+  </div>
+  <br>
+  <div align="center">
+    <input type="range" min="-5" max="5" value="1" id="velocity1"></input>
+    <p id="val1" class="input">Lateral Angular Velocity: 0.2</p>
+    <br>
+    <input type="range" min="-5" max="5" value="1" id="velocity2"></input>
+    <p id="val2" class="input">Longitudinal Angular Velocity: 0.2</p>
+    <br>
+  </div>
+  <p class="textContent">
+    The Hopf fibration is an interesting continuous map from the unit 3-sphere (unit quaternions) to the unit 2-sphere
+    (ordinary sphere in space). The interesting thing about this map is that the pre-image of any point on the 2-sphere
+    is exactly a circle on the 3-sphere. This map has a special property which makes it a <i>fibration</i>, and the
+    circles which are the pre-image of a given point are called the <i>fibers</i> of that point. To construct the map,
+    we represent a point in 4D space as a pair of complex numbers, $(z_1,\; z_2)$, and a point in 3D space as a complex
+    number paired with a real number, $(z_0,\; x)$. The map is as follows:
+    $$(z_1,\; z_2) \mapsto (2z_1\bar{z_2},\;|z_1|^2-|z_2|^2)$$
+    Where I've used $\bar{z_2}$ to represent the complex conjugate of $z_2$. It's not difficult to see that multiplying
+    $z_1$ and $z_2$ by the same complex number of absolute value 1 (the same action as rotating them both in the
+    complex plane by some angle) gives the same result under the Hopf map. This tells us that the pre-image of any
+    point is <i>at least</i> a circle on the 3-sphere. To see why it is exactly a circle let $z_1=w+xi$ and $z_2=y+zi$.
+    The Hopf fibration is then:
+    $$(w,\; x,\; y,\; z) \mapsto (2(wy+xz),\; 2(xy-wz),\; 1-2(y^2+z^2))$$
+    The last component may be a bit confusing, but remember that we are on the unit 3-sphere, so $w^2+x^2+y^2+z^2=1$
+    and therefore $w^2+x^2-y^2-z^2=1-2(y^2+z^2)$.
+    Now, if we look at the matrix representation of the rotation induced by some unit quaternion $q=w+xi+yj+zk$:
+    $$
+    \begin{bmatrix}
+    1-2(y^2+z^2) & 2(xy + wz) & 2(xz-wy)\\
+    2(xy - wz) & 1-2(x^2+z^2) & 2(yz+wx)\\
+    2(xz+wy) & 2(yz-wx) & 1-2(x^2+y^2)
+    \end{bmatrix}
+    $$
+    The first column looks exactly like the Hopf map! This means that the pre-image of $p$ on the unit 2-sphere is the
+    set of all quaternions which rotate $\langle 1,\; 0,\; 0 \rangle$ to $p$!
+    <br><br>
+    We can construct a quaternion that rotates $\langle 1,\; 0,\; 0 \rangle$ to $p$ as long as $p$ is not $\langle
+    -1,\; 0,\; 0 \rangle$. We will call this quaternion $q_p$.
+    $$q_p=\frac{1}{\sqrt{2(1+p_y)}}(1+p_y+p_zi-p_xk)$$
+    Pre-composing this rotation with any rotation about the x-axis will also rotate $\langle 1,\; 0,\; 0 \rangle$ to
+    $p$. A quaternion which rotates about the x-axis by $\theta$ is given by
+    $q_{\theta}=\cos(\frac{\theta}{2})+\sin(\frac{\theta}{2})i$. If we let $\theta$ vary from $0$ to $4\pi$, $q_\theta$
+    is a great circle in the set of unit quaternions. The composition of these rotations is simply the product of the
+    quaternions: $q_pq_{\theta}$. This parametrizes the circle on the unit 3-sphere which is exactly the pre-image of
+    $p$.
+    <br><br>
+    There's a rather long expression for this product in terms of $p$ and $\theta$, but instead of looking at that I'm
+    going to get into how I actually rendered these fibers (or pre-images). First of all, there are 16 points on the
+    equator of the 2-sphere whose fibers are being rendered. As you can probably guess, the 2-sphere isn't standing
+    still. It's being rotated and the sliders that you can adjust correspond to the lateral and longitudinal velocities
+    of the unseen 2-sphere. The rgb components of the color of a fiber corresponds to the xyz coordinates of its point
+    scaled down by $\frac{1}{2}$ and shifted up by $\frac{1}{2}$ to get it into the range $[0,\;1]$.
+    <br><br>
+    For each point on the 2-sphere being sampled, I used the expression for $q_pq_{\theta}$ to calculate 3 points on
+    the fiber of $p$ by plugging in 3 (arbitrary but different) values for $\theta$. I then stereographically project
+    these 3 points into 3D space and calculate their orthocenter and the radius of the circle that they define, this is
+    also enough information to compute a direction vector for the circle and a matrix that rotates the y-axis to that
+    direction. All of this information, color, center, and rotation matrix, is sent to the shader. The shader uses this
+    and the signed distance field for a torus of constant thickness to raymarch each fiber.
+    <br><br>
+    To conclude this little tidbit on the Hopf fibration, I want to mention a fact whose proof I haven't looked into,
+    but that I find extremely fascinating. If you imagine the tori in the image above as circles, and instead you
+    imagine infinitely many, filling all of 3D space, they are the flow-lines for a fluid satisfying the incompressible
+    Navier-Stokes equations! <a target="_blank" href="https://en.wikipedia.org/wiki/Hopf_fibration#Fluid_mechanics">Source.</a>
+    This personally makes me want to start learning about fluid dynamics!
+  </p>
+  <script src="../../scripts/three.min.js"></script>
+  <script id="vs" , type="x-shader/x-vertex">
+    void main() {
+	  gl_Position = vec4(position, 1.0);
+	}
+</script>
+  <script id="fs" type="x-shader/x-fragment">
+    uniform vec2 res;
+uniform vec2 m;
+uniform float time;
+
+uniform vec3 torus0Col;
+uniform mat3 torus0Mat;
+uniform vec4 torus0Cen;
+
+uniform vec3 torus1Col;
+uniform mat3 torus1Mat;
+uniform vec4 torus1Cen;
+
+uniform vec3 torus2Col;
+uniform mat3 torus2Mat;
+uniform vec4 torus2Cen;
+
+uniform vec3 torus3Col;
+uniform mat3 torus3Mat;
+uniform vec4 torus3Cen;
+
+uniform vec3 torus4Col;
+uniform mat3 torus4Mat;
+uniform vec4 torus4Cen;
+
+uniform vec3 torus5Col;
+uniform mat3 torus5Mat;
+uniform vec4 torus5Cen;
+
+uniform vec3 torus6Col;
+uniform mat3 torus6Mat;
+uniform vec4 torus6Cen;
+
+uniform vec3 torus7Col;
+uniform mat3 torus7Mat;
+uniform vec4 torus7Cen;
+
+uniform vec3 torus8Col;
+uniform mat3 torus8Mat;
+uniform vec4 torus8Cen;
+
+uniform vec3 torus9Col;
+uniform mat3 torus9Mat;
+uniform vec4 torus9Cen;
+
+uniform vec3 torus10Col;
+uniform mat3 torus10Mat;
+uniform vec4 torus10Cen;
+
+uniform vec3 torus11Col;
+uniform mat3 torus11Mat;
+uniform vec4 torus11Cen;
+
+uniform vec3 torus12Col;
+uniform mat3 torus12Mat;
+uniform vec4 torus12Cen;
+
+uniform vec3 torus13Col;
+uniform mat3 torus13Mat;
+uniform vec4 torus13Cen;
+
+uniform vec3 torus14Col;
+uniform mat3 torus14Mat;
+uniform vec4 torus14Cen;
+
+uniform vec3 torus15Col;
+uniform mat3 torus15Mat;
+uniform vec4 torus15Cen;
+
+#define thickness 0.03
+#define longitudinalSamps 1
+#define lattitudinalSamps 16
+
+#define steps 40
+#define far 12.0
+#define threshold 0.01
+
+const float piT = 8.0*atan(1.0);
+const float pi  = 0.5*piT;
+const float pi2 = 0.5*pi;
+
+float sdTorus(vec3 p, float r){return length(vec2(length(p.xz) - r, p.y)) - thickness;}
+
+vec3 nTorus(vec3 pos, float r){
+    return normalize(pos*(dot(pos,pos)- thickness*thickness - r*r*vec3(1.0,1.0,-1.0)));}
+
+vec4 sdf(vec3 p, vec3 rd){
+    float d = 9e9;
+    vec3 col = vec3(0);
+    float torus = 0.0;
+
+    torus = sdTorus(torus0Mat*p - torus0Cen.xyz, torus0Cen.w);
+    if(torus < d){
+      d = torus;
+      col = torus0Col*(0.4 + max(0.0, dot(-rd, nTorus(p, torus0Cen.w))));
+    }
+
+    torus = sdTorus(torus1Mat*p - torus1Cen.xyz, torus1Cen.w);
+    if(torus < d){
+      d = torus;
+      col = torus1Col*(0.4 + max(0.0, dot(-rd, nTorus(p, torus1Cen.w))));
+    }
+
+    torus = sdTorus(torus2Mat*p - torus2Cen.xyz, torus2Cen.w);
+    if(torus < d){
+      d = torus;
+      col = torus2Col*(0.4 + max(0.0, dot(-rd, nTorus(p, torus2Cen.w))));
+    }
+
+    torus = sdTorus(torus3Mat*p - torus3Cen.xyz, torus3Cen.w);
+    if(torus < d){
+      d = torus;
+      col = torus3Col*(0.4 + max(0.0, dot(-rd, nTorus(p, torus3Cen.w))));
+    }
+
+    torus = sdTorus(torus4Mat*p - torus4Cen.xyz, torus4Cen.w);
+    if(torus < d){
+      d = torus;
+      col = torus4Col*(0.4 + max(0.0, dot(-rd, nTorus(p, torus4Cen.w))));
+    }
+
+    torus = sdTorus(torus5Mat*p - torus5Cen.xyz, torus5Cen.w);
+    if(torus < d){
+      d = torus;
+      col = torus5Col*(0.4 + max(0.0, dot(-rd, nTorus(p, torus5Cen.w))));
+    }
+
+    torus = sdTorus(torus6Mat*p - torus6Cen.xyz, torus6Cen.w);
+    if(torus < d){
+      d = torus;
+      col = torus6Col*(0.4 + max(0.0, dot(-rd, nTorus(p, torus6Cen.w))));
+    }
+
+    torus = sdTorus(torus7Mat*p - torus7Cen.xyz, torus7Cen.w);
+    if(torus < d){
+      d = torus;
+      col = torus7Col*(0.4 + max(0.0, dot(-rd, nTorus(p, torus7Cen.w))));
+    }
+
+    torus = sdTorus(torus8Mat*p - torus8Cen.xyz, torus8Cen.w);
+    if(torus < d){
+      d = torus;
+      col = torus8Col*(0.4 + max(0.0, dot(-rd, nTorus(p, torus8Cen.w))));
+    }
+
+    torus = sdTorus(torus9Mat*p - torus9Cen.xyz, torus9Cen.w);
+    if(torus < d){
+      d = torus;
+      col = torus9Col*(0.4 + max(0.0, dot(-rd, nTorus(p, torus9Cen.w))));
+    }
+
+    torus = sdTorus(torus10Mat*p - torus10Cen.xyz, torus10Cen.w);
+    if(torus < d){
+      d = torus;
+      col = torus10Col*(0.4 + max(0.0, dot(-rd, nTorus(p, torus10Cen.w))));
+    }
+
+    torus = sdTorus(torus11Mat*p - torus11Cen.xyz, torus11Cen.w);
+    if(torus < d){
+      d = torus;
+      col = torus11Col*(0.4 + max(0.0, dot(-rd, nTorus(p, torus11Cen.w))));
+    }
+
+    torus = sdTorus(torus12Mat*p - torus12Cen.xyz, torus12Cen.w);
+    if(torus < d){
+      d = torus;
+      col = torus12Col*(0.4 + max(0.0, dot(-rd, nTorus(p, torus12Cen.w))));
+    }
+
+    torus = sdTorus(torus13Mat*p - torus13Cen.xyz, torus13Cen.w);
+    if(torus < d){
+      d = torus;
+      col = torus13Col*(0.4 + max(0.0, dot(-rd, nTorus(p, torus13Cen.w))));
+    }
+
+    torus = sdTorus(torus14Mat*p - torus14Cen.xyz, torus14Cen.w);
+    if(torus < d){
+      d = torus;
+      col = torus14Col*(0.4 + max(0.0, dot(-rd, nTorus(p, torus14Cen.w))));
+    }
+
+    torus = sdTorus(torus15Mat*p - torus15Cen.xyz, torus15Cen.w);
+    if(torus < d){
+      d = torus;
+      col = torus15Col*(0.4 + max(0.0, dot(-rd, nTorus(p, torus15Cen.w))));
+    }
+
+    return vec4(col, d);}
+
+vec3 raymarch(vec3 ro, vec3 rd){
+    float t = 0.0;
+    vec3 p = ro;
+    bool hit = false;
+    vec3 col = vec3(0);
+    for(int i = 0; i < steps; i++){
+        vec4 colAndDist = sdf(p, rd);
+        if(colAndDist.w < threshold){
+            hit = true;
+            col = colAndDist.rgb;
+            break;
+        }
+        if(t > far) break;
+        float d = 0.5*colAndDist.w;
+        t += d;
+        p += d*rd;
+    }
+    if(hit) return col;
+    return vec3(0);}
+
+float iTorus( in vec3 ro, in vec3 rd, in vec2 torus )
+{
+	float Ra2 = torus.x*torus.x;
+	float ra2 = torus.y*torus.y;
+
+	float m = dot(ro,ro);
+	float n = dot(ro,rd);
+
+	float k = (m - ra2 - Ra2)/2.0;
+	float a = n;
+	float b = n*n + Ra2*rd.y*rd.y + k;
+	float c = k*n + Ra2*ro.y*rd.y;
+	float d = k*k + Ra2*ro.y*ro.y - Ra2*ra2;
+
+    //----------------------------------
+
+	float p = -3.0*a*a     + 2.0*b;
+	float q =  2.0*a*a*a   - 2.0*a*b   + 2.0*c;
+	float r = -3.0*a*a*a*a + 4.0*a*a*b - 8.0*a*c + 4.0*d;
+	p /= 3.0;
+	r /= 3.0;
+	float Q = p*p + r;
+	float R = 3.0*r*p - p*p*p - q*q;
+
+	float h = R*R - Q*Q*Q;
+	float z = 0.0;
+	if( h < 0.0 )
+	{
+		float sQ = sqrt(Q);
+		z = 2.0*sQ*cos( acos(R/(sQ*Q)) / 3.0 );
+	}
+	else
+	{
+		float sQ = pow( sqrt(h) + abs(R), 1.0/3.0 );
+		z = sign(R)*abs( sQ + Q/sQ );
+
+	}
+
+	z = p - z;
+
+    //----------------------------------
+
+	float d1 = z   - 3.0*p;
+	float d2 = z*z - 3.0*r;
+
+	if( abs(d1)<1.0e-4 )
+	{
+		if( d2<0.0 ) return -1.0;
+		d2 = sqrt(d2);
+	}
+	else
+	{
+		if( d1<0.0 ) return -1.0;
+		d1 = sqrt( d1/2.0 );
+		d2 = q/d1;
+	}
+
+    //----------------------------------
+
+	float result = 1e20;
+
+	h = d1*d1 - z + d2;
+	if( h>0.0 )
+	{
+		h = sqrt(h);
+		float t1 = -d1 - h - a;
+		float t2 = -d1 + h - a;
+		     if( t1>0.0 ) result=t1;
+		else if( t2>0.0 ) result=t2;
+	}
+
+	h = d1*d1 - z - d2;
+	if( h>0.0 )
+	{
+		h = sqrt(h);
+		float t1 = d1 - h - a;
+		float t2 = d1 + h - a;
+		     if( t1>0.0 ) result=min(result,t1);
+		else if( t2>0.0 ) result=min(result,t2);
+	}
+
+	return result;
+}
+
+vec3 iFibers(vec3 ro, vec3 rd){
+  float torus = 0.0;
+  float d = 9e9;
+  vec3 col = vec3(0);
+  torus = iTorus(torus0Mat*(ro - torus0Cen.xyz), torus0Mat*rd, vec2(thickness, torus0Cen.w)); if(torus < d){ col = torus0Col; d = torus; }
+  torus = iTorus(torus1Mat*(ro - torus1Cen.xyz), torus1Mat*rd, vec2(thickness, torus1Cen.w)); if(torus < d){ col = torus1Col; d = torus; }
+  torus = iTorus(torus2Mat*(ro - torus2Cen.xyz), torus2Mat*rd, vec2(thickness, torus2Cen.w)); if(torus < d){ col = torus2Col; d = torus; }
+  torus = iTorus(torus3Mat*(ro - torus3Cen.xyz), torus3Mat*rd, vec2(thickness, torus3Cen.w)); if(torus < d){ col = torus3Col; d = torus; }
+  torus = iTorus(torus4Mat*(ro - torus4Cen.xyz), torus4Mat*rd, vec2(thickness, torus4Cen.w)); if(torus < d){ col = torus4Col; d = torus; }
+  torus = iTorus(torus5Mat*(ro - torus5Cen.xyz), torus5Mat*rd, vec2(thickness, torus5Cen.w)); if(torus < d){ col = torus5Col; d = torus; }
+  torus = iTorus(torus6Mat*(ro - torus6Cen.xyz), torus6Mat*rd, vec2(thickness, torus6Cen.w)); if(torus < d){ col = torus6Col; d = torus; }
+  torus = iTorus(torus7Mat*(ro - torus7Cen.xyz), torus7Mat*rd, vec2(thickness, torus7Cen.w)); if(torus < d){ col = torus7Col; d = torus; }
+  torus = iTorus(torus8Mat*(ro - torus8Cen.xyz), torus8Mat*rd, vec2(thickness, torus8Cen.w)); if(torus < d){ col = torus8Col; d = torus; }
+  torus = iTorus(torus9Mat*(ro - torus9Cen.xyz), torus9Mat*rd, vec2(thickness, torus9Cen.w)); if(torus < d){ col = torus9Col; d = torus; }
+  torus = iTorus(torus10Mat*(ro - torus10Cen.xyz), torus10Mat*rd, vec2(thickness, torus10Cen.w)); if(torus < d){ col = torus10Col; d = torus; }
+  torus = iTorus(torus11Mat*(ro - torus11Cen.xyz), torus11Mat*rd, vec2(thickness, torus11Cen.w)); if(torus < d){ col = torus11Col; d = torus; }
+  torus = iTorus(torus12Mat*(ro - torus12Cen.xyz), torus12Mat*rd, vec2(thickness, torus12Cen.w)); if(torus < d){ col = torus12Col; d = torus; }
+  torus = iTorus(torus13Mat*(ro - torus13Cen.xyz), torus13Mat*rd, vec2(thickness, torus13Cen.w)); if(torus < d){ col = torus13Col; d = torus; }
+  torus = iTorus(torus14Mat*(ro - torus14Cen.xyz), torus14Mat*rd, vec2(thickness, torus14Cen.w)); if(torus < d){ col = torus14Col; d = torus; }
+  torus = iTorus(torus15Mat*(ro - torus15Cen.xyz), torus15Mat*rd, vec2(thickness, torus15Cen.w)); if(torus < d){ col = torus15Col; d = torus; }
+  return col;
+}
+
+void main(){
+    gl_FragColor = vec4(0);
+    vec2 xy = (2.0*gl_FragCoord.xy - res)/res.y;
+    vec3 ro = vec3(0,0,-5);
+    vec3 rd = normalize(vec3(xy, 2));
+    gl_FragColor.rgb = raymarch(ro, rd);
+}
+</script>
+  <script type="text/javascript" , src="../../scripts/displayFibers.js"></script>
+</body>
+
+</html>

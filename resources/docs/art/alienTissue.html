@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="keywords" content="Eben,Kadile,Cowley,Graphics,Mathematics,Math,Circle,Inversion,Fractal,Digital,Art" />
+    <link rel="stylesheet" type="text/css" href="../../style.css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+	tex2jax: {inlineMath: [["$", "$"],["\\(","\\)"]]},
+	errorSetting: {message: undefined}
+});
+</script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/mathjax/MathJax/2.7.6/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <title>
+        Alien Tissue - Eben Kadile
+    </title>
+</head>
+
+<body>
+    <div class="heading">
+        <h1>Alien Tissue</h1>
+        <h2>A circle inversion IFS fractal.</h2>
+        <h3>eben.kadile24@gmail.com</h3>
+    </div>
+    <br>
+    <div align="center" style="width:100%">
+        <a class="navItem" style="border-top-left-radius:15px;border-bottom-left-radius:15px;" href="../../../home.html">Home</a>
+        <a class="navItem" href="../../../Art.html">Art</a>
+        <a class="navItem" href="../../../Software.html">Software</a>
+        <a class="navItem" href="../../../Blog.html">Blog</a>
+        <a class="navItem" style="border-top-right-radius:15px;border-bottom-right-radius:15px;" href="../../../Research.html">Research</a>
+    </div>
+    <br>
+    <div align="center">
+        <canvas id="canvas" onmousemove="readMouse(event)" onclick="interactive=!interactive" style="height:668px;width:972px" />
+    </div>
+    <div align="center">
+        <button type="button" id="pause" align="center">Play Color</button>
+    </div>
+    <p class="textContent">
+        See the full code in action <a target="_blank" href="https://www.shadertoy.com/view/Xs2cDt">here.</a> I made it
+        so that you can click the image to toggle the interactivity on and off, this way you can pause it on a specific
+        color phase if you want.
+        <br><br>
+        <i>Möbius transformations</i> are rational functions of the form $f(z)=\frac{az+b}{cz+d}$ with $ad-bc \neq 0$
+        (If this condition didn't hold then the function would be a constant). These functions act on the extended complex
+        plane, or <i>Riemann sphere</i>, $\mathbb{C}\cup \{\infty\}$. The Riemann sphere is denoted $\hat{\mathbb{C}}$ for brevity.
+        The whole reason that this object is called the Riemann sphere is that if you <a target="_blank" href="https://en.wikipedia.org/wiki/Stereographic_projection">
+        stereographically project</a> the sphere onto the extended complex plane, apply a Möbius transformation,
+        then perform an inverse stereographic projection, it amounts to a rotation and translation of the sphere!
+        <br><br>
+        A simple example of a Möbius transformation is $z\mapsto \frac{1}{z}$, which is equivalent to $z\mapsto
+        \frac{\bar{z}}{|z|^2}$. Scaling a point by the inverse square of its distance to the origin is an <i>inversion</i>
+        of the unit circle. It gets the name "inversion" because it turns the unit disk inside out, and leaves the
+        boundary unchanged in the same way that $x\mapsto \frac{1}{x}$ turns the positive real numbers inside out while
+        leaving $1$ unchanged. The $\bar{z}$ part of this map amounts to a reflection across the real axis. Via stereographic
+        projection, we can visualize this transformation by imagining the unit sphere centered at the origin rotating by
+        $\pi$ radians across the real axis. If this is difficult to understand, check out
+        <a target="_blank" href="https://www.youtube.com/watch?v=0z1fIsUNhO4">this video</a>, which supplies an excellent
+        visual intuition for how these transformations work.
+        <br><br>
+        Möbius transformations form a group under function composition. In fact, it is not difficult to show that this group is
+        isomorphic to the group of $2\times 2$ complex matrices quotiented by the group of scalar multiples (If you multiply every
+        coefficient in a Möbius transformation by a non-zero number, you get the same Möbius transformation). This group is called
+        $PSL(2, \mathbb{C})$.
+        <br><br>
+        Since all Möbius transformations are holomorphic and have non-vanishing derivatives, they are all conformal, meaning
+        they always preserve angles. From the relationship with stereographic projection, we can deduce that Möbius transformations
+        always take circles to circles (Note that lines are circles in the extended complex plane). It's also not difficult to show
+        that Möbius transformations are <i>triply transitive</i>, meaning that if we specify how a triple $(z_1,\, z_2,\, z_3)$
+        of complex numbers is mapped to another triple $(w_1,\, w_2,\, w_3)$ then we get ourselves a <i>unique</i> Möbius transformation!
+        <br><br>
+        I could go on all day about the interesting properties of Möbius transformations. They even pop up in my <a href="../articles/specialRelMath.html">special relativity article</a>.
+        However, what we're really interested in for the discussion of this fractal is <i>Kleinian groups</i>. These are simply discrete
+        subgroups of the <i>Möbius group</i> (the group of all Möbius transformations).
+        <br><br>
+        Over 2000 years ago, <a target="_blank" href="https://en.wikipedia.org/wiki/Apollonius_of_Perga">Apollonius of Perga</a>
+        discovered that if you start with three pairwise tangent circles and begin iteratively drawing circles which are tangent to
+        three pre-existing circles, you get a <a target="_blank" href="https://www.shadertoy.com/view/4dsBDn">neat desgin</a>.
+        This "neat design" is a fractal called the <i>Apollonian gasket</i>. It turns out that this marvelous shape is also the <i>limit set</i>
+        of a Kleinian group. In simple terms, this means that every Kleinian group has a gasket which is invariant under the application of
+        any element of the group.
+        <br><br>
+        It turns out that there is a simple way to render Apollonian gaskets using circle inversions. Pick four pairwise tangent circles, call them
+        primitive circles. We can construct an Apollonian gasket by inverting across each of these circles. A point which never falls outside
+        of any of the circles is in the gasket, while a point that eventually falls out of the circles is not in the gasket. Too see why this
+        works, notice that any triple of the four primitive circles specifies three points of tangency. The three points of tangency can be used to define
+        a circle which will, clearly, never fall outside any of the primitive circles under iterated inversion. There are 4 such circles.
+        Three of them will be the initial circles for the Apollonian gasket and one will be a circle which encapsulates the other three.
+        Since circle inversion preserves circle tangency, iterated inversion will give us the Apollonian gasket of the initial circles!
+        I encourage you to draw the situation out if you find it difficult to understand.
+        <br><br>
+        As you may have noticed, this fractal is <i>not</i> an Apollonian gasket. It's an experimental fractal! It's constructed via the process
+        that I described in the previous paragraph, except that the primitive circles are allowed to overlap. The mouse coordinates are changing the radii
+        of two of the circles.
+        <br><br>
+        This might seem like a lot to take in. Indeed, this is an area of math that I wish I knew more about. That
+        being said, a popular text about Möbius transformations and the novelties that arise from them is <a target="_blank"
+            href="https://www.amazon.com/Indras-Pearls-Vision-Felix-Klein/dp/1107564743">Indra's Pearls.</a>
+        <br><br>
+        Bonus! Here are two other inversion systems that I once rendered:
+        </p>
+        <div align="center">
+        <img align="center" class="projImg" src="../../images/inversion1.png">
+        <br><br>
+        <img class="projImg" src="../../images/inversion2.png">
+        </div>
+<script src="../../scripts/three.min.js"></script>
+<script id="vs" type="x-shader/x-vertex">
+    void main() {
+	  gl_Position = vec4(position, 1.0);
+	}
+</script>
+    <script id="fs" type="x-shader/x-fragment">
+        uniform vec2 res;
+		uniform float time;
+		uniform vec2 mouse;
+        uniform vec2 pos;
+
+        const int ITS = 35;
+        const float pi = 3.1415926536;
+        const vec2 c1 = vec2(0, 1);
+        const vec2 c2 = vec2(.866, -.866);
+        const vec2 c3 = vec2(-.866, -.866);
+        const float rad1 = 1.;
+
+        vec2 circleInverse(vec2 pos, vec2 center, float rad){
+            vec2 d = pos - center;
+            return d * rad * rad/dot(d, d) + center;
+        }
+
+        vec3 gasket(vec2 pos){
+            float rad2 = mouse.x + 1.0;
+            float rad3 = mouse.y + 1.0;
+            if(mouse.xy == vec2(0.)) {rad2 = 1.; rad3 = 1.;}
+            float index = 0.;
+            for(int i = 0 ; i < ITS; i++){
+                if(distance(pos, c1) < rad1){
+                    pos = circleInverse(pos, c1, rad1); index++;
+                }
+                else if(distance(pos, c2) < rad2){
+                    pos = circleInverse(pos, c2, rad2); index++;
+                }
+                else if(distance(pos, c3) < rad3){
+                    pos = circleInverse(pos, c3, rad3); index++;
+                }
+                else if(pos.y < 0.){
+                    pos = vec2(pos.x, -pos.y); index++;
+                }
+                else return vec3(pos, index);
+            }
+        }
+
+        vec4 getCol(vec3 n){
+            float s = 0.08 * (4.0-length(n.xy)) + n.z;
+            if (n.z > 44.0) return vec4(0);
+            float arg = 0.05*pi*s + time;
+            vec3 col = sin(vec3(arg - 0.5*pi, arg - pi, arg - 0.666666*pi))*0.5 + 0.5;
+            return vec4(col*col, 1.);
+        }
+
+        void main(){
+            vec2 pos = gl_FragCoord.xy/res.y - .5*vec2(res.x/res.y, 1.);
+            pos.y -= .15;
+            gl_FragColor = getCol(gasket(pos));
+            //gl_FragColor.rgb = mouse.xyy;
+        }
+    </script>
+    <script type="text/javascript" , src="../../scripts/displayCircleIFS.js"></script>
+</body>
+
+</html>

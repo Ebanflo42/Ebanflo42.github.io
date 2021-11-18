@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="keywords" content="Eben,Kadile,Cowley,Graphics,Mathematics,Math,Digital,Art,Poincare,Hyperbolic,Orthogonal,Circle" />
+    <link rel="stylesheet" type="text/css" href="../../style.css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({ tex2jax: {inlineMath: [["$", "$"],["\\(","\\)"]]}, errorSetting: {message: undefined} });
+    </script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/mathjax/MathJax/2.7.6/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <title>
+        Orthogonal Circles - Eben Kadile
+    </title>
+</head>
+
+<body>
+    <div class="heading">
+        <h1>Orthogonal Circles</h1>
+        <h2>Geodesics in the hyperbolic plane.</h2>
+        <h3>eben.kadile24@gmail.com</h3>
+    </div>
+    <br>
+    <div align="center" style="width:100%">
+        <a class="navItem" style="border-top-left-radius:15px;border-bottom-left-radius:15px;" href="../../../home.html">Home</a>
+        <a class="navItem" href="../../../Art.html">Art</a>
+        <a class="navItem" href="../../../Software.html">Software</a>
+        <a class="navItem" href="../../../Blog.html">Blog</a>
+        <a class="navItem" style="border-top-right-radius:15px;border-bottom-right-radius:15px;" href="../../../Research.html">Research</a>
+    </div>
+    <br>
+    <p class="textContent">
+        <big><u>The Poincaré Disk Model</u></big>
+        <br><br>
+        The Poincaré disk model is probably my favorite model of hyperbolic geometry. In this model, the entire space is regarded as an open disk in the plane and geodesics (lines) are defined as arcs which are orthogonal to the boundary circle. I made the following interactive doodle of the situation (drag the endpoints of the arcs):</br>
+    </p>
+    <div align="center">
+        <canvas id="canvas" onmousemove="readMouse(event)" onmousedown="mouseDown=true" onmouseup="mouseDown=false" style="height:668px;width:972px" />
+    </div>
+    <p class="textContent">
+        <big><u>Orthogonal Circles</u></big>
+        <br><br>
+        For this doodle it was necessary to determine the equation of a circle orthogonal to a given circle with two given intersection points. If we have circles given by the equations
+        $$x^2 + y^2 + 2fx + 2gx + c = 0$$
+        $$x^2 + y^2 + 2f'x + 2g'x + c' = 0$$
+        Then it is a well-known formula that these circles are orthogonal iff:
+        $$2gg'+2ff'=c+c'$$
+        In this situation we know $f$, $g$, and $c$, and we desire to find $f'$, $g'$, and $c'$ given two points on the second circle. This basically comes down to a bit of linear algebra and a quadratic equation. The full derivation is rather tedious and fairly uninteresting, so I will not write it here. Instead, in case you ever find yourself in need of doing this exact computation, I will provide you with the necessary GLSL code:
+        <pre>
+        <code style="color:white;font-size:16px">
+
+            struct Circle {
+                vec2 c;
+                float r;
+            };
+
+            Circle computeOrthoCircle(Circle circle, vec2 p1, vec2 p2) {
+
+                float g = circle.c.x;
+                float f = circle.c.y;
+                float c = g*g + f*f - circle.r*circle.r;
+
+                mat2 A = -2.0*mat2(p1.x - g, p2.x - g, p1.y - f, p2.y - f);
+                vec2 v = vec2(c - p1.x*p1.x - p1.y*p1.y, c - p2.x*p2.x - p2.y*p2.y);
+                vec2 center = inverse(A)*v;
+
+                float r = sqrt(-2.0*g*center.x - 2.0*f*center.y + c + center.x*center.x + center.    y*center.y);
+
+                return Circle(center, r);
+            }
+        </code>
+        <pre>
+    </p>
+    <script src="../../scripts/three.min.js"></script>
+    <script id="vs" , type="x-shader/x-vertex">
+        void main() { gl_Position = vec4(position, 1.0); }
+    </script>
+    <script id="fs" type="x-shader/x-fragment">
+        uniform vec2 res;
+        uniform vec2 m;
+
+        uniform vec4 arcPos1;
+        uniform vec4 arcPos2;
+        uniform vec4 arcPos3;
+        uniform vec4 arcPos4;
+
+        uniform float r1;
+        uniform vec2 c1;
+        uniform float r2;
+        uniform vec2 c2;
+        uniform float r3;
+        uniform vec2 c3;
+        uniform float r4;
+        uniform vec2 c4;
+
+        const float thickness = 0.005;
+
+        struct Circle {
+            vec2 c;
+            float r;
+        };
+
+        vec4 drawCircle(vec2 xy, Circle circle) {
+            float d = abs(distance(xy, circle.c) - circle.r);
+            if(d < thickness)
+                return vec4(1, 1, 1, 0);
+            return vec4(0, 0, 0, 0);
+        }
+
+        /*
+        Circle computeOrthoCircle(Circle circle, vec2 p1, vec2 p2) {
+
+            float g = circle.c.x;
+            float f = circle.c.y;
+            float c = g*g + f*f - circle.r*circle.r;
+
+            mat2 A = -2.0*mat2(p1.x - g, p2.x - g, p1.y - f, p2.y - f);
+            vec2 v = vec2(c - p1.x*p1.x - p1.y*p1.y, c - p2.x*p2.x - p2.y*p2.y);
+            vec2 center = inverse(A)*v;
+
+            float r = sqrt(-2.0*g*center.x - 2.0*f*center.y + c + center.x*center.x + center.y*center.y);
+
+            return Circle(center, r);
+        }
+        */
+
+        vec4 drawSquare(vec2 xy, vec2 c, float len, vec2 orient, vec3 col) {
+            mat2 rot = mat2(orient.x, -orient.y, orient.y, orient.x);
+            vec2 new = rot*(xy - c);
+            if(abs(new.x) < len && abs(new.y) < len)
+                return vec4(col, 0);
+            return vec4(0);
+        }
+
+        void main()
+        {
+            vec2 xy = (2.0*gl_FragCoord.xy - res)/res.y;
+            gl_FragColor = vec4(0, 0, 0, 1);
+
+            Circle unitCircle = Circle(vec2(0, 0), 0.9);
+            gl_FragColor += drawCircle(xy, unitCircle);
+
+            if(length(xy) < 0.9) {
+
+                Circle circ1 = Circle(c1, r1);
+                Circle circ2 = Circle(c2, r2);
+                Circle circ3 = Circle(c3, r3);
+                Circle circ4 = Circle(c4, r4);
+
+                gl_FragColor += drawCircle(xy, circ1);
+                gl_FragColor += drawSquare(xy, arcPos1.xy, 0.05, normalize(arcPos1.xy), vec3(0, 0, 1));
+                gl_FragColor += drawSquare(xy, arcPos1.zw, 0.05, normalize(arcPos1.zw), vec3(0, 0, 1));
+
+                gl_FragColor += drawCircle(xy, circ2);
+                gl_FragColor += drawSquare(xy, arcPos2.xy, 0.05, normalize(arcPos2.xy), vec3(0, 0, 1));
+                gl_FragColor += drawSquare(xy, arcPos2.zw, 0.05, normalize(arcPos2.zw), vec3(0, 0, 1));
+
+                gl_FragColor += drawCircle(xy, circ3);
+                gl_FragColor += drawSquare(xy, arcPos3.xy, 0.05, normalize(arcPos3.xy), vec3(0, 0, 1));
+                gl_FragColor += drawSquare(xy, arcPos3.zw, 0.05, normalize(arcPos3.zw), vec3(0, 0, 1));
+
+                gl_FragColor += drawCircle(xy, circ4);
+                gl_FragColor += drawSquare(xy, arcPos4.xy, 0.05, normalize(arcPos4.xy), vec3(0, 0, 1));
+                gl_FragColor += drawSquare(xy, arcPos4.zw, 0.05, normalize(arcPos4.zw), vec3(0, 0, 1));
+
+            }
+
+            //gl_FragColor = vec4(vec3(distance(m, xy) < 0.1), 1);
+            //gl_FragColor = vec4(xy, 0, 1);
+
+        }
+    </script>
+    <script type="text/javascript" , src="../../scripts/displayPoincare.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="keywords" content="Eben,Kadile,Cowley,Graphics,Mathematics,Math,Digital,Art,Worley,Noise,Ocean" />
+	<link rel="stylesheet" type="text/css" href="../../style.css" />
+	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+	<style>
+		img {
+	height: 324px;
+	width: 526px;
+}
+</style>
+	<title>
+		Worley Sea - Eben Kadile
+	</title>
+</head>
+
+<body>
+	<div class="heading">
+		<h1>Worley Sea</h1>
+		<h2>An efficient ocean scene with procedural water ripples and clouds.</h2>
+		<h3>eben.kadile24@gmail.com</h3>
+	</div>
+	<br />
+	<div align="center" style="width:100%">
+		<a class="navItem" style="border-top-left-radius:15px;border-bottom-left-radius:15px;" href="../../../home.html">Home</a>
+		<a class="navItem" href="../../../Art.html">Art</a>
+        <a class="navItem" href="../../../Software.html">Software</a>
+		<a class="navItem" href="../../../Blog.html">Blog</a>
+		<a class="navItem" style="border-top-right-radius:15px;border-bottom-right-radius:15px;" href="../../../Research.html">Research</a>
+	</div>
+	<br />
+	<div align="center">
+		<canvas id="canvas" onmousemove="readmouse(event)" />
+	</div>
+	<div align="center">
+		<button type="button" id="pause" align="center">Pause</button>
+	</div>
+	<p class="textContent">
+		See the full code in action <a href="https://www.shadertoy.com/view/MsfBW8">here.</a>
+		<br><br>
+		This project was my first attempt at rendering something using a height map, i.e. a function which takes a two
+		dimensional position and outputs a height. The most common way to define a water height map is called "the sum of
+		sines approximation." This technique is exactly what it sounds like, just adding a bunch of sine waves together. This
+		ocean uses only two sine waves, I wanted to use something slightly more novel for the small ripples.
+		<br><br>
+		Worley noise is generated in essentially the same way as a Voronoi diagram. Start with a square grid, offset each
+		vertex by some random values, for each point loop over the nearby vertices to determine the closest one then return
+		the distance. This algorithm generates noise that looks like this:
+	</p>
+	<div align="center">
+		<img src="../../images/worleynoisesmall.png" />
+	</div>
+	<p class="textContent">
+		If we zoom in we see something useful for creating ripples:
+	</p>
+	<div align="center">
+		<img src="../../images/worleynoiselarge.png" />
+	</div>
+	<p class="textContent">
+		The ocean heightmap here is basically this pattern added to the two sine waves. But how did I get the ripples to be
+		dynamic? Simple, perform the same algorithm but in three dimensions, then call that noise function with the two
+		parameters for the heightmap and a third having to do with time.
+		<br><br>
+		The standard way of rendering a height map is to increment the length of a ray passing through a pixel until it hits
+		the surface. Since the camera's position is fixed here, however, there are a couple nifty things we can do to make it
+		run faster. The first is to only render the ocean if the direction of the ray is below the horizon. The second is to
+		project onto a plane which we know the heightmap will be underneath, saving many valuable height map samples and ray
+		increments.
+		<br><br>
+		What about the sky? Well, most of it just came about through experimentation, there were no special techniques or
+		algorithms that I referenced - just intuition and trial and error. What I can explain is that the clouds are rendered
+		in a somewhat similar way to the ripples in the water. Project the ray onto a plane (which is above the camera this
+		time), then, instead of calling an ordinary noise function, call a 3D FBM function. FBM is noise that is scaled down
+		and iteratively added to itself, it's good for making cloud-like patterns, which is why it's used here. What you see,
+		however, isn't naked FBM it's a smoothstep of it based on a pre-defined <code>cloudThickness</code> parameter. The
+		sun is just some jumbled exponentiation and interpolation based on the ray direction, and the fog is a similar idea.
+		<br><br>
+		Although it's not the most visually exciting scene, rendering Worley Sea was a big deal for me at the time that I did
+		it because for a while I had been looking forward to the point where my skills would allow me to render an ocean.
+	</p>
+	<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="../../scripts/three.min.js"></script>
+	<script id="vs" type="x-shader/x-vertex">
+		void main() {
+		gl_Position = vec4(position, 1.0);
+	}
+</script>
+	<script id="fs" type="x-shader/x-fragment">
+		uniform vec3 res;
+	uniform float time;
+	uniform float deltaTime;
+	uniform int frame;
+	uniform vec4 mouse;
+
+	//clouds
+	#define cloudIterations 4
+	#define cloudScale .1
+	#define cloudThickness .3
+	#define cloudSpeed .1
+	#define cloudDir vec2(.866, .5)
+	#define skyHeight 40.0
+	//waves
+	#define bigWaveDir vec2(.866, .5)
+	#define smallWaveDir vec2(.866, -.5)
+	#define bigWaveHeight 10.0
+	#define smallWaveHeight 5.0
+	#define bigWaveSpeed 1.0
+	#define smallWaveSpeed 2.0
+	#define bigWaveLength 5.0
+	#define smallWaveLength 5.0
+	//ripples
+	#define rippleHeight .5
+	#define rippleDensity 1.0
+	#define rippleFreq 3.0
+	//colors
+	#define skyColor vec3(.3, .8, 1)
+	#define cloudColor vec3(.7, .84, .84)
+	#define fogColor vec3(.74, .84, .94)
+	#define waterColor vec3(.05, .546, .85)
+	//util
+	#define pi 3.141592654
+	#define steps 20
+	#define heightThreshold .01
+	#define epsilon .01
+	#define stepsize .1
+	//misc
+	#define cameraHeight 25.0
+	#define light vec3(1)
+
+	vec3 r(vec3 v, vec2 r){//rodolphito's rotation
+	    vec4 t = sin(vec4(r, r + 1.5707963268));
+	    float g = dot(v.yz, t.yw);
+	    return vec3(v.x * t.z - g * t.x,
+	                v.y * t.w - v.z * t.y,
+	                v.x * t.x + g * t.z);
+	}
+
+	vec3 hash33(vec3 p3)//Dave_Hoskins https://www.shadertoy.com/view/4djSRW
+	{
+		p3 = fract(p3 * vec3(.1031, .1030, .0973));
+	    p3 += dot(p3, p3.yxz+19.19);
+	    return fract((p3.xxy + p3.yxx)*p3.zyx);
+
+	}
+
+	float hash13(vec3 p3)//Dave_Hoskins https://www.shadertoy.com/view/4djSRW
+	{
+		p3  = fract(p3 * .1031);
+	    p3 += dot(p3, p3.yzx + 19.19);
+	    return fract((p3.x + p3.y) * p3.z);
+	}
+
+	float hashNoise(vec3 x)
+	{
+	    vec3 p = floor(x);
+	    vec3 f = fract(x);
+	    f = f*f*(3.0-2.0*f);
+
+	    return mix(mix(mix(hash13(p+vec3(0,0,0)),
+	                       hash13(p+vec3(1,0,0)),f.x),
+	                   mix(hash13(p+vec3(0,1,0)),
+	                       hash13(p+vec3(1,1,0)),f.x),f.y),
+	               mix(mix(hash13(p+vec3(0,0,1)),
+	                       hash13(p+vec3(1,0,1)),f.x),
+	                   mix(hash13(p+vec3(0,1,1)),
+	                       hash13(p+vec3(1,1,1)),f.x),f.y),f.z);
+	}
+
+	float ripples(vec2 x){
+	    vec3 p = vec3(x, rippleFreq*time);
+	    p *= rippleDensity;
+	    float d = 9e9;
+	    vec3 g = floor(p);
+	    for(int i = -1; i < 2; i++){
+	        for(int j = -1; j < 2; j++){
+	            for(int k = -1; k < 2; k++){
+					vec3 g0 = g + vec3(i, j, k);
+	                vec3 v = p - g0 - hash33(g0);
+	            	d = min(d, dot(v, v));
+	            }
+	        }
+	    }
+	    return rippleHeight * d;
+	}
+
+	float heightMap(vec2 x){
+	    float result = -2.0*(bigWaveHeight + smallWaveHeight + 2.0*rippleHeight);
+	    result += bigWaveHeight*sin(dot(x, bigWaveDir)/bigWaveLength
+	                                   + bigWaveSpeed*time);
+	    result += smallWaveHeight*sin(dot(x, smallWaveDir)/smallWaveLength
+	                                   + smallWaveSpeed*time);
+	    result += ripples(x);
+		return result;
+	}
+
+	float hpotential(vec3 pos){return pos.y - heightMap(pos.xz);}
+
+	vec3 getNormal(vec3 pos){
+	    vec2 e = vec2(1.0, 0.0);
+	    return normalize(vec3(
+	        hpotential(pos + epsilon * e.xyy),
+	        hpotential(pos + epsilon * e.yxy),
+	        hpotential(pos + epsilon * e.yyx))
+	        - hpotential(pos));
+	}
+
+	float doSun(vec3 rd){
+	    float l = max(0.0, dot(rd, normalize(light)));
+	    l *= l;
+	    l *= l;
+	    l *= l;
+	    return l;
+	}
+
+	float doClouds(vec2 x){
+	    x *= cloudScale;
+	    x.x += 1000.0;
+	    x += cloudSpeed*time*cloudDir;
+	    float result = 0.0;
+	    float scale = .5;
+	    for(int n = 0; n < cloudIterations; n++){
+	        result += hashNoise(vec3(x, cloudSpeed*time)*scale)/scale;
+	        scale *= 2.0;
+
+	    }
+	    result *= .5;
+	    result = smoothstep(1.0 - cloudThickness, 1.0, result);
+	    return result;
+	}
+
+	vec3 doSky(vec3 rd, vec3 ro){
+	    vec2 skyPos = ro.xz + rd.xz*(skyHeight - ro.y)/rd.y;
+	    vec3 result = cloudColor;
+	    float sun = doSun(rd);
+	    float clouds = doClouds(skyPos);
+	    result += clouds;
+	    result = mix(result, skyColor, clouds);
+	    result += pow(vec3(.9, .4, .1), (.8 - vec3(sun * clouds)) * 20.0);
+	    return result;
+	}
+
+	vec3 render(vec3 rd, vec3 ro){
+	    if(rd.y < 0.0){
+	        float rdParam = rd.y + length(rd.xz);
+	        vec3 intersect = ro + cameraHeight * rd / rd.y;
+	        float dist = length(intersect.xz);
+	        float d = distance(intersect, ro);
+	        vec3 pos = intersect;
+	        for(int n = 0; n < steps; n++){
+	        	pos = d * rd + ro;
+	        	float h = hpotential(pos);
+	        	if(h < heightThreshold) break;
+	        	else d += rdParam/h;
+	    	}
+	        vec3 n = getNormal(pos);
+	        pos.y += cameraHeight;
+	        vec3 refl = doSky(reflect(rd, n), pos);
+	        return refl * waterColor;
+	    }
+	    else return doSky(rd, ro);
+	}
+
+	void main(){
+	    gl_FragColor.w = 1.0;
+	    vec2 xy = (2.0*gl_FragCoord.xy - res.xy)/res.y;
+	    vec3 ro = vec3(0.0, cameraHeight, 0.0);
+			vec3 rd = normalize(vec3(xy, 2.5));
+	    vec2 m = 2.0*(2.0*mouse.xy - res.xy)/res.y;
+	    if(mouse.xy == vec2(0)) m = vec2(0);
+	    rd = r(rd, m);
+	    gl_FragColor.xyz = mix(render(rd, ro), fogColor, max(0.0, 1.0 - abs(10.0 * rd.y)));
+	}
+</script>
+	<script type="text/javascript" src="../../scripts/displayWorleySea.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="keywords" content="Eben,Kadile,Cowley,Graphics,Mathematics,Math,Digital,Art,Blackhole,Gravitational,Lensing" />
+    <link rel="stylesheet" type="text/css" href="../../style.css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+	tex2jax: {inlineMath: [["$", "$"],["\\(","\\)"]]},
+	errorSetting: {message: undefined}
+
+});
+</script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/mathjax/MathJax/2.7.6/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <title>
+        Magnetic Anomaly - Eben Kadile
+    </title>
+</head>
+
+<body>
+    <div class="heading">
+        <h1>Magnetic Anomaly</h1>
+        <h2>Flow line approximation and gravitational lensing.</h2>
+        <h3>eben.kadile24@gmail.com</h3>
+    </div>
+    <br>
+    <div align="center" style="width:100%">
+        <a class="navItem" style="border-top-left-radius:15px;border-bottom-left-radius:15px;" href="../../../home.html">Home</a>
+        <a class="navItem" href="../../../Art.html">Art</a>
+        <a class="navItem" href="../../../Software.html">Software</a>
+        <a class="navItem" href="../../../Blog.html">Blog</a>
+        <a class="navItem" style="border-top-right-radius:15px;border-bottom-right-radius:15px;" href="../../../Research.html">Research</a>
+    </div>
+    <br>
+    <div align="center">
+        <canvas id="canvas" onmousemove="readMouse(event)" />
+    </div>
+    <div align="center">
+        <button type="button" id="pause" align="center">Pause</button>
+    </div>
+    <div align="center">
+        <input type="range" min="-500" max="500" value="-100" id="A"></input>
+        <p id="AVal" class="input">A = -100</p>
+        <br>
+        <input type="range" min="0" max="20" value="10" id="B"></input>
+        <p id="BVal" class="input">B = 0.5</p>
+        <br>
+    </div>
+    <p class="textContent">
+        See the full code in action <a target="_blank" href="https://www.shadertoy.com/view/4dVcRR">here.</a> My first
+        two experiments with gravitational lensing were: <a target="_blank" href="https://www.shadertoy.com/view/MtByRh">Lensing</a>,
+        where I put a gravitational lensing effect on top of someone else's star field; and <a target="_blank" href="https://www.shadertoy.com/view/lsXfRX">Cosmos</a>,
+        which features two simple FBM-based starfields. Both of them used a simple and arbitrary trick. This lensing
+        method, which is more apparent in <a target="_blank" href="https://www.shadertoy.com/view/Xd3yWX">Cosmic Storm</a>
+        because of the background, rotates the ray direction by the <a target="_blank" href="https://en.wikipedia.org/wiki/Gravitational_lens#Explanation_in_terms_of_space-time_curvature">correct
+            angle of deflection</a> as it passes the blackhole. This means that the effect isn't perfect because the
+        path of the ray is a corner, not a curve.
+        <br><br>
+        This shader uses volumetric rendering, meaning rays are fired from a virtual camera through each pixel and as
+        they pass through space they accumulate color. In my last post about the <a href="hopfFibers.html">Hopf
+            Fibration</a> I mentioned that it would be really cool to learn about fluid dynamics because there is a
+        certain solution to the Navier-Stokes equations whose flow lines are the projected circles of the Hopf
+        fibration. I haven't really learned very much about fluid dynamics, but I got inspired by <a targe="_blanks"
+            href="https://www.shadertoy.com/view/4llGWl">this shader's</a> technique for rendering a 2D vector field.
+        It uses Euler's method or the Runge-Kutta method to approximate the flow of an individual point under the
+        velocity field. It samples a texture at two points along the flow and interpolates between the two colors based
+        on time to make it look like the texture is moving. You can tell something similar is being used here because
+        if you don't move the camera and look carefully you'll see that the image is periodic. Here's my 3D version of
+        the color interpolation in GLSL:
+        <br><br>
+        <code>
+            vec3 interpolateColor(vec3 p){<br>
+            <span style="margin:4em" />float t1 = fract(0.5*time);<br>
+            <span style="margin:4em" />float t2 = fract(t1 + 0.5);<br>
+            <span style="margin:4em" />vec3 c1 = makeColor(approxFlow(p, t1 + 0.3));<br>
+            <span style="margin:4em" />vec3 c2 = makeColor(approxFlow(p, t2 + 0.3));<br>
+            <span style="margin:4em" />t1 = 2.0*abs(t1 - 0.5);<br>
+            <span style="margin:4em" />return mix(c1, c2, t1);<br>
+            }
+        </code>
+        <br><br>
+        where <code>t1</code> and <code>t2</code> define the points in time where the flow will be approximated. <code>approxFlow(vec3
+            p, float t)</code> approximates the flow of point <code>p</code> at time <code>t</code>; it uses 5
+        iterations of the Runge-Kutta method. <code>t1</code> is set to <code>2.0*abs(t1 - 0.5)</code> before linearly
+        interpolating so that the color at <code>t2</code> fades in as the color at <code>t1</code> fades out and vice
+        versa. <code>makeColor(vec3 p)</code> makes a color based on the pressure and density of the solution to the
+        Navier-Stokes equations. So here is the <a target="_blank" href="https://en.wikipedia.org/wiki/Hopf_fibration#Fluid_mechanics">solution</a>:
+        $$v(x,y,z) = A \left(a^2+x^2+y^2+z^2\right)^{-2} \left( 2(-ay+xz), 2(ax+yz) , a^2-x^2-y^2+z^2 \right),$$
+        $$p(x,y,z) = -A^2B \left(a^2+x^2+y^2+z^2\right)^{-3},$$
+        $$\rho(x,y,z) = 3B\left(a^2+x^2+y^2+z^2\right)^{-1}$$
+        where $v$ is velocity, $p$ is pressure, $\rho$ is density, $a$ is the distance to the unit circle in the $xy$
+        plane, and $A$ and $B$ are the arbitrary constants which you can manipulate using the sliders above!
+        <br><br>
+        <code>makeColor</code> squishes pressure and density into the range $(0,\,1)$ with a logistic curve. It then
+        calculates the hue of the color from the pressure, high pressure meaning more blue and lower pressure meaning
+        more red, the reasoning being that high pressure corresponds to higher temperatures which in turn corresponds
+        to higher frequency light being emitted from whatever gas is swirling around this blackhole. The brightness
+        of the color is the based off of the density, with the reasoning being that regions with more atoms will emit
+        more light.
+        <br><br>
+        This was a fun technique to experiment with, but it makes me more curious about the physics behind fluids and
+        how fluid simulations are actually carried out.
+    </p>
+    <script src="../../scripts/three.min.js"></script>
+    <script id="vs" , type="x-shader/x-vertex">
+        void main() {
+	  gl_Position = vec4(position, 1.0);
+	}
+</script>
+    <script id="fs" type="x-shader/x-fragment">
+        uniform vec2 res;
+uniform vec2 m;
+uniform float time;
+
+//vector field from https://en.wikipedia.org/wiki/Hopf_fibration#Fluid_mechanics
+uniform float A;
+uniform float B;
+
+//nebula params
+
+#define nebula
+
+#define marchingIters 20
+#define cloudBrightness 75.0
+#define rungeKuttaIters 5
+
+//blackhole params
+
+#define blackhole
+#define lensing
+
+//4G/c^2 where G is the gravitational constant and c is the speed of light
+#define forGc2 2.970357293242085e-27
+#define blackholeMass 1e26
+#define blackholeRadius 0.5*forGc2*blackholeMass //Schwarschild radius
+
+const float pi = 4.0*atan(1.0);
+const float isqrt2 = inversesqrt(2.0);
+
+vec4 makeQuat(vec3 axis, float t){
+    t *= 0.5;
+    vec2 tr = sin(vec2(t, t + 0.5*pi));
+    return vec4(tr.x*normalize(axis), tr.y);
+}
+
+vec3 Rotate(vec4 q, vec3 v){
+    vec3 t = 2.*cross(q.xyz, v);
+    return v + q.w*t + cross(q.xyz, t);
+}
+
+vec3 r(vec3 v, vec2 r){
+    vec4 t = sin(vec4(r, r + 1.5707963268));
+    float g = dot(v.yz, t.yw);
+    return vec3(v.x * t.z - g * t.x,
+                v.y * t.w - v.z * t.y,
+                v.x * t.x + g * t.z);
+}
+
+//distance to inner ring of Hopf fibration (unit circle in xy pllane centered at origin)
+float dRing(vec3 p){return length(vec2(length(p.xy) - 1.0, p.y));}
+
+vec3 velocity(vec3 p){
+    float a = dRing(p);
+    float a2 = a*a;
+    float r = dot(p, p);
+    float ar = a2 + r;
+    return A*vec3(2.0*(-a*p.y + p.x*p.z), 2.0*(a*p.x - p.y*p.z), a - r)/(ar*ar);
+}
+
+float density(vec3 p){
+    float a = dRing(p);
+    return 3.0*B/(a*a + dot(p, p));
+}
+
+vec2 pressureAndDensity(vec3 p){
+    float d = density(p);
+    return vec2(-A*A*0.333333*d*d*d/(B*B), d);
+}
+
+vec2 logistic(vec2 v){
+    return vec2(16.0/(1.0 + 10.0*exp(-0.75*v.x)),
+                1.0/(1.0 + 10.0*exp(-1.95*v.y)));
+}
+
+vec3 gaussian(float x){
+    vec3 disp = x - vec3(0.3, 0.6, 0.9);
+    return exp(-16.0*disp*disp - 4.0);
+}
+
+vec3 makeColor(vec3 p){
+    vec2 pd = pressureAndDensity(p);
+    pd = logistic(pd);
+    return cloudBrightness*vec3(1, 0.75, 1)*pd.y*gaussian(pd.x);
+}
+
+vec3 approxFlow(vec3 p, float t){
+    t /= float(rungeKuttaIters);
+    for(int i = 0; i < rungeKuttaIters; ++i) {
+        	vec3 k1 = -velocity(p);
+        	vec3 k2 = -velocity(p + 0.5*k1*t);
+        	vec3 k3 = -velocity(p + 0.5*k2*t);
+	        vec3 k4 = -velocity(p + k3*t);
+    	    p += 0.161616*t*(k1 + 2.0*k2 + 2.0*k2 + k3);
+    }
+
+    return p;
+}
+
+vec3 interpolateColor(vec3 p){
+    float t1 = fract(0.5*time);
+    float t2 = fract(t1 + 0.5);
+    vec3 c1 = makeColor(approxFlow(p, t1 + 0.3));
+    vec3 c2 = makeColor(approxFlow(p, t2 + 0.3));
+    t1 = 2.0*abs(t1 - 0.5);
+    return mix(c1, c2, t1);
+}
+
+bool iBlackhole(vec3 ro, vec3 rd){
+    float loc = dot(rd, ro);
+    return loc*loc + 2.25*blackholeRadius*blackholeRadius > dot(ro, ro);
+}
+
+float dBlackholePlane(vec3 ro, vec3 rd, vec3 n){return -dot(ro, n)/dot(rd, n);}
+
+vec3 render(vec3 ro, vec3 rd){
+
+    vec3 nml = normalize(ro);
+
+    vec3 col = vec3(0);
+    bool hit = iBlackhole(ro, rd);
+    float plane = dBlackholePlane(ro, rd, nml);
+
+    float stepsize = 2.0*plane/float(marchingIters);
+
+    vec3 pos = ro + stepsize*rd;
+
+    #ifdef nebula
+    //march until the plane containing the blackhole center is reached
+	for(int n = 0; n < marchingIters/2; n++){
+        if(hit && n == marchingIters/2 - 1) break;
+        col += interpolateColor(pos);
+        pos += stepsize*rd;
+    }
+    #endif
+
+    #ifdef lensing
+    //then change direction
+    float r = length(pos);
+    vec3 axis = cross(pos, nml);
+    //angle of deflection is 4MG/(rc^2)
+    float angle = -forGc2*blackholeMass/r;
+    vec4 quaternion = makeQuat(axis, angle);
+    rd = Rotate(quaternion, rd);
+    #endif
+
+    #ifdef blackhole
+    if(hit) return col;
+    #ifdef nebula
+    else {
+        for(int n = 0; n < marchingIters/2; n++){
+            col += interpolateColor(pos);
+
+            pos += stepsize*rd;
+        }
+    #endif
+    }
+    #else
+    for(int n = 0; n < marchingIters/2; n++){
+        col += interpolateColor(pos);
+        pos += stepsize*rd;
+    }
+    #endif
+    return col;
+}
+
+void main(){
+	gl_FragColor.a = 1.0;
+    vec2 xy = (2.0 * gl_FragCoord.xy - res.xy) / res.y;
+    vec3 ro = vec3(0.0, 0.0, -0.5*float(marchingIters)*blackholeRadius);
+    vec3 rd = normalize(vec3(xy, 2.5));
+
+    rd = r(rd, 3.0*m);
+    ro = r(ro, 3.0*m);
+    gl_FragColor.rgb = render(ro, rd);
+}
+</script>
+    <script type="text/javascript" , src="../../scripts/displayAnomaly.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="keywords" content="Eben,Kadile,Cowley,Mathematics,Math,Geometry,Pachner,Moves,Convex,Hull" />
+        <link rel="stylesheet" type="text/css" href="../../style.css" />
+        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({
+                tex2jax: {inlineMath: [["$", "$"],["\\(","\\)"]]},
+                errorSetting: {message: undefined}
+            });
+        </script>
+        <script type="text/javascript" src="https://cdn.rawgit.com/mathjax/MathJax/2.7.6/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../../scripts/three.min.js"></script>
+        <script src="../../scripts/OrbitControls.js"></script>
+        <script src="../../scripts/QuickHull.js"></script>
+        <script src="../../scripts/ConvexGeometry.js"></script>
+        <title>
+            Pachner Moves - Eben Kadile
+        </title>
+    </head>
+    <body>
+        <div class="heading">
+            <h1>Pachner Moves</h1>
+            <h2>Decomposing homeomoprphisms between simplicial complexes.</h2>
+            <h3>eben.kadile24@gmail.com</h3>
+            <br>
+        </div>
+        <div align="center" style="width:100%">
+            <a class="navItem" style="border-top-left-radius:15px;border-bottom-left-radius:15px;" href="../../../home.html">Home</a>
+            <a class="navItem" href="../../../Art.html">Art</a>
+            <a class="navItem" href="../../../Software.html">Software</a>
+            <a class="navItem" href="../../../Blog.html">Blog</a>
+            <a class="navItem" style="border-top-right-radius:15px;border-bottom-right-radius:15px;" href="../../../Research.html">Research</a>
+        </div>
+        <br><br>
+        <div align="center">
+            <iframe width="840" height="457" src="https://www.youtube.com/embed/XE2mgHYPgas" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <br><br><br><br>
+        <p class="textContent"><big><u>Supplementary Interactive Figure used in the talk:</u></big></p>
+        <div align="center">
+            <canvas id="canvas" style="height: 720px; width: 1080px; background-color: black"></canvas>
+            <br>
+            <input type="range" min="0" max="100" value="0" id="single"></input>
+            <br>
+            <input type="range" min="-50" max="50" value="0" id="double"></input>
+        </div>
+        <br><br><br><br>
+        <p class="textContent">
+            <big><u>Some Notes About the Talk</u></big>
+            <br><br>
+            People seemed to find my explanation of Pachner moves in terms of drawings somewhat difficult to understand. I will explain them here using some more combinatorial notation.
+            <br><br>
+            Suppose we have a simplex in an $n$-dimensional simplicial complex denoted by $v_0v_1...v_n$ where each $v_i$ is a vertex of this simplex. We may change the combinatorial structure of the simplicial complex by creating a new vertex $u$ in the interior of the simplex (I referred to it as the barycenter in the talk but it does not matter which interior point is chosen) then form $n+1$ new simplices by taking groups of $n$ vertices from the original simplex and joining them with $u$; for example, $v_0v_1...v_{n-1}u$, $v_1v_2...v_nu$, etc.
+            <br><br>
+            Suppose we have two adjacent simplices in the simplicial complex given by $v_0v_1...v_n$ and $v_1v_2...v_{n+1}$. These simplices share the vertices $v_1,v_2,...,v_n$, but the vertices $v_0$ and $v_{n+1}$ belong to only one simplex or the other. We may replace this configuration of two simplices with a configuration of $n$ simplices whose vertices are $v_0v_{n+1}$ joined with sets of $n-1$ vertices from the intersection of the original two simplices; for example, $v_0,v_{n+1}v_1v_2...v_{n-1}$, $v_0v_{n+1}v_2v_3...v_n$, etc.
+            <br><br>
+            An efficient way of describing how Pachner moves generalize to simplicial complexes with boundary is as follows: the boundary of a simplicial complex is itself a simplicial complex; any Pachner moves of one dimension lower may be performed on the boundary as long as any subdivisions and reconfigurations performed on the faces on certain simplicies are "conified" so as to keep the structure of the complex consistent.
+            <br><br>
+            Someone asked whether or not there would be a problem estabilishing a homeomorphism between two 2-dimensional simplicial complexes where one had an even number of triangles and the other had an odd number of triangles. This is, in fact, impossible if both complexes are <i>closed</i> (for closed 2D simplicial complexes is a topological invariant). It is not difficult to think of counterexamples that have boundary. One such counterexample is the fact that a single triangle is homeomorphic to two triangles glued along an edge; the homeomorphism is simply the 1D Pachner move applied to a boundary edge of the triangle (that is, bisecting an edge of the triangle and drawing a line from the bisection point to the opposite vertex gives you the desired simplicial complex).
+        </p>
+        <script src="../../scripts/displayPachner.js"></script>
+    </body>
+</html>
