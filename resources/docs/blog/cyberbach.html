@@ -1,0 +1,230 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="keywords" content="Eben,Kadile,Cowley,Mathematics,Limit,Cycle,Cyber,Bach,Network,Machine,Learning,Music,Piano" />
+    <link rel="stylesheet" type="text/css" href="../../style.css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+	tex2jax: {inlineMath: [["$", "$"],["\\(","\\)"]]},
+	errorSetting: {message: undefined}
+});
+</script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/mathjax/MathJax/2.7.6/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <title>
+        CyberBach - Eben Kadile
+    </title>
+</head>
+
+<body>
+    <div class="heading">
+        <h1>CyberBach</h1>
+        <h2>Training machines to predict and generate music in the simplest possible way.</h2>
+        <h3>eben.kadile24@gmail.com</h3>
+        <br>
+    </div>
+    <div align="center" style="width:100%">
+        <a class="navItem" style="border-top-left-radius:15px;border-bottom-left-radius:15px;" href="../../../index.html">Home</a>
+        <a class="navItem" href="../../../Art.html">Art</a>
+        <a class="navItem" href="../../../Software.html">Software</a>
+        <a class="navItem" href="../../../Blog.html">Blog</a>
+        <a class="navItem" style="border-top-right-radius:15px;border-bottom-right-radius:15px;" href="../../../Research.html">Research</a>
+    </div>
+    <br>
+    <p class="textContent">
+        <u><big>Introduction</big></u>
+        <br><br>
+        The creation and appreciation of music has been a ubiquitous human activity since the dawn of history. During my time at CATNIP Lab, one of the questions we asked was how recurrent neural networks may be able to gain an understanding of music. Originally, we wanted to use this as a bridge to generate hypotheses about how the brain processes music. Initially, I was training linear models and vanilla RNNs so that we would have the best hope of interpretting the computational processes which they learned; the old source code may be found at <a target="_blank" href="https://github.com/catniplab/ML-music-analysis">this repo</a>. Eventually, I added to the framework some more state-of-the-art architectures (LSTMs and GRUs) as well as <a target="_blank" href=https://ieeexplore.ieee.org/document/9049080>limit cycle initialization</a>, I also cleaned up the code in 2021 and made it friendly to anyone who wants to download <a target="_blank" href="https://github.com/Ebanflo42/CyberBach">the repo</a>.
+        <br><br>
+        <u><big>Training Procedure</big></u>
+        <br><br>
+        There are four standard datasets of piano music which have been used to benchmark recurrent neural networks in the past: JSB_Chorales (JSB standing for Johanne Sebastian Bach), Nottingham, MuseData, and Piano_midi. These datasets were used, for example, in <a href="https://arxiv.org/abs/1206.6392" target="_blank">this 2012 Bengio paper</a> about RNN-RBMs. I initially wanted to incorporate RBMs or some other stochastic method into the readout, but was told by my colleagues that RBMs take too long to train.
+        <br><br>
+        The first step of training neural networks on this data is converting each song into 88 binary sequences. Each of the 88 sequences will correspond to 1 note, and each entry in the sequence will specify whether the note was on or off during that specific beat. Suppose a song is given by the binary sequences $y_{i,t}$, where $i$ specifies the note and $t$ secifies the time, or beat. The goal of our algorithm, is to take $y_{i,0..t-1}$ as input and then output a sequence $p_{i,t}$, specifying the probability that note $i$ is played at beat $t$. We can say the sequence of probabilities $p_{i,t}$ solves the task if it minimizes the cross entropy loss:
+        $$L(p, y)=-\sum_t\sum_i y_{i,t}\log(p_{i,t})$$
+        This is a classic loss function in machine learning, and essentially represents how surprised one expects to be about the event $y_{i,t}$ assuming its probability is $p_{i,t}$. The basic procedure is to use gradient descent to train a recurrent neural network to output a suitable $p_{i,t}$ given $y_{i,t}$. I empirically found that the RMSprop optimizer significantly outperforms both SGD and Adam for this task. I also implemented gradient clipping and orthogonal initialization in my framework, but found them to be unnecessary for improving performance. Initializing the $\tanh$ RNNs and GRUs to be near a direct sum of Hopf bifurcations (each 2D plane in the hidden state space is between a limit cycle and attracting fixed point) does improve performance. Unfortunately, these results will probably not be published because they still do not outperform RNN-RBMs.
+        <br><br>
+        <u><big>Limit Cycle Intitialization</big></u>
+        <br><br>
+        Much of my research at CATNIP Laboratory was on the treatment of recurrent neural networks as ordinary differentialy equations: Neural ODEs or NODEs. One mathematical observation which we made is that if one has an ODE with a 2D state-space and a limit cycle, the dynamics of its adjoint are stable in the sense that they also possess a limit cycle (see my figure below). This observation is important because the adjoint dynamics are the continuous analogue of backpropagating gradients; the result suggests that the backpropagating gradietns of a limit cycle neural network cannot explode.
+        <br>
+    </p>
+        <div align="center">
+            <img src="../../images/phase_portrait500.png">
+        </div>
+        <br>
+    <p class="textContent">
+        The idea of limit cycle initialization in my CyberBach project is that a $\tanh$ or GRU network with an even number of hidden units may be initialized so that each consecutive pair of hidden units has dynamics which look similar to what is pictured above. Of course, this only guarantees gradient stability at the first step, but I have had no trouble with exploding gradients using this initialization, and I think each limit cycle will indirectly act as a memory unit for the rest of the network.
+        <br><br>
+        The critical question, of course, is how we get a $\tanh$ or GRU network to exhibit a limit cycle. The intuition in 2D is not so hard: both systems are globally contracting their hidden state space to the region $[-1,1]^2$. Additionally, both systems are linearizeable around the origin. If we use a typical rotation matrix for the weights then we would expect the origin to be a stable spiral fixed point. However, if we scale that rotation matrix up enough then the origin can become a repelling spiral, meaning there will be a limit cycle in between.
+        <br><br>
+        Here I used WebGL to create a visualization of the $\tanh$ system:
+    </p>
+    <div align="center">
+        <canvas id="tanh" style="border-radius:5px;width:1336px;" />
+    </div>
+    <div align="center">
+    <input type="range" min="0" max="628" value="100" id="angle"></input>
+    <p id="val1" class="input">Angle = 1</p>
+    <br>
+    <input type="range" min="0" max="200" value="100" id="scale"></input>
+    <p id="val2" class="input">Scale = 1.5</p>
+    <br>
+    </div>
+    <br>
+    <p class="textContent">
+        This visualization plots a single trajectory in black and uses a popular technique called <a target="_blank" href="https://en.wikipedia.org/wiki/Domain_coloring">domain coloring</a> for the rest of the vector field (specifically: red is an upperward pointing vector, green is to the lower right, and blue is to the lower left). It is quick and easy to render the phase portrait of the system like this. The vector field is given by:
+        $$F(x)=\tanh(Wx)-x$$
+        where $\tanh$ is applied to the vector $x$ element-wise and
+        $$W=\begin{bmatrix} S\cos(\theta) & -S\sin(\theta) \\ S\sin(\theta) & S\cos(\theta)\end{bmatrix}$$
+        is the weight matrix with angle $\theta$ and scale $S$. The Euler approximation of this vector field with step-size $1$ corresponds to a $\tanh$ recurrent neural network (without input, in these equations). This observation is what gave rise to the concept of Neural Ordinary Differential Equations.
+        <br><br>
+        As one can see from the interactive phase portrait, with any angle between about $0.2$ and $1.2$, and any scale slightly larger than $1$, the systems dynamics are given by a stable limit cycle. That is how the initialization works for the $\tanh$ networks: simply set the biases equal to zero and the requrrent weights equal to sequence of block diagonal $2\times2$ scaled rotation matrices with angle sampled between $0.2$ and $1.2$ and scale sampled between $1$ and $1.1$. Empirically, I found that a larger scaled will worsen performance greatly. My hypothesis is that the network prefers to be on the bifurcation point because with a limit cycle that is very structurally stable it will always have information from arbitrarily far back in the past resurfacing and acting as noise. That is, memory is good, but if you remember everything and your gradients are too stable you will not be able to distinguish relevant from irrelevant features. The GRU initialization works similarly, but one must also set all hidden weights except $n$-to-$h$ weights to $0$, and then double the scale of the rotation matrices (it is straightforward to work this out with some algebra on the GRU equations).
+        <br><br>
+        <big><u>Music Synthesis</u></big>
+        <br><br>
+        Now for the fun part. It is fairly straightforward to get neural networks trained to predict music to generate new music. Imagine as before we have the target song $y_{i,t}$, then we can ask the network to give probabilities of which notes will be played after the song has ended $p_{i, T+1}$. Then we can create a new binary sequence $q_{i, T+1}$ which is $1$ either for the notes which were given a probability greater than $0.5$, or the top 10 most probable notes (if the network tried to play more than 10 notes at a time it would sound very strange).
+        <br><br>
+        We can append $q_{i,T+1}$ to the end of $y_{i,t}$ and then feed it back to the network to get $p_{i,T+2}$, and $q_{i,T+2}$, and so on. For the synthesis procedure I also added some small Gaussian white noise to the input to try to make sure the network does not get locked into boring, highly periodic tunes.
+        <br><br>
+        The results of this procedure vary from aesthetic in a very bizarre way to extremely annoying. I createed the following table of input tunes and synthesized tunes. All of the synthesized tunes are included in the repository, I encourage you to use my framework to generate new music!
+    </p>
+    <div align="center">
+        <table>
+            <tr>
+              <th>Dataset</th>
+              <th>Original</th>
+              <th>TANH</th>
+              <th>Limit Cycle TANH</th>
+              <th>GRU</th>
+              <th>Limit Cycle GRU</th>
+              <th>LSTM</th>
+            </tr>
+            <tr>
+              <th>JSB_Chorales</th>
+              <th><audio controls><source src="../../tunes/jsb_chorales.wav" type="audio/wav"></audio></th>
+              <th><audio controls><source src="../../tunes/tanh_JSB_Chorales.wav" type="audio/wav"></audio></th>
+              <th><audio controls><source src="../../tunes/tanh_limitcycle_JSB_Chorales.wav" type="audio/wav"></audio></th>
+              <th><audio controls><source src="../../tunes/gru_JSB_Chorales.wav" type="audio/wav"></audio></th>
+              <th><audio controls><source src="../../tunes/gru_limitcycle_JSB_Chorales.wav" type="audio/wav"></audio></th>
+              <th><audio controls><source src="../../tunes/lstm_JSB_Chorales.wav" type="audio/wav"></audio></th>
+            </tr>
+            <tr>
+              <th>Nottingham</th>
+              <th><audio controls><source src="../../tunes/nottingham.wav" type="audio/wav"></audio></th>
+              <th><audio controls><source src="../../tunes/tanh_Nottingham.wav" type="audio/wav"></audio></th>
+              <th><audio controls><source src="../../tunes/tanh_limitcycle_Nottingham.wav" type="audio/wav"></audio></th>
+              <th><audio controls><source src="../../tunes/gru_Nottingham.wav" type="audio/wav"></audio></th>
+              <th><audio controls><source src="../../tunes/gru_limitcycle_Nottingham.wav" type="audio/wav"></audio></th>
+              <th><audio controls><source src="../../tunes/lstm_Nottingham.wav" type="audio/wav"></audio></th>
+            </tr>
+            <tr>
+              <th>MuseData</th>
+              <th><audio controls><source src="../../tunes/musedata.wav" type="audio/wav"></audio></th>
+              <th><audio controls><source src="../../tunes/tanh_MuseData.wav" type="audio/wav"></audio></th>
+              <th><audio controls><source src="../../tunes/tanh_limitcycle_MuseData.wav" type="audio/wav"></audio></th>
+              <th><audio controls><source src="../../tunes/gru_MuseData.wav" type="audio/wav"></audio></th>
+              <th><audio controls><source src="../../tunes/gru_limitcycle_MuseData.wav" type="audio/wav"></audio></th>
+              <th><audio controls><source src="../../tunes/lstm_MuseData.wav" type="audio/wav"></audio></th>
+            </tr>
+            <tr>
+              <th>Piano_midi</th>
+              <th><audio controls><source src="../../tunes/piano_midi.wav" type="audio/wav"></audio></th>
+              <th><audio controls><source src="../../tunes/tanh_Piano_midi.wav" type="audio/wav"></audio></th>
+              <th><audio controls><source src="../../tunes/tanh_limitcycle_Piano_midi.wav" type="audio/wav"></audio></th>
+              <th><audio controls><source src="../../tunes/gru_Piano_midi.wav" type="audio/wav"></audio></th>
+              <th><audio controls><source src="../../tunes/gru_limitcycle_Piano_midi.wav" type="audio/wav"></audio></th>
+              <th><audio controls><source src="../../tunes/lstm_Piano_midi.wav" type="audio/wav"></audio></th>
+            </tr>
+          </table>
+    </div>
+    <script src="../../scripts/three.min.js"></script>
+    <script id="vs" type="glsl">
+      void main() {
+        gl_Position = vec4(position, 1.0);
+      }
+    </script>
+    <script id="fs" type="glsl">
+        uniform vec2 res;
+        uniform float angle;
+        uniform float scale;
+
+        // pi determined at compilation
+        const vec4 pi = vec4(1, 2, 4, 8)*atan(1.0);
+
+        vec2 curve[200];
+
+        float tanh(float x){
+            return (exp(x) - exp(-x))/(exp(x) + exp(-x));
+        }
+
+        vec2 tanh(vec2 x){
+            return vec2(tanh(x.x), tanh(x.y));
+        }
+
+        vec2 forwardComp(vec2 state, mat2 weights){
+            return tanh(weights*state) - state;
+        }
+
+        vec3 color(vec2 p, mat2 weights){
+            vec2 v = forwardComp(p, weights);
+            vec3 col = pow(dot(v, v), 0.2)*(0.5 + 0.5*sin(atan(v.y, v.x) + vec3(0, 0.333, 0.666)*pi.w));
+            return col;
+        }
+
+        float dCurve(vec2 p){
+            float result = 9e9;
+            for(int i = 0; i < 199; i++){
+
+                vec2 pos = p - curve[i];
+                vec2 segment = curve[i + 1] - curve[i];
+                float len = length(segment);
+                vec2 normed = segment/len;
+                vec2 ortho = vec2(normed.y, -normed.x);
+
+                float proj1 = dot(normed, pos);
+                float d = (proj1 < len && proj1 > 0.0)
+                        ? abs(dot(pos, ortho))
+                        : min(length(pos), distance(pos, segment));
+
+                result = min(result, d);
+            }
+            return result;
+        }
+
+        void eulerStep(vec2 p, mat2 weights){
+            curve[0] = p;
+            for(int i = 1; i < 200; i++){
+                curve[i] = curve[i - 1] + forwardComp(curve[i - 1], weights);
+            }
+        }
+
+        vec3 render(vec2 frag, mat2 weights){
+
+            vec2 xy = (2.0*frag - res.xy)/res.y;
+
+            float d = dCurve(xy);
+            if(d < 0.004) return vec3(0);
+
+            vec2 flow = forwardComp(xy, weights);
+
+            return color(xy, weights);
+        }
+
+        void main()
+        {
+            vec2 trig = sin(vec2(angle, angle + pi.y));
+            mat2 weights = scale*mat2(trig.y, -trig.x, trig.x, trig.y);
+
+            eulerStep(vec2(1.2), weights);
+
+            gl_FragColor = vec4(0, 0, 0, 1);
+            gl_FragColor.rbg = render(gl_FragCoord.xy, weights);
+        }
+    </script>
+    <script type="text/javascript" src="../../scripts/displayTanh.js"></script>
+</body>
+
+</html>

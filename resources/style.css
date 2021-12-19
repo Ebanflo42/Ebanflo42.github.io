@@ -26,6 +26,17 @@ h3 {
   font-size: 12px;
 }
 
+table, th, td {
+  color: rgb(183,193,179);
+  border: 2px solid white;
+  padding: 20px;
+}
+
+audio {
+  width: 200px;
+  height: 40px;
+}
+
 img.me {
   border-radius: 5px;
   width: 650px;
