@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="keywords" content="Eben,Kadile,Cowley,Graphics,Mathematics,Math,Julia,Zipf,Law,Geometry,Fourier,Laplace,Beltrami,Weyl" />
+    <link rel="stylesheet" type="text/css" href="../../style.css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+	tex2jax: {inlineMath: [["$", "$"],["\\(","\\)"]]},
+	errorSetting: {message: undefined}
+});
+</script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/mathjax/MathJax/2.7.6/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <title>
+        The Geometry of Zipf's Law - Eben Kadile
+    </title>
+</head>
+
+<body>
+    <div class="heading">
+        <h1>The Geometry of Zipf's Law</h1>
+        <h2>The precise balance between detail and redundancy.</h2>
+        <h3>eben.kadile24@gmail.com</h3>
+    </div>
+    <br>
+    <div align="center" style="width:100%">
+        <a class="navItem" style="border-top-left-radius:15px;border-bottom-left-radius:15px;" href="../../../index.html">Home</a>
+        <a class="navItem" href="../../../Art.html">Art</a>
+        <a class="navItem" href="../../../Software.html">Software</a>
+        <a class="navItem" href="../../../Blog.html">Blog</a>
+        <a class="navItem" style="border-top-right-radius:15px;border-bottom-right-radius:15px;" href="../../../Research.html">Research</a>
+    </div>
+        <script src="../../scripts/three.min.js"></script>
+        <script id="vs" type="glsl">
+          void main() {
+            gl_Position = vec4(position, 1.0);
+          }
+        </script>
+        <script id="mshader" type="glsl">
+            uniform vec2 res;
+            uniform vec2 m;
+
+            vec2 csqr(vec2 z){return vec2(z.x*z.x - z.y*z.y, 2.0*z.x*z.y);}
+
+            vec3 mandelbrot(vec2 z){
+                vec2 result = z;
+                for(int i = 0; i < 20; i++){
+                    result = csqr(result);
+                    result += z;
+                    if(dot(result, result) > 4.0) return vec3(1);
+                }
+                return vec3(0);
+            }
+
+            void main(){
+                gl_FragColor = vec4(0);
+                vec2 xy = 1.125*(2.0*gl_FragCoord.xy - res)/res.y;
+                gl_FragColor.rgb = mandelbrot(xy);
+                if(distance(xy, m) < 0.02) gl_FragColor = vec4(1, 0, 0, 0);
+	        }
+        </script>
+        <script id="jshader" type="glsl">
+            uniform vec2 res;
+            uniform vec2 c;
+
+            const float pi = 4.0*atan(1.0);
+
+            vec2 csqr(vec2 z){return vec2(z.x*z.x - z.y*z.y, 2.0*z.x*z.y);}
+
+            vec3 julia(vec2 z){
+                for(int i = 0; i < 120; i++){
+                    z = csqr(z);
+                    z += c;
+                    if(dot(z, z) > 4.0) return vec3(z, float(i));
+                }
+                return vec3(z, 100);
+            }
+
+            vec3 getCol(vec3 n){
+                float s = 0.08*(4.0 - length(n.xy)) + n.z;
+                if(n.z == 100.0) return vec3(0);
+                float arg = 0.02*pi*s;
+                vec3 col = sin(vec3(arg - 0.5*pi, arg - pi, arg - 0.666666*pi))*0.5 + 0.5;
+                return col*col;
+            }
+
+            vec3 render(vec2 coords){
+                vec2 p = 1.25*(2.0*coords - res)/res.y;
+                vec3 col = getCol(julia(p));
+                return pow(col, vec3(0.4545));
+            }
+
+            void main(){
+                gl_FragColor = vec4(0, 0, 0, 1);
+                for(int i = 0; i < 2; i++){
+                    for(int j = 0; j < 2; j++){
+                        gl_FragColor.rgb += render(gl_FragCoord.xy + vec2(i, j));
+                    }
+                }
+                gl_FragColor *= 0.25;
+	        }
+        </script>
+        <script src="../../scripts/renderMandelbrot.js"></script>
+        <script src="../../scripts/renderJulia.js"></script>
+</body>
