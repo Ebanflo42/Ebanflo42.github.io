@@ -1,20 +1,31 @@
 'use strict';
 
-var fourierCanvas = document.getElementById('fourieria');
+var fourierCanvas = document.getElementById('2dfourierCanvas');
 var fourierScene = new THREE.Scene();
 var fourierRenderer = new THREE.WebGLRenderer({canvas: fourierCanvas, antialias: false});
 var fourierCamera = new THREE.PerspectiveCamera(45, fourierCanvas.clientWidth/fourierCanvas.clientWidth, 1, 1000);
 
 var fourierRes = new THREE.Vector2(fourierCanvas.clientWidth, fourierCanvas.clientHeight);
 
+var inp_xFreq = document.getElementById('freqx');
+var inp_yFreq = document.getElementById('freqy');
+
+var fourierFreqs = new THREE.Vector2(inp_xFreq.value, inp_yFreq.value);
+inp_xFreq.oninput = function () {
+    fourierFreqs.x = this.value;
+}
+inp_yFreq.oninput = function () {
+    fourierFreqs.y = this.value;
+}
+
 var fouriershader = new THREE.ShaderMaterial({
 	vertexShader: document.getElementById('vs').textContent,
-	fragmentShader: document.getElementById('jshader').textContent,
+	fragmentShader: document.getElementById('2dfouriershader').textContent,
 	depthWrite: false,
 	depthTest: false,
 	uniforms: {
 		res: { type: 'v2', value: fourierRes },
-		c: { type: 'v2', value: mouse }
+		freqs: { type: 'v2', value: fourierFreqs }
 	}
 });
 
@@ -38,7 +49,9 @@ function render() {
   }
 
   fouriershader.uniforms['res'].value = fourierRes;
-  fouriershader.uniforms['c'].value = mouse;
+  fouriershader.uniforms['freqs'].value = fourierFreqs;
+
+  fourierRenderer.render(fourierScene, fourierCamera);
 
 }
 
