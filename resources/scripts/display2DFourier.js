@@ -7,8 +7,8 @@ var fourierCamera = new THREE.PerspectiveCamera(45, fourierCanvas.clientWidth/fo
 
 var fourierRes = new THREE.Vector2(fourierCanvas.clientWidth, fourierCanvas.clientHeight);
 
-var inp_xFreq = document.getElementById('freqx');
-var inp_yFreq = document.getElementById('freqy');
+var inp_xFreq = document.getElementById('2d_freqx');
+var inp_yFreq = document.getElementById('2d_freqy');
 
 var fourierFreqs = new THREE.Vector2(inp_xFreq.value, inp_yFreq.value);
 inp_xFreq.oninput = function () {
@@ -19,7 +19,7 @@ inp_yFreq.oninput = function () {
 }
 
 var fouriershader = new THREE.ShaderMaterial({
-	vertexShader: document.getElementById('vs').textContent,
+	vertexShader: document.getElementById('2d_vs').textContent,
 	fragmentShader: document.getElementById('2dfouriershader').textContent,
 	depthWrite: false,
 	depthTest: false,

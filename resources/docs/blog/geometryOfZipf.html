@@ -34,10 +34,21 @@
     <div align="center">
         <canvas id="2dfourierCanvas" style="height:480px;width:720px"/>
     </div>
-    <input type="range" min="-12" max="12" value="2" id="freqx"></input>
-    <input type="range" min="-12" max="12" value="-3" id="freqy"></input>
+    <input type="range" min="-12" max="12" value="2" id="2d_freqx"></input>
+    <input type="range" min="-12" max="12" value="-3" id="2d_freqy"></input>
+    <br>
+    <div align="center">
+        <canvas id="1dfourierCanvas" style="height:480px;width:720px"/>
+    </div>
+    <input type="range" min="-12" max="12" value="2" id="1d_freqx"></input>
+    <input type="range" min="-12" max="12" value="-3" id="1d_freqy"></input>
         <script src="../../scripts/three.min.js"></script>
-        <script id="vs" type="glsl">
+        <script type="glsl" id="1d_vs">
+            void main() {
+                gl_Position = projectionMatrix*modelViewMatrix*vec4(position, 1);
+            }
+        </script>
+        <script id="2d_vs" type="glsl">
           void main() {
             gl_Position = vec4(position, 1.0);
           }
@@ -54,7 +65,7 @@
 
             vec3 render(vec2 coords) {
                 vec2 s = sin(2.0*pi*freqs*coords/res);
-                return colormap(s.x + s.y, 2.0);
+                return colormap(s.x * s.y, 1.0);
             }
 
             void main(){
