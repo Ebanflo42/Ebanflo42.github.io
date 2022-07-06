@@ -32,35 +32,38 @@
         <a class="navItem" style="border-top-right-radius:15px;border-bottom-right-radius:15px;" href="../../../Research.html">Research</a>
     </div>
     <div align="center">
-        <canvas id="2dfourierCanvas" style="height:480px;width:720px"/>
+        <canvas id="freq2dCanvas" style="height:480px;width:720px"/>
     </div>
-    <input type="range" min="-12" max="12" value="2" id="2d_freqx"></input>
-    <input type="range" min="-12" max="12" value="-3" id="2d_freqy"></input>
+    <input type="range" min="-12" max="12" value="2" id="inpxFreq"></input>
+    <input type="range" min="-12" max="12" value="-3" id="inpyFreq"></input>
     <br>
     <div align="center">
-        <canvas id="1dfourierCanvas" style="height:480px;width:720px"/>
+        <canvas id="freq1dCanvas" style="height:480px;width:720px"/>
     </div>
-    <input type="range" min="-12" max="12" value="2" id="1d_freqx"></input>
-    <input type="range" min="-12" max="12" value="-3" id="1d_freqy"></input>
+    <input type="range" min="-12" max="12" value="2" id="inpFreq"></input>
         <script src="../../scripts/three.min.js"></script>
-        <script type="glsl" id="1d_vs">
+        <script id="1d_vs" type="glsl">
             void main() {
                 gl_Position = projectionMatrix*modelViewMatrix*vec4(position, 1);
             }
+        </script>
+        <script id="1d_fs" type="glsl">
+            void main() { gl_FragColor = vec4(0.2, 0.8, 0.2, 1.0); }
         </script>
         <script id="2d_vs" type="glsl">
           void main() {
             gl_Position = vec4(position, 1.0);
           }
         </script>
-        <script id="2dfouriershader" type="glsl">
+        <script id="2d_fs" type="glsl">
             uniform vec2 res;
             uniform vec2 freqs;
 
             const float pi = 4.0*atan(1.0);
 
             vec3 colormap(float val, float scale) {
-                return vec3(-min(0.0, val/scale), 0.0, max(0.0, val/scale));
+                val /= scale;
+                return vec3(max(0.0, val), 0.15*abs(val), -min(0.0, val));
             }
 
             vec3 render(vec2 coords) {
@@ -78,5 +81,5 @@
                 gl_FragColor *= 0.25;
 	        }
         </script>
-        <script src="../../scripts/display2DFourier.js"></script>
+        <script src="../../scripts/displayZipfGeometry.js"></script>
 </body>
