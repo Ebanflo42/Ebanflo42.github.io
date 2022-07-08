@@ -1,6 +1,6 @@
 'use strict';
 
-// 2D Fourier Frequency Animation ///////////////////////////////////////////////////////
+// 2D Fourier Frequency Animation /////////////////////////////////////////////
 
 var freq2dCanvas = document.getElementById('freq2dCanvas');
 var freq2dScene = new THREE.Scene();
@@ -39,8 +39,9 @@ var freqQuad = new THREE.Mesh(
 freq2dScene.add(freqQuad);
 freq2dCamera.position.z = 15;
 
-// 1D Fourier Frequency Animation ///////////////////////////////////////////////////////
-//*
+// 1D Fourier Frequency Animation /////////////////////////////////////////////
+
+
 var linePoints = 300
 
 var freq1dCanvas = document.getElementById('freq1dCanvas');
@@ -58,7 +59,7 @@ var freq1dGeometry = new THREE.BufferGeometry();
 freq1dGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(3 * linePoints), 3));
 let posArray = freq1dGeometry.getAttribute('position').array;
 for(let i = 0; i < linePoints; i++) {
-	let x = (i - 0.5*linePoints)/linePoints;
+	let x = (i - 0.5*(linePoints - 1))/(linePoints - 1);
 	posArray[3*i] = x;
 	posArray[3*i + 1] = 0.45*Math.sin(4*Math.PI*x);
 	posArray[3*i + 2] = 0;
@@ -67,12 +68,6 @@ for(let i = 0; i < linePoints; i++) {
 var lineMaterial = new THREE.ShaderMaterial({
 	vertexShader: document.getElementById('1d_vs').textContent,
     fragmentShader: document.getElementById('1d_fs').textContent,
-    //uniforms: {
-	//    color: {
-	//        type: 'v3',
-	//        value: new THREE.Vector3(trajParams.curve.r, trajParams.curve.g, trajParams.curve.b)
-	//    }
-	//},
 	depthWrite: false,
 	depthTest: false,
 	linewidth: 3,
@@ -84,17 +79,17 @@ freq1dScene.add(freq1dLine);
 
 var inpFreq = document.getElementById('inpFreq');
 inpFreq.oninput = function () {
-	console.log('input touchy touchied')
 	let posAttr = freq1dGeometry.getAttribute('position');
 	let posArray = posAttr.array;
 	for(let i = 0; i < linePoints; i++) {
-		let x = (i - 0.5*linePoints)/linePoints;
+		let x = (i - 0.5*(linePoints - 1))/(linePoints - 1);
 		posArray[3*i + 1] = 0.45*Math.sin(2*this.value*Math.PI*x);
 	}
 	posAttr.needsUpdate = true;
 }
 
-		//*/
+
+// Rendering //////////////////////////////////////////////////////////////////
 
 
 function render() {
