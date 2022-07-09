@@ -157,10 +157,11 @@
         uniform float p;
         varying vec3 fragCol;
         void main(){
-            vec3 pows = pow(fragCol, vec3(1.0 - p));
-            float n = pow(pows.x + pows.y + pows.z, 1.0/(1.0 - p));
-            vec3 new_col = fragCol/n;
-            gl_FragColor = vec4(new_col, 1);
+            vec3 col = fragCol/(fragCol.r + fragCol.g + fragCol.b);
+            col = pow(col, vec3(-2.0 - p));
+            float m = max(col.r, max(col.g, col.b));
+            col /= m;
+            gl_FragColor = vec4(col, 1);
         }
     </script>
     <script src="../../scripts/displayZipfGeometry.js"></script>

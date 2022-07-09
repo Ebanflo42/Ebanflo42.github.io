@@ -92,7 +92,9 @@ inpFreq.oninput = function () {
 
 // High Dimensional Projection ////////////////////////////////////////////////
 
+var highdLinePoints = 1200;
 
+//*
 var axis1 = new Array();
 for(let i = 0; i < 300; i++) {
 	axis1.push(Math.random());
@@ -112,40 +114,48 @@ for(let i = 0; i < 150; i++) {
 }
 var axis3 = new Array();
 for(let i = 0; i < 100; i++) {
-	axis3.push(axis1[3*i + 2]*axis2[3*i + 3] - axis1[3*i + 3]*axis2[3*i + 2]);
-	axis3.push(axis1[3*i + 1]*axis2[3*i + 3] - axis1[3*i + 3]*axis2[3*i + 1]);
 	axis3.push(axis1[3*i + 1]*axis2[3*i + 2] - axis1[3*i + 2]*axis2[3*i + 1]);
+	axis3.push(axis1[3*i]*axis2[3*i + 2] - axis1[3*i + 2]*axis2[3*i]);
+	axis3.push(axis1[3*i]*axis2[3*i + 1] - axis1[3*i + 1]*axis2[3*i]);
 }
+//*/
+//var axis1 = [1, 0, 0];
+//var axis2 = [0, 1, 0];
+//var axis3 = [0, 0, 1];
 
 var phases = new Array();
 for(let i = 0; i < 300; i++) {
 	phases.push(Math.PI*Math.random());
 }
 var exponent = -1;
+var powerNormalizer = 0;
+for(let i = 0; i < 300; i++) {
+	powerNormalizer += Math.pow(i + 1, exponent);
+}
 
 var highdPoints = new Array();
-for(let i = 0; i < linePoints + 1; i++) {
+for(let i = 0; i < highdLinePoints + 1; i++) {
 	let point = new Array();
 	for(let j = 0; j < 300; j++) {
-		let wav = Math.sin(2*Math.PI*i/linePoints + phases[j]);
-		let amp = Math.pow(j + 1, exponent);
+		let wav = Math.sin(2*Math.PI*(j + 1)*i/highdLinePoints + phases[j]);
+		let amp = Math.pow(j + 1, exponent)/powerNormalizer;
 		point.push(amp*wav);
 	}
+	//*/
 	highdPoints.push(point)
 }
 
 var highdCanvas = document.getElementById('highdCanvas');
-var highdCamera = new THREE.PerspectiveCamera(60, highdCanvas.clientWidth / highdCanvas.clientHeight, 1, 20);
+var highdCamera = new THREE.PerspectiveCamera(60, highdCanvas.clientWidth / highdCanvas.clientHeight, 0.01, 20);
 var cameraControl = new THREE.OrbitControls(highdCamera, highdCanvas);
-cameraControl.rotateSpeed = 0.0;
-highdCamera.position.set(0, 0, 5);
+highdCamera.position.set(0, 0, 0.1);
 highdCamera.lookAt(new THREE.Vector3(0, 0, 0));
 
 var highdGeometry = new THREE.BufferGeometry();
 highdGeometry.setAttribute('position',
-						    new THREE.BufferAttribute(new Float32Array(3 * (linePoints + 1)), 3));
+						    new THREE.BufferAttribute(new Float32Array(3 * (highdLinePoints + 1)), 3));
 var highdPosArray = highdGeometry.getAttribute('position').array;
-for(let i = 0; i < linePoints + 1; i++) {
+for(let i = 0; i < highdLinePoints + 1; i++) {
 	highdPosArray[3*i] = 0;
 	highdPosArray[3*i + 1] = 0;
 	highdPosArray[3*i + 2] = 0;
@@ -153,18 +163,17 @@ for(let i = 0; i < linePoints + 1; i++) {
 		highdPosArray[3*i] += axis1[j]*highdPoints[i][j];
 		highdPosArray[3*i + 1] += axis2[j]*highdPoints[i][j];
 		highdPosArray[3*i + 2] += axis3[j]*highdPoints[i][j];
-		console.log(highdPosArray[3*i + 2])
 	}
 }
 
-let vertCol = new Float32Array(3*(linePoints + 1));
-for (let i = 0; i < linePoints + 1; i++) {
-	vertCol[3*i] = Math.sin(2*Math.PI*i/linePoints);
-	vertCol[3*i + 1] = Math.sin(2*Math.PI*i/linePoints + 0.333*Math.PI);
-	vertCol[3*i + 2] = Math.sin(2*Math.PI*i/linePoints + 0.66*Math.PI);
+let vertCol = new Float32Array(3*(highdLinePoints + 1));
+for (let i = 0; i < highdLinePoints + 1; i++) {
+	vertCol[3*i] = 0.5 + 0.5*Math.sin(2*Math.PI*i/highdLinePoints);
+	vertCol[3*i + 1] = 0.5 + 0.5*Math.sin(2*Math.PI*i/highdLinePoints + 0.333*Math.PI);
+	vertCol[3*i + 2] = 0.5 + 0.5*Math.sin(2*Math.PI*i/highdLinePoints + 0.66*Math.PI);
 }
 highdGeometry.setAttribute('vertCol', new THREE.BufferAttribute(vertCol, 3));
-highdGeometry.setDrawRange(0, linePoints + 1);
+highdGeometry.setDrawRange(0, highdLinePoints + 1);
 
 var highdMaterial = new THREE.ShaderMaterial({
 	vertexShader: document.getElementById('highd_vs').textContent,
@@ -187,18 +196,23 @@ var expInput = document.getElementById("expInput");
 expInput.oninput = function() {
 
 	exponent = -this.value/20;
+	powerNormalizer = 0;
+	for(let i = 0; i < 300; i++) {
+		powerNormalizer += Math.pow(i + 1, exponent);
+	}
 
-	for(let i = 0; i < linePoints; i++) {
+
+	for(let i = 0; i < highdLinePoints + 1; i++) {
 		for(let j = 0; j < 300; j++) {
-			let wav = Math.sin(2*Math.PI*i/linePoints + phases[j]);
-			let amp = Math.pow(j + 1, exponent);
+			let wav = Math.sin(2*Math.PI*(j + 1)*i/highdLinePoints + phases[j]);
+			let amp = Math.pow(j + 1, exponent)/powerNormalizer;
 			highdPoints[i][j] = amp*wav;
 		}
 	}
 
 	let posAttr = highdGeometry.getAttribute('position');
 	let posArray = posAttr.array;
-	for(let i = 0; i < linePoints + 1; i++) {
+	for(let i = 0; i < highdLinePoints + 1; i++) {
 		posArray[3*i] = 0;
 		posArray[3*i + 1] = 0;
 		posArray[3*i + 2] = 0;
