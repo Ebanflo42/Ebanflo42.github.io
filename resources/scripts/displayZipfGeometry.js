@@ -92,7 +92,7 @@ inpFreq.oninput = function () {
 
 // High Dimensional Projection ////////////////////////////////////////////////
 
-var highdLinePoints = 1200;
+var highdLinePoints = 3600;
 
 //*
 var axis1 = new Array();
@@ -118,10 +118,13 @@ for(let i = 0; i < 100; i++) {
 	axis3.push(axis1[3*i]*axis2[3*i + 2] - axis1[3*i + 2]*axis2[3*i]);
 	axis3.push(axis1[3*i]*axis2[3*i + 1] - axis1[3*i + 1]*axis2[3*i]);
 }
-//*/
-//var axis1 = [1, 0, 0];
-//var axis2 = [0, 1, 0];
-//var axis3 = [0, 0, 1];
+norm = 0;
+for(let i = 0; i < 300; i++) {
+	norm += axis3[i]*axis3[i];
+}
+for(let i = 0; i < 300; i++) {
+	axis3[i] /= Math.sqrt(norm);
+}
 
 var phases = new Array();
 for(let i = 0; i < 300; i++) {
@@ -148,7 +151,7 @@ for(let i = 0; i < highdLinePoints + 1; i++) {
 var highdCanvas = document.getElementById('highdCanvas');
 var highdCamera = new THREE.PerspectiveCamera(60, highdCanvas.clientWidth / highdCanvas.clientHeight, 0.01, 20);
 var cameraControl = new THREE.OrbitControls(highdCamera, highdCanvas);
-highdCamera.position.set(0, 0, 0.1);
+highdCamera.position.set(0, 0, 0.05);
 highdCamera.lookAt(new THREE.Vector3(0, 0, 0));
 
 var highdGeometry = new THREE.BufferGeometry();

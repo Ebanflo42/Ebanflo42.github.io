@@ -7,21 +7,21 @@ div.heading {
 }
 
 h1 {
-  color: rgb(183,193,179);
+  color: rgb(210, 140, 230);
   font-family: "Roboto";
   font-size: 64px;
   line-height: 40px;
 }
 
 h2 {
-  color: rgb(200,210,200);
+  color: rgb(210, 140, 230);
   font-family: "Roboto";
   font-size: 32px;
   line-height: 20px;
 }
 
 h3 {
-  color: rgb(183,193,179);
+  color: rgb(210, 140, 230);
   font-family: "Roboto";
   font-size: 12px;
 }
@@ -47,36 +47,36 @@ img.me {
 
 .home {
   font-family: roboto;
-  color: rgb(230,240,230);
+  color: rgb(200,220,250);
   font-size: 24px;
-  padding-left: 4em;
-  padding-right: 4em;
+  padding-left: 8em;
+  padding-right: 8em;
 }
 
 a.navItem {
   font-size: 20px;
   width:18%;
-  background-color: rgb(26,30,40);
+  background-color: rgb(20,40,30);
   border-style: solid;
   border-width: 3px;
-  border-color: rgb(140,160,180);
+  border-color: rgb(100,200,180);
   display: inline-block;
   text-align: center;
 }
 
 a:link {
   font-family: "Roboto";
-  color: white;
+  color: rgb(80,250,130);
 }
 
 a:visited {
-  color: rgb(175,175,175);
+  color: rgb(35,140,70);
 }
 
 .textContent {
   text-align: left;
-  background-color: rgb(75,75,75);
-  color: rgb(240,240,240);
+  background-color: rgb(26,30,40);
+  color: rgb(200,220,250);
   font-family: "Roboto";
   font-size: 20px;
   padding: 20px;
