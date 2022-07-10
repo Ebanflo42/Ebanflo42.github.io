@@ -57,7 +57,7 @@
         <a href="https://github.com/Ebanflo42/zipf-bible" target="_blank">here.</a>
         </p>
         <div align="center">
-            <img src="../../images/zipf_curve.png" style="border-radius: 5px"/>
+            <img src="../../images/zipf_curve.png" style="border-radius: 5px; filter: brightness(90%)"/>
         </div>
         <p class="textContent">
             The horizontal axis of this plot corresponds to the logarithm of the nth most common word
@@ -72,15 +72,14 @@
             Indeed, this distribution of words is something that arose completely naturally, and has been
             observed across many different corpuses of text in many different languages. Not only that,
             this distribution has been observed in the magnitude of Earthquakes, the noise spectrum of
-            electrical circuits, the sizes of cities, or the frequency of gene sequences in the Zebra fish.
+            electrical circuits, the sizes of cities, and even the frequency of gene sequences in the Zebra fish.
             <br><br>
             Although the ubiquity of this distribution may be initially surprising, there is a significant
             body of literature across different fields which provides a number of different explanations
-            for the phenomenon.
-            However, there is a specific paper from computational neuroscience,
+            for the phenomenon. However, there is a specific paper from computational neuroscience,
             <a href="https://www.nature.com/articles/s41586-019-1346-5" target="_blank">Stringer and Pachitariu et al.</a>,
-            that contains a proof in its supplementary material, which I believe gets to the heart of the phenomenon
-            in a way that is more elegant and enlightening than anything else I have read so far.
+            that contains a proof in its supplementary material which I believe gets to the heart of the phenomenon
+            in a more elegant and enlightening way than anything else I have read so far.
             <br><br>
             In order to understand the reasoning of Stringer and Pachitariu, we are going to have to review
             some basic statistics before delving into differential geometry, generalizing the Fourier transform,
@@ -107,28 +106,69 @@
             product</i> for this sort of thing. That would give use a real-valued measure of the spread of the data,
             but what we actually want is a measure of the spread in <i>all directions</i>. For this, we use the
             <b>outer product</b>: $\otimes$. $u\otimes v$, for vectors $u$ and $v$, produces a matrix $A$ defined
-            by $A_{ij}=u_i v_j$. Then we define the <b>covariance matrix</b> as follows:
+            by $A_{ij}=u_i v_j$. Then we define the <b>sample covariance matrix</b> as follows:
             <br><br>
-            $$\Sigma=\frac{1}{N}\sum_{i=1}^N (X_i-\mu)\otimes(X_i-\mu)$$
+            $$\Sigma_S=\frac{1}{N}\sum_{i=1}^N (X_i-\mu)\otimes(X_i-\mu)$$
             <br>
-            We should interpret the matrix entry $\Sigma_{ij}$ as how likely dimension $i$ of the data is likely
+            We should interpret the matrix entry $\Sigma_{Sij}$ as how likely dimension $i$ of the data is likely
             to be spread out when dimension $j$ of the data is spread out.
             <br><br>
-            Note that $\Sigma$ is symmetric. That's because $\otimes$ always produces symmetric matrices,
+            Note that $\Sigma_S$ is symmetric. That's because $\otimes$ always produces symmetric matrices,
             and any sum of symmetric matrices is symmetric. Recall from linear algebra that a symmetric matrix
             may be written in the following form:
             <br><br>
-            $$\Sigma=U\Lambda U^T$$
+            $$\Sigma_S=U\Lambda U^T$$
             <br>
             Where $\Lambda$ is a non-negative diagonal matrix of eigenvalues and $U$ is a real orthogonal matrix of
             eigenvectors. Now, what we may do at this point is transform our data into a new coordinate system
             $X'_1=U^T X_1,\; X'_2=U^T X_2,...\;X'_N=U^TX_N$. The advantage of this coordinate system is that
-            the covariance matrix $\Sigma'$ of the new data is simply $\Lambda$.
+            the sample covariance matrix $\Sigma_S'$ of the new data is simply $\Lambda$.
             <br><br>
             What this tells us is that the columns of $U$ can be thought of as an orthogonal basis determining
             the directions in which the data is primarily spread. In practice, a column $U_i$ is called the ith
             <b>principal component</b>, and the eigenvalue $\Lambda_{ii}$ is called the <i>variance along the
             ith principal component</i>.
+            <br><br>
+            In order to better illustrate what's going on here, lets consider a simple example. Suppose random
+            $X_1$ and $X_2$ are sampled from a multivariate Gaussian distribution function:
+            $(X_1, X_2)~\mathcal{N}(\mu,\Sigma)$. The probability density function of this distribution is:
+            <br><br>
+            $$f(\mathbf{x})=\frac{1}{Z}\exp\big[-\frac{1}{2}(\mathbf{x}-\mu)\Sigma^{-1}(\mathbf{x}-\mu)^T\big]$$
+            <br>
+            Where $Z$ is a normalizing factor which ensures that probability integrated over the entire plane is 1.
+            This distribution function is exactly analogous to the 1-dimensional Gaussian distribution, except that
+            the variance $\sigma$ is replaced with the covariance matrix $\Sigma$. The inverted covariance $\Sigma^{-1}$
+            will scale the input $\mathbf{x}$ by the inverse of its eigenvalues along the axes defined by its
+            eigenvectors, meaning larger eigenvalues correspond to larger spread in a sample of the random variable.
+            For a Gaussian, the sample covariance $\Sigma_S$ is a good approximation of the true covariance $\Sigma$.
+            Let's pick some numbers for our example:
+            <br><br>
+            $$\Sigma=
+            \begin{pmatrix}
+            8 & 4 \\
+            4 & 5 \\
+            \end{pmatrix}$$
+            <br>
+            There's no special meaning to these numbers, I just fiddled around until I got a nice plot:
+        </p>
+        <div align="center">
+            <img src="../../images/pca_plot.png" style="border-radius: 5px; filter: brightness(90%)"/>
+        </div>
+        <p class="textContent">
+            The blue dots are sampled from a multivariate Gaussian with $\Sigma$ as defined above. The eigenvectors
+            of $\Sigma$ are plotted in red and are scaled by their corresponding eigenvalue. As you can see, the
+            eigenvectors of $\Sigma$ give us a good idea of the directions in which the data is spread, and the
+            eigenvalues give us a good idea of how spread along each direction the data is.
+            <br><br>
+            In practice, this technique is more commonly used on very high-dimensional data. For every dimension of
+            the data, we get a principal component and a corresponding principal variance. To visualize the data,
+            we can project it onto the first two or three principal components, and ask how much variance those
+            dimensions account for.
+            <br><br>
+            What Stringer and Pachitariu found is that, if we perform calcium imaging on a mouse's brain while
+            showing it videos
+        </p>
+        <p class="textContent" id="Kernels">
             <br><br>
             For the rest of this article, I will invite you to think of functions as vectors. For some readers this
             might be familiar, but for those who are new to the concept remember that for any
