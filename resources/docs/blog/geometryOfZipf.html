@@ -39,11 +39,11 @@
         genomics, physics, and even neuroscience. To state the law as it was originally observed
         for languages, let $f_n$ be the frequency (or total number of occurrences) of the nth most
         common word for some language. Then we have the following approximate equation:
-        <br><br>
+        <br>
         $$f_n=\frac{f_1}{n}$$
         <br><br>
         Or, taking the logarithm for a more convenient form:
-        <br><br>
+        <br>
         $$\log(f_n)=-\log(n)+\log(f_1)$$
         <br><br>
         For example, the most common word in English is "the," the second most common word is "be,"
@@ -93,13 +93,13 @@
             Suppose we have an experiment which we perform that gives us some vector-valued observations
             $X_1,X_2,...X_N$ in $\mathbb{R}^n$. The most basic statistic we could extract from our data is
             the mean:
-            <br><br>
+            <br>
             $$\mu=\frac{1}{N}\sum_{i=1}^N X_i$$
             <br>
             which tells us about the general position of the data. It would be interesting to have an idea
             about how the data is <i>spread out</i> around the mean. If each $X_i$ were a single real number,
             we could compute this using the <i>variance</i>:
-            <br><br>
+            <br>
             $$\sigma^2=\frac{1}{N}\sum_{i=1}^N(X_i-\mu)^2$$
             <br>
             However, we need a precise notion of what it means to square a vector. Usually, we would use the <i>inner
@@ -107,7 +107,7 @@
             but what we actually want is a measure of the spread in <i>all directions</i>. For this, we use the
             <b>outer product</b>: $\otimes$. $u\otimes v$, for vectors $u$ and $v$, produces a matrix $A$ defined
             by $A_{ij}=u_i v_j$. Then we define the <b>sample covariance matrix</b> as follows:
-            <br><br>
+            <br>
             $$\Sigma_S=\frac{1}{N}\sum_{i=1}^N (X_i-\mu)\otimes(X_i-\mu)$$
             <br>
             We should interpret the matrix entry $\Sigma_{Sij}$ as how likely dimension $i$ of the data is likely
@@ -116,7 +116,7 @@
             Note that $\Sigma_S$ is symmetric. That's because $\otimes$ always produces symmetric matrices,
             and any sum of symmetric matrices is symmetric. Recall from linear algebra that a symmetric matrix
             may be written in the following form:
-            <br><br>
+            <br>
             $$\Sigma_S=U\Lambda U^T$$
             <br>
             Where $\Lambda$ is a non-negative diagonal matrix of eigenvalues and $U$ is a real orthogonal matrix of
@@ -132,7 +132,7 @@
             In order to better illustrate what's going on here, lets consider a simple example. Suppose random
             $X_1$ and $X_2$ are sampled from a multivariate Gaussian distribution function:
             $(X_1, X_2)~\mathcal{N}(\mu,\Sigma)$. The probability density function of this distribution is:
-            <br><br>
+            <br>
             $$f(\mathbf{x})=\frac{1}{Z}\exp\big[-\frac{1}{2}(\mathbf{x}-\mu)\Sigma^{-1}(\mathbf{x}-\mu)^T\big]$$
             <br>
             Where $Z$ is a normalizing factor which ensures that probability integrated over the entire plane is 1.
@@ -142,7 +142,7 @@
             eigenvectors, meaning larger eigenvalues correspond to larger spread in a sample of the random variable.
             For a Gaussian, the sample covariance $\Sigma_S$ is a good approximation of the true covariance $\Sigma$.
             Let's pick some numbers for our example:
-            <br><br>
+            <br>
             $$\Sigma=
             \begin{pmatrix}
             8 & 4 \\
@@ -165,38 +165,71 @@
             we can project it onto the first two or three principal components, and ask how much variance those
             dimensions account for.
             <br><br>
-            What Stringer and Pachitariu found is that, if we perform calcium imaging on a mouse's brain while
-            showing it videos
+            What Stringer and Pachitariu found is that, if they perform calcium imaging on a mouse's brain while
+            showing it natural images, and define $\lambda_n$ to be the nth largest eigenvalue of the covariance
+            matrix of the mouse's brain activity, then the following approximate relationship emerges empirically:
+            <br>
+            $$\lambda_n=\frac{\lambda_1}{n}$$
+            <br>
+            this is exactly the same relationship appearing in Zipf's law!
+            <br><br>
+            To understand the relationship intuitively, one could think of a "principal component" of a text as
+            a single word, since this is a specific variable distinguished from every other word (in the same
+            sense that each principal component is orthogonal to every other). Then the nth variance or eigenvalue
+            $\lambda_n$ would naturally correspond to the number of occurrences of the word, since that is exactly
+            how much the word contributes to the variance of the text.
+            <br><br>
+            At this point, this most probably seems extremely hand-wavy, and it is. However, if you're willing to
+            accept this interpretation for the time being you will later see that there is a very natural reason
+            why we would expect this distribution to occur any time there is a representation which must simultaneously
+            optimize both its detail and its readability.
+            <br><br>
+            But before we prove our main theorem, we need a few more definitions.
         </p>
-        <p class="textContent" id="Kernels">
-            <big><u><b>Kernels</b></u></big>
+        <p class="textContent" id="Hilbert_Spaces">
+            <big><u><b>Hilbert Spaces</b></u></big>
             <br><br>
             For the rest of this article, I will invite you to think of functions as vectors. For some readers this
             might be familiar, but for those who are new to the concept remember that for any
             $f,g:\mathbb{R}\rightarrow\mathbb{R}$ we still have that, for all scalars $c\in\mathbb{R}$,
-            $x\mapsto f(x)+cg(x)$ is still a function $\mathbb{R}\rightarrow\mathbb{R}$. I will use
-            $\mathbb{R}^{\mathbb{N}}$ to denote the vector space of real-valued functions of the natural
-            numbers (equivalent to real-valued sequences) and $\mathcal{C}(\mathbb{R}, \mathbb{R})$ to denote
-            the vector space of continuous functions from the reals to the reals.
+            $x\mapsto f(x)+cg(x)$ is still a function $\mathbb{R}\rightarrow\mathbb{R}$. We will use the notation
+            $\mathcal{C}(M,\mathbb{R})$ to denote the vector space of continuous functions from $M$ to $\mathbb{R}$.
+            For example $M$ could be the natural numbers $\mathbb{N}$, an interval $[0,1]$, a  $[0,1]\times [0,1]$,
+            or a more complicated space.
             <br><br>
-            Given a real-valued function $f$, we might want to intuitively think of the values $f(x)$ as the
-            entries of the vector. We might also want to (very intuitively) think of the integral sign $\int$
-            as if it were summation $\sum$. Then suppose we have a function of two variables $K(x,y)$, we could
+            An extremely important subspace of $\mathcal{C}(\mathbb{R},\mathbb{R})$ is $L^2(\mathbb{R},\mathbb{R})$.
+            This subspace is defined such that for all $f\in L^2(\mathbb{R},\mathbb{R})$, we have that the quantitity
+            <br>
+            $$\langle f,f \rangle =\int_{-\infty}^{\infty}f(x)^2dx$$
+            <br><br>
+            is well defined. For general $f,g\in L^2(\mathbb{R},\mathbb{R})$, we define
+            <br>
+            $$\langle f,g \rangle =\int_{-\infty}^{\infty}f(x)g(x)dx$$
+            <br>
+            The operation $\langle\cdot,\cdot\rangle$ is referred to as the inner product on this
+            space. A vector space supporting such an operation is referred to as a <b>Hilbert space</b>.
+            <br><br>
+            To see the intuition for this definition: we might want to think of the value $f(x)$ as the
+            entry of the vector at index $x$. We might also want to (very intuitively) think of the integral sign $\int$
+            as if it were summation $\sum$. In that case, the operation defined above is precisely the infinite-dimensional
+            generalization of the dot product. This is even more clear to see if we think of $L^2(\mathbb{N}, \mathbb{R})$,
+            where the equivalent of integration is again summation, so we have that for sequences
+            $a,b\in L^2(\mathbb{N}, \mathbb{R})$ the inner product is defined as:
+            <br>
+            $$\langle a,b \rangle =\sum_{i=0}^{\infty}a_i b_i$$
+            which is simply the dot product with infinitely many indices. Indeed this space is simply the set of convergent
+            sequences whose element-wise product is still convergent!
+            <br><br>
+            Now that we have defined an inner product for functions, we should think about what it means to have a
+            matrix product for functions. Suppose we have a function of two variables $K(x,y)$, we could
             think of $K$ as the functional version of a matrix, in which case matrix multiplication of $f$ by $K$
             would be defined as:
-            <br><br>
+            <br>
             $$g(x)=\int K(x, y)f(y)dy$$
             <br>
             This is a very dangerous move: it requires that $K(x,\cdot)f(\cdot)$ is an integrable function for all
             $x$, so we can't just throw any old $K$ into this equation. However, if we are careful, the operation
             described above is called an <b>integral operator</b> and $K$ is referred to as its <b>kernel</b>.
-            <br><br>
-            In a way exactly analogous to how we defined an outer product which takes vectors and produces matrices,
-            we can define and outer product which takes functions $f$ and $g$ and produces a kernel $K$:
-            <br><br>
-            $$K(x,y)=f\otimes g=f(x)g(y)$$
-            <br>
-            Note that $K(x, y)=K(y,x)$, meaning it is a <b>symmetric</b> kernel.
             <br><br>
             Stringer and Pachitariu's theory rests on the assumption that their calcium images record so many
             neurons (several thousand) in the mouse visual cortex, that the activity space can be thought of as
@@ -206,20 +239,21 @@
             that their experiments involved showing the mice videos and images, which should be primarily
             responsible for the variance in the activity of the neurons. Suppose we have a finite-dimensional
             space $M$ with points $p\in M$ representing specific stimuli shown to the mouse. Then, assuming the
-            brain has some degree of consistency, we autmotically have a <b>representation</b>
+            brain has some degree of consistency, we automatically have a <b>representation</b>
             $\Phi:M\rightarrow \mathbb{H}$ which takes stimuli and returns cortex activity.
             <br><br>
-            In order to develop a theory of how Zipf's law emerges in the brain, we assume we have a random
-            variable $P$ defined on $M$; this denotes the probability distribution over all possible stimuli
-            which the mouse could see. I will use $P_1$ and $P_2$ to denote independent samples of $P$.
-            Now we can define the <b>covariance kernel</b> on the space of neurons:
-            <br><br>
-            $$K=\mathbb{E}_{P_1,P_2}[\Phi(P_1)\otimes\Phi(P_2)]$$
+            The central object required for developing a theory of how Zipf's law occurs in the brain is a kernel
+            $K$ defined on the finite-dimensional stimulus space $M$. The definition for $p,q\in M$ is straightforward:
             <br>
-            Where I used $\mathbb{E}_{P_1,P_2}$ to denote the expectation over two random variables. Intuitively,
-            this is nothing more than <i>the infinite-dimensional generalization of the covariance matrix</i>.
-            Given two neurons $x$ and $y$, $K(x,y)$ denotes their expected co-activation over all possible different
-            stimuli.
+            $$K(p,q)=\langle \Phi(p),\Phi(q) \rangle$$
+            <br>
+            From now on, I will use $K$ to denote specifically this kernel for whatever space $M$ might be in question.
+            Now it is time to review a few theorems we will use in the proof.
+            <br><br>
+            A short note for advanced readers: a Hilbert space is actually any inner product space <i>such that the metric
+            induced by the inner product is complete.</i> Stringer and Pachitariu specifically refer to <i>separable</i> Hilbert spaces.
+            Also, if you are comfortable with the definitions, it is an important exercise to prove that $L^2$ is indeed a
+            Hilbert space.
         </p>
 
     </p>
@@ -260,14 +294,13 @@
         const float pi = 4.0*atan(1.0);
 
         vec3 colormap(float val, float scale) {
-            val /= scale;
-            return vec3(max(0.0, val), 0.15*abs(val), -min(0.0, val));
+            return scale*vec3(max(0.0, val), -min(0.0, val), max(0.0, val));
         }
 
         vec3 render(vec2 coords) {
             vec2 s = sin(2.0*pi*freqs*coords/res);
             vec2 c = cos(2.0*pi*freqs*coords/res);
-            return colormap(s.x*s.y, 1.0);
+            return colormap(s.x*s.y, 0.9);
         }
 
         void main(){
