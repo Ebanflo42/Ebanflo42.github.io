@@ -173,7 +173,7 @@
             <br>
             this is exactly the same relationship appearing in Zipf's law!
             <br><br>
-            To understand the relationship intuitively, one could think of a "principal component" of a text as
+            Intuitively, one could think of a "principal component" of a text as
             a single word, since this is a specific variable distinguished from every other word (in the same
             sense that each principal component is orthogonal to every other). Then the nth variance or eigenvalue
             $\lambda_n$ would naturally correspond to the number of occurrences of the word, since that is exactly
@@ -264,6 +264,13 @@
     <input type="range" min="-12" max="12" value="-3" id="inpyFreq"></input>
     <br>
     <div align="center">
+        <canvas id="coeff2dCanvas" style="height:360px;width:1440px"/>
+    </div>
+    <input type="range" min="-20" max="20" value="2" id="inp2dCoeff1"></input>
+    <input type="range" min="-20" max="20" value="-3" id="inp2dCoeff2"></input>
+    <input type="range" min="-20" max="20" value="-3" id="inp2dCoeff3"></input>
+    <br>
+    <div align="center">
         <canvas id="freq1dCanvas" style="height:480px;width:720px"/>
     </div>
     <input type="range" min="-12" max="12" value="2" id="inpFreq"></input>
@@ -271,7 +278,7 @@
     <div align="center">
         <canvas id="highdCanvas" style="height:480px;width:720px"/>
     </div>
-    <input type="range" min="0" max="40" value="20" id="expInput"></input>
+    <input type="range" min="0" max="80" value="20" id="expInput"></input>
     <script src="../../scripts/three.min.js"></script>
     <script src="../../scripts/OrbitControls.js"></script>
     <script id="1d_vs" type="glsl">
@@ -313,6 +320,56 @@
             gl_FragColor *= 0.25;
 	    }
     </script>
+    <script id="2d_fs2" type="glsl">
+        uniform vec2 res;
+        uniform vec3 coeffs;
+
+        const float pi = 4.0*atan(1.0);
+
+        const vec2 freqs1 = vec2(1, 2);
+        const vec2 freqs2 = vec2(3, 4);
+        const vec2 freqs3 = vec2(5, 6);
+
+        vec3 colormap(float val, float scale) {
+            return scale*vec3(max(0.0, val), -min(0.0, val), max(0.0, val));
+        }
+
+        vec3 render(vec2 coords) {
+            if(coords.x < 0.25*res.x) {
+                vec2 r = vec2(0.25*res.x, res.y);
+                vec2 s = sin(2.0*pi*freqs1*coords/r);
+                return colormap(s.x*s.y, 0.9);
+            }
+            else if(coords.x < 0.5*res.x) {
+                coords.x -= 0.25*res.x;
+                vec2 s = sin(2.0*pi*freqs2*coords/res.y);
+                return colormap(s.x*s.y, 0.9);
+            }
+            else if(coords.x < 0.75*res.x) {
+                coords.x -= 0.5*res.x;
+                vec2 s = sin(2.0*pi*freqs3*coords/res.y);
+                return colormap(s.x*s.y, 0.9);
+            }
+            else {
+                coords.x -= 0.75*res.x;
+                vec2 s1 = sin(2.0*pi*freqs1*coords/res.y);
+                vec2 s2 = sin(2.0*pi*freqs2*coords/res.y);
+                vec2 s3 = sin(2.0*pi*freqs3*coords/res.y);
+                float s = coeffs.x*s1.x*s1.y + coeffs.y*s2.x*s2.y + coeffs.z*s3.x*s3.y;
+                return colormap(s, 0.9);
+            }
+        }
+
+        void main(){
+            gl_FragColor = vec4(0, 0, 0, 1);
+            for(int i = 0; i < 2; i++){
+                for(int j = 0; j < 2; j++){
+                    gl_FragColor.rgb += render(gl_FragCoord.xy + vec2(i, j));
+                }
+            }
+            gl_FragColor *= 0.25;
+	    }
+    </script>
     <script id="highd_vs" type="glsl">
         attribute vec3 vertCol;
         varying vec3 fragCol;
@@ -326,7 +383,7 @@
         varying vec3 fragCol;
         void main(){
             vec3 col = fragCol/(fragCol.r + fragCol.g + fragCol.b);
-            col = pow(col, vec3(-2.0 - p));
+            col = pow(col, vec3(-4.0 - p));
             float m = max(col.r, max(col.g, col.b));
             col /= m;
             gl_FragColor = vec4(col, 1);

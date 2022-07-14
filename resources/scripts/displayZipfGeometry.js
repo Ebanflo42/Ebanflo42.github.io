@@ -39,6 +39,49 @@ var freqQuad = new THREE.Mesh(
 freq2dScene.add(freqQuad);
 freq2dCamera.position.z = 15;
 
+// 2D Fourier Coefficient Animation /////////////////////////////////////////////
+
+var coeff2dCanvas = document.getElementById('coeff2dCanvas');
+var coeff2dScene = new THREE.Scene();
+var coeff2dRenderer = new THREE.WebGLRenderer({canvas: coeff2dCanvas, antialias: false});
+var coeff2dCamera = new THREE.PerspectiveCamera(45, coeff2dCanvas.clientWidth/coeff2dCanvas.clientWidth, 1, 1000);
+
+var coeff2dRes = new THREE.Vector2(coeff2dCanvas.clientWidth, coeff2dCanvas.clientHeight);
+
+var inp2dCoeff1 = document.getElementById('inp2dCoeff1');
+var inp2dCoeff2 = document.getElementById('inp2dCoeff2');
+var inp2dCoeff3 = document.getElementById('inp2dCoeff3');
+
+var coeffs2d = new THREE.Vector3(inp2dCoeff1.value/20, inp2dCoeff2.value/40, inp2dCoeff3.value/60);
+inp2dCoeff1.oninput = function () {
+    coeffs2d.x = this.value/20;
+}
+inp2dCoeff2.oninput = function () {
+    coeffs2d.y = this.value/40;
+}
+inp2dCoeff3.oninput = function () {
+    coeffs2d.z = this.value/60;
+}
+
+var coeff2dShader = new THREE.ShaderMaterial({
+	vertexShader: document.getElementById('2d_vs').textContent,
+	fragmentShader: document.getElementById('2d_fs2').textContent,
+	depthWrite: false,
+	depthTest: false,
+	uniforms: {
+		res: { type: 'v2', value: coeff2dRes },
+		coeffs: { type: 'v3', value: coeffs2d }
+	}
+});
+
+var coeffQuad = new THREE.Mesh(
+	new THREE.PlaneGeometry(2, 2),
+	coeff2dShader
+);
+
+coeff2dScene.add(coeffQuad);
+coeff2dCamera.position.z = 15;
+
 // 1D Fourier Frequency Animation /////////////////////////////////////////////
 
 
@@ -126,23 +169,18 @@ for(let i = 0; i < 300; i++) {
 	axis3[i] /= Math.sqrt(norm);
 }
 
-var phases = new Array();
-for(let i = 0; i < 300; i++) {
-	phases.push(Math.PI*Math.random());
-}
 var exponent = -1;
-var powerNormalizer = 0;
-for(let i = 0; i < 300; i++) {
-	powerNormalizer += Math.pow(i + 1, exponent);
-}
 
 var highdPoints = new Array();
 for(let i = 0; i < highdLinePoints + 1; i++) {
 	let point = new Array();
-	for(let j = 0; j < 300; j++) {
-		let wav = Math.sin(2*Math.PI*(j + 1)*i/highdLinePoints + phases[j]);
-		let amp = Math.pow(j + 1, exponent)/powerNormalizer;
-		point.push(amp*wav);
+	for(let j = 0; j < 150; j++) {
+		let wav1 = Math.sin(2*Math.PI*(j + 1)*i/highdLinePoints);
+		let amp1 = Math.pow(j + 1, exponent/2);
+		point.push(amp1*wav1);
+		let wav2 = Math.cos(2*Math.PI*(j + 1)*i/highdLinePoints);
+		let amp2 = Math.pow(j + 1, exponent/2);
+		point.push(amp2*wav2);
 	}
 	//*/
 	highdPoints.push(point)
@@ -151,7 +189,7 @@ for(let i = 0; i < highdLinePoints + 1; i++) {
 var highdCanvas = document.getElementById('highdCanvas');
 var highdCamera = new THREE.PerspectiveCamera(60, highdCanvas.clientWidth / highdCanvas.clientHeight, 0.01, 20);
 var cameraControl = new THREE.OrbitControls(highdCamera, highdCanvas);
-highdCamera.position.set(0, 0, 0.05);
+highdCamera.position.set(0, 0, 1);
 highdCamera.lookAt(new THREE.Vector3(0, 0, 0));
 
 var highdGeometry = new THREE.BufferGeometry();
@@ -199,17 +237,15 @@ var expInput = document.getElementById("expInput");
 expInput.oninput = function() {
 
 	exponent = -this.value/20;
-	powerNormalizer = 0;
-	for(let i = 0; i < 300; i++) {
-		powerNormalizer += Math.pow(i + 1, exponent);
-	}
-
 
 	for(let i = 0; i < highdLinePoints + 1; i++) {
-		for(let j = 0; j < 300; j++) {
-			let wav = Math.sin(2*Math.PI*(j + 1)*i/highdLinePoints + phases[j]);
-			let amp = Math.pow(j + 1, exponent)/powerNormalizer;
-			highdPoints[i][j] = amp*wav;
+		for(let j = 0; j < 150; j++) {
+			let wav1 = Math.sin(2*Math.PI*(j + 1)*i/highdLinePoints);
+			let amp1 = Math.pow(j + 1, exponent/2);
+			highdPoints[i][2*j] = amp1*wav1;
+			let wav2 = Math.cos(2*Math.PI*(j + 1)*i/highdLinePoints);
+			let amp2 = Math.pow(j + 1, exponent/2);
+			highdPoints[i][2*j + 1] = amp2*wav2;
 		}
 	}
 
@@ -242,6 +278,13 @@ function render() {
     	freq2dRes = new THREE.Vector2(freq2dCanvas.clientWidth, freq2dCanvas.clientHeight);
     }
 
+    if(coeff2dCanvas.width !== coeff2dCanvas.clientWidth || coeff2dCanvas.height !== coeff2dCanvas.clientHeight) {
+    	coeff2dRenderer.setSize(coeff2dCanvas.clientWidth, coeff2dCanvas.clientHeight, false);
+    	coeff2dCamera.aspect = coeff2dCanvas.clientWidth/coeff2dCanvas.clientHeight;
+    	coeff2dCamera.updateProjectionMatrix();
+    	coeff2dRes = new THREE.Vector2(freq2dCanvas.clientWidth, freq2dCanvas.clientHeight);
+    }
+
     if(freq1dCanvas.width !== freq1dCanvas.clientWidth || freq1dCanvas.height !== freq1dCanvas.clientHeight) {
   	    freq1dRenderer.setSize(freq1dCanvas.clientWidth, freq1dCanvas.clientHeight, false);
   	    freq1dCamera.aspect = freq1dCanvas.clientWidth/freq1dCanvas.clientHeight;
@@ -254,15 +297,19 @@ function render() {
 		highdCamera.aspect = highdCanvas.clientWidth/highdCanvas.clientHeight;
 		highdCamera.updateProjectionMatrix();
 		highdRes = new THREE.Vector2(highdCanvas.clientWidth, highdCanvas.clientHeight);
-  }
+  	}
 
     freq2dShader.uniforms['res'].value = freq2dRes;
     freq2dShader.uniforms['freqs'].value = freqs2d;
+
+    freq2dShader.uniforms['res'].value = coeff2dRes;
+	coeff2dShader.uniforms['coeffs'].value = coeffs2d;
 
 	highdMaterial.uniforms['p'].value = exponent;
 
     freq2dRenderer.render(freq2dScene, freq2dCamera);
     freq1dRenderer.render(freq1dScene, freq1dCamera);
+	coeff2dRenderer.render(coeff2dScene, coeff2dCamera);
 	highdRenderer.render(highdScene, highdCamera);
 
 }
