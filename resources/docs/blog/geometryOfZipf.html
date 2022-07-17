@@ -71,22 +71,29 @@
             probably had no idea about exponents, logarithms, lines of best fit, or even equations.
             Indeed, this distribution of words is something that arose completely naturally, and has been
             observed across many different corpuses of text in many different languages. Not only that,
-            this distribution has been observed in the magnitude of Earthquakes, the noise spectrum of
-            electrical circuits, the sizes of cities, and even the frequency of gene sequences in the Zebra fish.
+            this distribution has been observed in the
+            <a href="https://ieeexplore.ieee.org/abstract/document/4325473" target="_blank">the noise spectrum of
+            electrical circuits,</a>
+            <a href="https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.3.013084">
+            Earthquake magnitudes, the sizes of cities,</a>
+            <a href="https://pubmed.ncbi.nlm.nih.gov/27997544/#&gid=article-figures&pid=fig-4-uid-3">
+            and even the frequency of amino acid sequences in the Zebra fish.</a>
             <br><br>
-            Although the ubiquity of this distribution may be initially surprising, there is a significant
-            body of literature across different fields which provides a number of different explanations
-            for the phenomenon. However, there is a specific paper from computational neuroscience,
-            <a href="https://www.nature.com/articles/s41586-019-1346-5" target="_blank">Stringer and Pachitariu et al.</a>,
-            that contains a proof in its supplementary material which I believe gets to the heart of the phenomenon
-            in a more elegant and enlightening way than anything else I have read so far.
+            Although the ubiquity of this distribution may be initially surprising, each paper which I linked
+            constains its own explanation for the phenomenon. However, the explanation
+            which I want to dive into with this article comes from computational neuroscience, and may even have
+            deep consequences for machine learning. The main paper which I'll be referring to is
+            <a href="https://www.nature.com/articles/s41586-019-1346-5" target="_blank">Stringer and Pachitariu et al.</a>.
+            The main body of this paper shows empirically that the visual cortex of the mouse is exhibiting Zipf's in a
+            way which I'll elaborate on in the next section. Contained in the supplement of the paper is a very elegant and
+            insightful proof for why we actually <i>expect</i> this distribution to emerge.
             <br><br>
             In order to understand the reasoning of Stringer and Pachitariu, we are going to have to review
             some basic statistics before delving into differential geometry, generalizing the Fourier transform,
             and tying it all back to the nature of <i>representation</i> itself, so buckle up and get ready for
-            some spicy math.
-
+            some spicy math!
         </p>
+        <!--
         <p class="textContent" id="PCA">
             <big><u><b>Principal Component Analysis</b></u></big>
             <br><br>
@@ -186,21 +193,22 @@
             <br><br>
             But before we prove our main theorem, we need a few more definitions.
         </p>
-        <p class="textContent" id="Hilbert_Spaces">
-            <big><u><b>Hilbert Spaces</b></u></big>
+        -->
+        <p class="textContent" id="Kernels_and_Hilbert_Spaces">
+            <big><u><b>Kernels and Hilbert Spaces</b></u></big>
             <br><br>
             For the rest of this article, I will invite you to think of functions as vectors. For some readers this
             might be familiar, but for those who are new to the concept remember that for any
             $f,g:\mathbb{R}\rightarrow\mathbb{R}$ we still have that, for all scalars $c\in\mathbb{R}$,
-            $x\mapsto f(x)+cg(x)$ is still a function $\mathbb{R}\rightarrow\mathbb{R}$. We will use the notation
-            $\mathcal{C}(M,\mathbb{R})$ to denote the vector space of continuous functions from $M$ to $\mathbb{R}$.
-            For example $M$ could be the natural numbers $\mathbb{N}$, an interval $[0,1]$, a  $[0,1]\times [0,1]$,
+            $f(x)+cg(x)$ is still a function $\mathbb{R}\rightarrow\mathbb{R}$. We will use the notation
+            $\mathcal{C}(S,\mathbb{R})$ to denote the vector space of continuous functions from $S$ to $\mathbb{R}$.
+            For example $S$ could be the natural numbers $\mathbb{N}$, an interval $[0,1]$, a square $[0,1]\times [0,1]$,
             or a more complicated space.
             <br><br>
             An extremely important subspace of $\mathcal{C}(\mathbb{R},\mathbb{R})$ is $L^2(\mathbb{R},\mathbb{R})$.
             This subspace is defined such that for all $f\in L^2(\mathbb{R},\mathbb{R})$, we have that the quantitity
             <br>
-            $$\langle f,f \rangle =\int_{-\infty}^{\infty}f(x)^2dx$$
+            $$\langle f,f \rangle =\int_{-\infty}^{\infty}|f(x)|^2dx$$
             <br><br>
             is well defined. For general $f,g\in L^2(\mathbb{R},\mathbb{R})$, we define
             <br>
@@ -217,13 +225,12 @@
             $a,b\in L^2(\mathbb{N}, \mathbb{R})$ the inner product is defined as:
             <br>
             $$\langle a,b \rangle =\sum_{i=0}^{\infty}a_i b_i$$
-            which is simply the dot product with infinitely many indices. Indeed this space is simply the set of convergent
-            sequences whose element-wise product is still convergent!
+            which is simply the dot product with infinitely many indices!
             <br><br>
             Now that we have defined an inner product for functions, we should think about what it means to have a
             matrix product for functions. Suppose we have a function of two variables $K(x,y)$, we could
-            think of $K$ as the functional version of a matrix, in which case matrix multiplication of $f$ by $K$
-            would be defined as:
+            think of $K$ as an infinite-dimensional matrix, with indices $x$ and $y$, in which case matrix
+            multiplication of $f$ by $K$ would be defined as:
             <br>
             $$g(x)=\int K(x, y)f(y)dy$$
             <br>
@@ -232,43 +239,78 @@
             described above is called an <b>integral operator</b> and $K$ is referred to as its <b>kernel</b>.
             <br><br>
             Stringer and Pachitariu's theory rests on the assumption that their calcium images record so many
-            neurons (several thousand) in the mouse visual cortex, that the activity space can be thought of as
-            infinite-dimensional. That is, we can choose a function space $\mathbb{H}$ for which $f\in\mathbb{H}$
+            neurons (over ten thousand) in the mouse visual cortex, that the activity space can be thought of as
+            infinite-dimensional. That is, we can choose a Hilbert space $\mathbb{H}$ for which $f\in\mathbb{H}$
             represents the overall activity of the cortex and the domain of the function indexes the neurons.
             This means that $f(x)$ should be thought of as representing the activity of neuron $x$. Remember
             that their experiments involved showing the mice videos and images, which should be primarily
             responsible for the variance in the activity of the neurons. Suppose we have a finite-dimensional
-            space $M$ with points $p\in M$ representing specific stimuli shown to the mouse. Then, assuming the
+            space $S$ with points $s\in S$ representing specific stimuli shown to the mouse. Then, assuming the
             brain has some degree of consistency, we automatically have a <b>representation</b>
             $\Phi:M\rightarrow \mathbb{H}$ which takes stimuli and returns cortex activity.
             <br><br>
             The central object required for developing a theory of how Zipf's law occurs in the brain is a kernel
-            $K$ defined on the finite-dimensional stimulus space $M$. The definition for $p,q\in M$ is straightforward:
+            $K$ defined on the stimulus space $S$. The definition for $s,s'\in S$ is straightforward:
             <br>
-            $$K(p,q)=\langle \Phi(p),\Phi(q) \rangle$$
+            $$K(s,s')=\langle \Phi(s),\Phi(s') \rangle$$
             <br>
-            From now on, I will use $K$ to denote specifically this kernel for whatever space $M$ might be in question.
-            Now it is time to review a few theorems we will use in the proof.
+            From now on, I will use $K$ to denote specifically this kernel for whatever representation $\Phi$ might be in question.
+            In order to understand this definition, remember that our representation $\Phi$ takes a stimulus $s$ to a function describing
+            neural activity. We can give a name to that function: $\Phi(s)=\phi(s,c)$ where $\phi(s,c)$ is now the activity of neuron $c$
+            given stimulus $s$.
             <br><br>
-            A short note for advanced readers: a Hilbert space is actually any inner product space <i>such that the metric
+            In the same way a matrix has an eigenvector equation, a kernel $K$ has an <b>eigenfunction equation</b>:
+            <br>
+            $$\lambda v(s)=\int_{S}K(s,s')v(s')dS$$
+            <br>
+            Where I used the notation $\int_{S}\cdot dS$ to denote integration over $S$.
+            <br><br>
+            There are two important properties of $K$ to note, which directly follow from the properties of $\langle\cdot ,\cdot\rangle$:
+            $\;K(s,s')$ is always non-negative when $s=s'$, and $K(s,s')=K(s',s)$. In finite dimensional spaces, this would allow us to
+            say that 1) the eigenvalues are all non-negative and 2) the eigenvectors form an orthonormal basis. It turns out,
+            <a href="https://en.wikipedia.org/wiki/Mercer%27s_theorem" target="_blank">Mercer's theorem</a> generalizes this principle
+            to infinite dimensions.
+            <br><br>
+            Specifically, the ith eigenvalue $\lambda_i$ is non-negative and the eigenfunctions $v_i$ and $v_j$ are orthonormal:
+            $\int_Sv_i(s)v_j(s)dS$ is 1 if $i=j$ and 0 otherwise. One more thing to note is that Mercer's theorem gives us the
+            following representation of the kernel $K$:
+            <br>
+            $$K(s,s')=\sum_{i=1}^{\infty}\lambda_i v_i(s)v_i(s')$$
+            <br>
+            This will be an important aspect of our proof later on.
+            <br><br>
+            Underlining the fact that $S$ is supposed to be a space representing natural images, $\mathbb{H}$ is the space of visual
+            cortex activity, and $\Phi$ is the map taking an image and returning brain activity, what Stringer and Pachitariu found
+            <b>empirically</b> is that the eigenvalues $\lambda_n$ of the kernel $K$ (which can be computed from sampled data)
+            have the following approximate relationship:
+            <br>
+            $$\lambda_n=\lambda_1 n^{-\alpha}$$
+            <br>
+            With $\alpha\simeq1$, which is exactly the same relationship appearing in Zipf's law!
+            <br><br>
+            Most of our definitions and observations are now in place, but before proving our main result we need to review a few more theorems.
+            <br><br>
+            Some short notes for advanced readers: a Hilbert space is actually any inner product space <i>such that the metric
             induced by the inner product is complete.</i> Stringer and Pachitariu specifically refer to <i>separable</i> Hilbert spaces.
             Also, if you are comfortable with the definitions, it is an important exercise to prove that $L^2$ is indeed a
-            Hilbert space.
+            Hilbert space. Also, its important to be certain that the application of Mercer's theorem was valid.
         </p>
-
-    </p>
     <div align="center">
         <canvas id="freq2dCanvas" style="height:480px;width:720px"/>
     </div>
-    <input type="range" min="-12" max="12" value="2" id="inpxFreq"></input>
-    <input type="range" min="-12" max="12" value="-3" id="inpyFreq"></input>
+    <div align="center">
+        <input type="range" min="-12" max="12" value="2" id="inpxFreq"></input>
+        <input type="range" min="-12" max="12" value="-3" id="inpyFreq"></input>
+    </div>
     <br>
     <div align="center">
         <canvas id="coeff2dCanvas" style="height:360px;width:1440px"/>
     </div>
-    <input type="range" min="-20" max="20" value="2" id="inp2dCoeff1"></input>
-    <input type="range" min="-20" max="20" value="-3" id="inp2dCoeff2"></input>
-    <input type="range" min="-20" max="20" value="-3" id="inp2dCoeff3"></input>
+    <div align="center">
+        <input type="range" min="-20" max="20" value="-20" id="inp2dCoeff1"></input>
+        <input type="range" min="-20" max="20" value="-20" id="inp2dCoeff2"></input>
+        <input type="range" min="-20" max="20" value="20" id="inp2dCoeff3"></input>
+    </div>
     <br>
     <div align="center">
         <canvas id="freq1dCanvas" style="height:480px;width:720px"/>
@@ -305,8 +347,8 @@
         }
 
         vec3 render(vec2 coords) {
-            vec2 s = sin(2.0*pi*freqs*coords/res);
-            vec2 c = cos(2.0*pi*freqs*coords/res);
+            vec2 s = sin(pi*freqs*coords/res);
+            vec2 c = cos(pi*freqs*coords/res);
             return colormap(s.x*s.y, 0.9);
         }
 
@@ -327,8 +369,8 @@
         const float pi = 4.0*atan(1.0);
 
         const vec2 freqs1 = vec2(1, 2);
-        const vec2 freqs2 = vec2(3, 4);
-        const vec2 freqs3 = vec2(5, 6);
+        const vec2 freqs2 = vec2(3, 5);
+        const vec2 freqs3 = vec2(7, 11);
 
         vec3 colormap(float val, float scale) {
             return scale*vec3(max(0.0, val), -min(0.0, val), max(0.0, val));
@@ -337,26 +379,26 @@
         vec3 render(vec2 coords) {
             if(coords.x < 0.25*res.x) {
                 vec2 r = vec2(0.25*res.x, res.y);
-                vec2 s = sin(2.0*pi*freqs1*coords/r);
+                vec2 s = sin(pi*freqs1*coords/r);
                 return colormap(s.x*s.y, 0.9);
             }
             else if(coords.x < 0.5*res.x) {
                 coords.x -= 0.25*res.x;
-                vec2 s = sin(2.0*pi*freqs2*coords/res.y);
+                vec2 s = sin(pi*freqs2*coords/res.y);
                 return colormap(s.x*s.y, 0.9);
             }
             else if(coords.x < 0.75*res.x) {
                 coords.x -= 0.5*res.x;
-                vec2 s = sin(2.0*pi*freqs3*coords/res.y);
+                vec2 s = sin(pi*freqs3*coords/res.y);
                 return colormap(s.x*s.y, 0.9);
             }
             else {
                 coords.x -= 0.75*res.x;
-                vec2 s1 = sin(2.0*pi*freqs1*coords/res.y);
-                vec2 s2 = sin(2.0*pi*freqs2*coords/res.y);
-                vec2 s3 = sin(2.0*pi*freqs3*coords/res.y);
+                vec2 s1 = sin(pi*freqs1*coords/res.y);
+                vec2 s2 = sin(pi*freqs2*coords/res.y);
+                vec2 s3 = sin(pi*freqs3*coords/res.y);
                 float s = coeffs.x*s1.x*s1.y + coeffs.y*s2.x*s2.y + coeffs.z*s3.x*s3.y;
-                return colormap(s, 0.9);
+                return colormap(s, 0.75);
             }
         }
 

@@ -52,15 +52,15 @@ var inp2dCoeff1 = document.getElementById('inp2dCoeff1');
 var inp2dCoeff2 = document.getElementById('inp2dCoeff2');
 var inp2dCoeff3 = document.getElementById('inp2dCoeff3');
 
-var coeffs2d = new THREE.Vector3(inp2dCoeff1.value/20, inp2dCoeff2.value/40, inp2dCoeff3.value/60);
+var coeffs2d = new THREE.Vector3(inp2dCoeff1.value/20, inp2dCoeff2.value/20, inp2dCoeff3.value/20);
 inp2dCoeff1.oninput = function () {
     coeffs2d.x = this.value/20;
 }
 inp2dCoeff2.oninput = function () {
-    coeffs2d.y = this.value/40;
+    coeffs2d.y = this.value/20;
 }
 inp2dCoeff3.oninput = function () {
-    coeffs2d.z = this.value/60;
+    coeffs2d.z = this.value/20;
 }
 
 var coeff2dShader = new THREE.ShaderMaterial({
@@ -105,7 +105,7 @@ let freq1dPosArray = freq1dGeometry.getAttribute('position').array;
 for(let i = 0; i < linePoints; i++) {
 	let x = (i - 0.5*(linePoints - 1))/(linePoints - 1);
 	freq1dPosArray[3*i] = x;
-	freq1dPosArray[3*i + 1] = 0.45*Math.sin(4*Math.PI*x);
+	freq1dPosArray[3*i + 1] = 0.45*Math.sin(Math.PI*(x + 0.5));
 	freq1dPosArray[3*i + 2] = 0;
 }
 
@@ -127,7 +127,7 @@ inpFreq.oninput = function () {
 	let freq1dPosArray = posAttr.array;
 	for(let i = 0; i < linePoints; i++) {
 		let x = (i - 0.5*(linePoints - 1))/(linePoints - 1);
-		freq1dPosArray[3*i + 1] = 0.45*Math.sin(2*this.value*Math.PI*x);
+		freq1dPosArray[3*i + 1] = 0.45*Math.sin(this.value*Math.PI*(x + 0.5));
 	}
 	posAttr.needsUpdate = true;
 }
