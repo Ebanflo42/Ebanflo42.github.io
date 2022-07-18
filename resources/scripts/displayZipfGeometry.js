@@ -84,8 +84,7 @@ coeff2dCamera.position.z = 15;
 
 // 1D Fourier Frequency Animation /////////////////////////////////////////////
 
-
-var linePoints = 300
+var linePoints = 300;
 
 var freq1dCanvas = document.getElementById('freq1dCanvas');
 var freq1dRes = new THREE.Vector2(freq1dCanvas.clientWidth, freq1dCanvas.clientHeight);
@@ -130,6 +129,155 @@ inpFreq.oninput = function () {
 		freq1dPosArray[3*i + 1] = 0.45*Math.sin(this.value*Math.PI*(x + 0.5));
 	}
 	posAttr.needsUpdate = true;
+}
+
+
+// 1D Fourier Coefficient Animation /////////////////////////////////////////////
+
+
+var coeff1dCanvas = document.getElementById('coeff1dCanvas');
+var coeff1dRes = new THREE.Vector2(coeff1dCanvas.clientWidth, coeff1dCanvas.clientHeight);
+
+var coeff1dScene = new THREE.Scene();
+var coeff1dRenderer = new THREE.WebGLRenderer({ canvas: coeff1dCanvas, antialias: true, alpha: true });
+coeff1dRenderer.setSize(coeff1dCanvas.clientWidth, coeff1dCanvas.clientHeight);
+
+var coeff1dCamera = new THREE.OrthographicCamera(-1, 1, -1, 1, 1, 10);
+coeff1dCamera.position.z = -2
+coeff1dCamera.lookAt(new THREE.Vector3(0, 0, 0))
+
+var coeff1dGeometry1 = new THREE.BufferGeometry();
+coeff1dGeometry1.setAttribute('position',
+							new THREE.BufferAttribute(new Float32Array(3 * linePoints), 3));
+let coeff1dPosArray1 = coeff1dGeometry1.getAttribute('position').array;
+var coeff1dGeometry2 = new THREE.BufferGeometry();
+coeff1dGeometry2.setAttribute('position',
+							new THREE.BufferAttribute(new Float32Array(3 * linePoints), 3));
+let coeff1dPosArray2 = coeff1dGeometry2.getAttribute('position').array;
+var coeff1dGeometry3 = new THREE.BufferGeometry();
+coeff1dGeometry3.setAttribute('position',
+							new THREE.BufferAttribute(new Float32Array(3 * linePoints), 3));
+let coeff1dPosArray3 = coeff1dGeometry3.getAttribute('position').array;
+var coeff1dGeometry4 = new THREE.BufferGeometry();
+coeff1dGeometry4.setAttribute('position',
+							new THREE.BufferAttribute(new Float32Array(3 * linePoints), 3));
+let coeff1dPosArray4 = coeff1dGeometry4.getAttribute('position').array;
+for(let i = 0; i < linePoints; i++) {
+
+	let x = 2*(i - 0.5*(linePoints - 1))/(linePoints - 1);
+
+	x *= 0.25;
+	x += 0.75;
+	coeff1dPosArray1[3*i] = x;
+	coeff1dPosArray1[3*i + 1] = 0.45*Math.sin(4*Math.PI*(1 - x));
+	coeff1dPosArray1[3*i + 2] = 0;
+
+	x -= 0.5;
+	coeff1dPosArray2[3*i] = x;
+	coeff1dPosArray2[3*i + 1] = 0.45*Math.sin(12*Math.PI*(0.5 + x));
+	coeff1dPosArray2[3*i + 2] = 0;
+
+	x -= 0.5;
+	coeff1dPosArray3[3*i] = x;
+	coeff1dPosArray3[3*i + 1] = 0.45*Math.sin(36*Math.PI*(-x));
+	coeff1dPosArray3[3*i + 2] = 0;
+
+	x -= 0.5;
+	coeff1dPosArray4[3*i] = x;
+	coeff1dPosArray4[3*i + 1] =
+		(-coeff1dPosArray1[3*i + 1] - coeff1dPosArray2[3*i + 1] + coeff1dPosArray3[3*i + 1])/2;
+	coeff1dPosArray4[3*i + 2] = 0;
+}
+
+var lineMaterial = new THREE.ShaderMaterial({
+	vertexShader: document.getElementById('1d_vs').textContent,
+    fragmentShader: document.getElementById('1d_fs').textContent,
+	depthWrite: false,
+	depthTest: false,
+	linewidth: 3,
+	transparent: true
+});
+
+var coeff1dLine1 = new THREE.Line(coeff1dGeometry1, lineMaterial);
+coeff1dScene.add(coeff1dLine1);
+var coeff1dLine2 = new THREE.Line(coeff1dGeometry2, lineMaterial);
+coeff1dScene.add(coeff1dLine2);
+var coeff1dLine3 = new THREE.Line(coeff1dGeometry3, lineMaterial);
+coeff1dScene.add(coeff1dLine3);
+var coeff1dLine4 = new THREE.Line(coeff1dGeometry4, lineMaterial);
+coeff1dScene.add(coeff1dLine4);
+
+var coeff1d1 = -1/2;
+var coeff1d2 = -1/2;
+var coeff1d3 = 1/2;
+
+var inp1dCoeff1 = document.getElementById('inp1dCoeff1');
+var inp1dCoeff2 = document.getElementById('inp1dCoeff2');
+var inp1dCoeff3 = document.getElementById('inp1dCoeff3');
+inp1dCoeff1.oninput = function () {
+
+	coeff1d1 = this.value/40;
+
+	let coeff1dPosArray1 = coeff1dGeometry1.getAttribute('position').array;
+	let coeff1dPosArray2 = coeff1dGeometry2.getAttribute('position').array;
+	let coeff1dPosArray3 = coeff1dGeometry3.getAttribute('position').array;
+
+	let posAttr4 = coeff1dGeometry4.getAttribute('position');
+	let coeff1dPosArray4 = posAttr4.array;
+	for(let i = 0; i < linePoints; i++) {
+		let x = (i - 0.5*(linePoints - 1))/(linePoints - 1);
+		x *= 0.25;
+		x += 0.75;
+		coeff1dPosArray4[3*i + 1] =
+			coeff1d1*coeff1dPosArray1[3*i + 1]
+		  + coeff1d2*coeff1dPosArray2[3*i + 1]
+		  + coeff1d3*coeff1dPosArray3[3*i + 1];
+	}
+	posAttr4.needsUpdate = true;
+}
+
+inp1dCoeff2.oninput = function () {
+
+	coeff1d2 = this.value/40;
+
+	let coeff1dPosArray1 = coeff1dGeometry1.getAttribute('position').array;
+	let coeff1dPosArray2 = coeff1dGeometry2.getAttribute('position').array;
+	let coeff1dPosArray3 = coeff1dGeometry3.getAttribute('position').array;
+
+	let posAttr4 = coeff1dGeometry4.getAttribute('position');
+	let coeff1dPosArray4 = posAttr4.array;
+	for(let i = 0; i < linePoints; i++) {
+		let x = (i - 0.5*(linePoints - 1))/(linePoints - 1);
+		x *= 0.25;
+		x += 0.75;
+		coeff1dPosArray4[3*i + 1] =
+			coeff1d1*coeff1dPosArray1[3*i + 1]
+		  + coeff1d2*coeff1dPosArray2[3*i + 1]
+		  + coeff1d3*coeff1dPosArray3[3*i + 1];
+	}
+	posAttr4.needsUpdate = true;
+}
+
+inp1dCoeff3.oninput = function () {
+
+	coeff1d3 = this.value/40;
+
+	let coeff1dPosArray1 = coeff1dGeometry1.getAttribute('position').array;
+	let coeff1dPosArray2 = coeff1dGeometry2.getAttribute('position').array;
+	let coeff1dPosArray3 = coeff1dGeometry3.getAttribute('position').array;
+
+	let posAttr4 = coeff1dGeometry4.getAttribute('position');
+	let coeff1dPosArray4 = posAttr4.array;
+	for(let i = 0; i < linePoints; i++) {
+		let x = (i - 0.5*(linePoints - 1))/(linePoints - 1);
+		x *= 0.25;
+		x += 0.75;
+		coeff1dPosArray4[3*i + 1] =
+			coeff1d1*coeff1dPosArray1[3*i + 1]
+		  + coeff1d2*coeff1dPosArray2[3*i + 1]
+		  + coeff1d3*coeff1dPosArray3[3*i + 1];
+	}
+	posAttr4.needsUpdate = true;
 }
 
 
@@ -292,6 +440,13 @@ function render() {
   	    freq1dRes = new THREE.Vector2(freq1dCanvas.clientWidth, freq1dCanvas.clientHeight);
     }
 
+    if(coeff1dCanvas.width !== coeff1dCanvas.clientWidth || coeff1dCanvas.height !== coeff1dCanvas.clientHeight) {
+		coeff1dRenderer.setSize(coeff1dCanvas.clientWidth, coeff1dCanvas.clientHeight, false);
+		coeff1dCamera.aspect = coeff1dCanvas.clientWidth/coeff1dCanvas.clientHeight;
+		coeff1dCamera.updateProjectionMatrix();
+		coeff1dRes = new THREE.Vector2(coeff1dCanvas.clientWidth, coeff1dCanvas.clientHeight);
+	}
+
     if(highdCanvas.width !== highdCanvas.clientWidth || highdCanvas.height !== highdCanvas.clientHeight) {
 		highdRenderer.setSize(highdCanvas.clientWidth, highdCanvas.clientHeight, false);
 		highdCamera.aspect = highdCanvas.clientWidth/highdCanvas.clientHeight;
@@ -310,6 +465,7 @@ function render() {
     freq2dRenderer.render(freq2dScene, freq2dCamera);
     freq1dRenderer.render(freq1dScene, freq1dCamera);
 	coeff2dRenderer.render(coeff2dScene, coeff2dCamera);
+	coeff1dRenderer.render(coeff1dScene, coeff1dCamera);
 	highdRenderer.render(highdScene, highdCamera);
 
 }
