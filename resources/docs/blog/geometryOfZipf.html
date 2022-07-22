@@ -52,20 +52,24 @@
         <br><br>
         In reality, this is not exactly the case. Zipf's law only becomes accurate
         <i>asymptotically,</i> meaning the equations are only really accurate if $n$ is large.
-        To demonstrate this, I performed the analysis on the NIV Bible. I plotted my results below,
-        and you can find my code, which includes preprocessing a PDF and cleaning the data,
-        <a href="https://github.com/Ebanflo42/zipf-bible" target="_blank">here.</a>
+        To demonstrate this, I performed the analysis on the NIV Bible and plotted my results below.
         </p>
         <div align="center">
             <img src="../../images/zipf_curve.png" style="border-radius: 5px; filter: brightness(90%)"/>
         </div>
         <p class="textContent">
-            The horizontal axis of this plot corresponds to the logarithm of the nth most common word
-            in the Bible, while the vertical axis corresponds to the logarithm of number of occurrences
-            of the word. The orange line is the line of best fit for the most common thousand words,
-            and the $R^2$ value of $1.00$ signifies that the error of the fit is negligible compared to
-            the variance of the data (the statisticians reading this might be skeptical based on the plot,
-            but remember that there is a lot more data towards the right).
+            To represent the phenomenon in a very straightforward way, I have plotted on the left a curve proportional to
+            $\frac{1}{x}$ as a green dotted line, and shown that it aligns roughly with the frequency of each word with respect
+            to its rank. However, this way of plotting a power-law phenonenon is very limited, as it shows us only a few orders
+            magnitude of the data. The more common way to plot this is shown on the right, where the logarithm of the number of
+            occurrences is plotted with respect to the logarithm of the rank of each word. Transformed to these coordinates,
+            the data nearly follows a straight line for 3 orders of magnitude!
+            <br><br>
+            You can find my code, which includes preprocessing a PDF and cleaning the data,
+            <a href="https://github.com/Ebanflo42/zipf-bible" target="_blank">here.</a>
+            In my analysis, plural and non-plural words were considered as the same.
+            However, different conjugations of the same verb are not identified. I would wager you could get an even better fit
+            to a straight line if you considered linguistic artifacts like this.
             <br><br>
             Something which probably stands out at this point is that the many authors of the Bible most
             probably had no idea about exponents, logarithms, lines of best fit, or even equations.
@@ -88,114 +92,13 @@
             way which I'll elaborate on in the next section. Contained in the supplement of the paper is a very elegant and
             insightful proof for why we actually <i>expect</i> this distribution to emerge.
             <br><br>
-            In order to understand the reasoning of Stringer and Pachitariu, we are going to have to review
-            some basic statistics before delving into differential geometry, generalizing the Fourier transform,
+            In order to understand the reasoning of Stringer and Pachitariu, we are going to have to introduce
+            some linear algebra before delving into differential geometry, generalizing the Fourier transform,
             and tying it all back to the nature of <i>representation</i> itself, so buckle up and get ready for
             some spicy math!
         </p>
-        <!--
-        <p class="textContent" id="PCA">
-            <big><u><b>Principal Component Analysis</b></u></big>
-            <br><br>
-            Suppose we have an experiment which we perform that gives us some vector-valued observations
-            $X_1,X_2,...X_N$ in $\mathbb{R}^n$. The most basic statistic we could extract from our data is
-            the mean:
-            <br>
-            $$\mu=\frac{1}{N}\sum_{i=1}^N X_i$$
-            <br>
-            which tells us about the general position of the data. It would be interesting to have an idea
-            about how the data is <i>spread out</i> around the mean. If each $X_i$ were a single real number,
-            we could compute this using the <i>variance</i>:
-            <br>
-            $$\sigma^2=\frac{1}{N}\sum_{i=1}^N(X_i-\mu)^2$$
-            <br>
-            However, we need a precise notion of what it means to square a vector. Usually, we would use the <i>inner
-            product</i> for this sort of thing. That would give use a real-valued measure of the spread of the data,
-            but what we actually want is a measure of the spread in <i>all directions</i>. For this, we use the
-            <b>outer product</b>: $\otimes$. $u\otimes v$, for vectors $u$ and $v$, produces a matrix $A$ defined
-            by $A_{ij}=u_i v_j$. Then we define the <b>sample covariance matrix</b> as follows:
-            <br>
-            $$\Sigma_S=\frac{1}{N}\sum_{i=1}^N (X_i-\mu)\otimes(X_i-\mu)$$
-            <br>
-            We should interpret the matrix entry $\Sigma_{Sij}$ as how likely dimension $i$ of the data is likely
-            to be spread out when dimension $j$ of the data is spread out.
-            <br><br>
-            Note that $\Sigma_S$ is symmetric. That's because $\otimes$ always produces symmetric matrices,
-            and any sum of symmetric matrices is symmetric. Recall from linear algebra that a symmetric matrix
-            may be written in the following form:
-            <br>
-            $$\Sigma_S=U\Lambda U^T$$
-            <br>
-            Where $\Lambda$ is a non-negative diagonal matrix of eigenvalues and $U$ is a real orthogonal matrix of
-            eigenvectors. Now, what we may do at this point is transform our data into a new coordinate system
-            $X'_1=U^T X_1,\; X'_2=U^T X_2,...\;X'_N=U^TX_N$. The advantage of this coordinate system is that
-            the sample covariance matrix $\Sigma_S'$ of the new data is simply $\Lambda$.
-            <br><br>
-            What this tells us is that the columns of $U$ can be thought of as an orthogonal basis determining
-            the directions in which the data is primarily spread. In practice, a column $U_i$ is called the ith
-            <b>principal component</b>, and the eigenvalue $\Lambda_{ii}$ is called the <i>variance along the
-            ith principal component</i>.
-            <br><br>
-            In order to better illustrate what's going on here, lets consider a simple example. Suppose random
-            $X_1$ and $X_2$ are sampled from a multivariate Gaussian distribution function:
-            $(X_1, X_2)~\mathcal{N}(\mu,\Sigma)$. The probability density function of this distribution is:
-            <br>
-            $$f(\mathbf{x})=\frac{1}{Z}\exp\big[-\frac{1}{2}(\mathbf{x}-\mu)\Sigma^{-1}(\mathbf{x}-\mu)^T\big]$$
-            <br>
-            Where $Z$ is a normalizing factor which ensures that probability integrated over the entire plane is 1.
-            This distribution function is exactly analogous to the 1-dimensional Gaussian distribution, except that
-            the variance $\sigma$ is replaced with the covariance matrix $\Sigma$. The inverted covariance $\Sigma^{-1}$
-            will scale the input $\mathbf{x}$ by the inverse of its eigenvalues along the axes defined by its
-            eigenvectors, meaning larger eigenvalues correspond to larger spread in a sample of the random variable.
-            For a Gaussian, the sample covariance $\Sigma_S$ is a good approximation of the true covariance $\Sigma$.
-            Let's pick some numbers for our example:
-            <br>
-            $$\Sigma=
-            \begin{pmatrix}
-            8 & 4 \\
-            4 & 5 \\
-            \end{pmatrix}$$
-            <br>
-            There's no special meaning to these numbers, I just fiddled around until I got a nice plot:
-        </p>
-        <div align="center">
-            <img src="../../images/pca_plot.png" style="border-radius: 5px; filter: brightness(90%)"/>
-        </div>
-        <p class="textContent">
-            The blue dots are sampled from a multivariate Gaussian with $\Sigma$ as defined above. The eigenvectors
-            of $\Sigma$ are plotted in red and are scaled by their corresponding eigenvalue. As you can see, the
-            eigenvectors of $\Sigma$ give us a good idea of the directions in which the data is spread, and the
-            eigenvalues give us a good idea of how spread along each direction the data is.
-            <br><br>
-            In practice, this technique is more commonly used on very high-dimensional data. For every dimension of
-            the data, we get a principal component and a corresponding principal variance. To visualize the data,
-            we can project it onto the first two or three principal components, and ask how much variance those
-            dimensions account for.
-            <br><br>
-            What Stringer and Pachitariu found is that, if they perform calcium imaging on a mouse's brain while
-            showing it natural images, and define $\lambda_n$ to be the nth largest eigenvalue of the covariance
-            matrix of the mouse's brain activity, then the following approximate relationship emerges empirically:
-            <br>
-            $$\lambda_n=\frac{\lambda_1}{n}$$
-            <br>
-            this is exactly the same relationship appearing in Zipf's law!
-            <br><br>
-            Intuitively, one could think of a "principal component" of a text as
-            a single word, since this is a specific variable distinguished from every other word (in the same
-            sense that each principal component is orthogonal to every other). Then the nth variance or eigenvalue
-            $\lambda_n$ would naturally correspond to the number of occurrences of the word, since that is exactly
-            how much the word contributes to the variance of the text.
-            <br><br>
-            At this point, this most probably seems extremely hand-wavy, and it is. However, if you're willing to
-            accept this interpretation for the time being you will later see that there is a very natural reason
-            why we would expect this distribution to occur any time there is a representation which must simultaneously
-            optimize both its detail and its readability.
-            <br><br>
-            But before we prove our main theorem, we need a few more definitions.
-        </p>
-        -->
-        <p class="textContent" id="Kernels_and_Hilbert_Spaces">
-            <big><u><b>Kernels and Hilbert Spaces</b></u></big>
+        <p class="textContent" id="Hilbert_Spaces">
+            <big><b><u>Hilbert Spaces</u></b></big>
             <br><br>
             For the rest of this article, I will invite you to think of functions as vectors. For some readers this
             might be familiar, but for those who are new to the concept remember that for any
@@ -205,12 +108,12 @@
             For example $S$ could be the natural numbers $\mathbb{N}$, an interval $[0,1]$, a square $[0,1]\times [0,1]$,
             or a more complicated space.
             <br><br>
-            An extremely important subspace of $\mathcal{C}(\mathbb{R},\mathbb{R})$ is $L^2(\mathbb{R},\mathbb{R})$.
-            This subspace is defined such that for all $f\in L^2(\mathbb{R},\mathbb{R})$, we have that the quantitity
+            An extremely important subspace of $\mathcal{C}(\mathbb{R},\mathbb{R})$ is $L^2(\mathbb{R})$.
+            This subspace is defined such that for all $f\in L^2(\mathbb{R})$, we have that the quantitity
             <br>
             $$\langle f,f \rangle =\int_{-\infty}^{\infty}|f(x)|^2dx$$
             <br><br>
-            is well defined. For general $f,g\in L^2(\mathbb{R},\mathbb{R})$, we define
+            is well defined. For general $f,g\in L^2(\mathbb{R})$, we define
             <br>
             $$\langle f,g \rangle =\int_{-\infty}^{\infty}f(x)g(x)dx$$
             <br>
@@ -220,12 +123,34 @@
             To see the intuition for this definition: we might want to think of the value $f(x)$ as the
             entry of the vector at index $x$. We might also want to (very intuitively) think of the integral sign $\int$
             as if it were summation $\sum$. In that case, the operation defined above is precisely the infinite-dimensional
-            generalization of the dot product. This is even more clear to see if we think of $L^2(\mathbb{N}, \mathbb{R})$,
+            generalization of the dot product. This is even more clear to see if we think of $L^2(\mathbb{N})$,
             where the equivalent of integration is again summation, so we have that for sequences
-            $a,b\in L^2(\mathbb{N}, \mathbb{R})$ the inner product is defined as:
+            $a,b\in L^2(\mathbb{N})$ the inner product is defined as:
             <br>
             $$\langle a,b \rangle =\sum_{i=0}^{\infty}a_i b_i$$
             which is simply the dot product with infinitely many indices!
+        <p class="textContent" id="The_Laplace_Operator">
+            <big><b><u>The Laplace Operator</u></b></big>
+            <br><br>
+            Let's assume from now on that our domain space $S$ is <i>compact</i>, meaning it doesn't go on forever.
+            $S$ could be a circle, sphere, line segment, or rectangle, for example. We will also assume that all of our
+            functions are <i>zero on the boundary</i>, if a boundary exists. Note that the functions still form a vector
+            space with this restriction.
+            <br><br>
+            One of the most important linear operators which we can define on $L^2(S)$ is the Laplace operator $\Delta$.
+            If $S$ is an interval, $[0,a]$, then we have the following definition:
+            <br><br>
+            $$\Delta=\frac{d}{dx^2}$$
+            <br>
+            That is, $\Delta$ is simply the second derivative operator. If we turn the interval into a prism, $[0,a]^N$,
+            then $\Delta$ is a sum of second derivative operators:
+            <br><br>
+            $$\Delta=\sum_{k=1}^N \frac{d^2}{dx^2_k}$$
+            <br>
+        </p>
+        </p>
+        <p class="textContent" id="Kernels">
+            <big><u><b>Kernels</b></u></big>
             <br><br>
             Now that we have defined an inner product for functions, we should think about what it means to have a
             matrix product for functions. Suppose we have a function of two variables $K(x,y)$, we could
@@ -254,6 +179,11 @@
             <br>
             $$K(s,s')=\langle \Phi(s),\Phi(s') \rangle$$
             <br>
+            <br><br>
+            To understand this definition, remember that the dot product of two finite-dimensional vectors $\rangle u,v\langle$ can be thought of as a product including
+            their mangitudes and their similarity. This still applies in infinite dimensions: $K(s,s')=\langle\Phi(s),\Phi(s')\rangle$
+            can be thought of as the similarity of the responses $\Phi(s)$, $\Phi(s')$ of stimuli of $s$ and $s'$.
+            <br><br>
             From now on, I will use $K$ to denote specifically this kernel for whatever representation $\Phi$ might be in question.
             In order to understand this definition, remember that our representation $\Phi$ takes a stimulus $s$ to a function describing
             neural activity. We can give a name to that function: $\Phi(s)=\phi(s,c)$ where $\phi(s,c)$ is now the activity of neuron $c$
@@ -261,7 +191,7 @@
             <br><br>
             In the same way a matrix has an eigenvector equation, a kernel $K$ has an <b>eigenfunction equation</b>:
             <br>
-            $$\lambda v(s)=\int_{S}K(s,s')v(s')dS$$
+            $$\lambda v(s)=\int_{S}K(s,s')v(s')ds'$$
             <br>
             Where I used the notation $\int_{S}\cdot dS$ to denote integration over $S$.
             <br><br>
@@ -286,14 +216,13 @@
             <br>
             $$\lambda_n=\lambda_1 n^{-\alpha}$$
             <br>
-            With $\alpha\simeq1$, which is exactly the same relationship appearing in Zipf's law!
+            With $\alpha\simeq1$, which is exactly the same relationship appearing in Zipf's law! If you're anything like me, the fact
+            that this distribution re-occurs in such an obscure setting is even more confusing than the original phenomenon itself.
+            Originally, we were just talking about the frequency of words, but now we're talking about the eigenvalues of some
+            infinite-dimensional matrix.
             <br><br>
-            Most of our definitions and observations are now in place, but before proving our main result we need to review a few more theorems.
-            <br><br>
-            Some short notes for advanced readers: a Hilbert space is actually any inner product space <i>such that the metric
-            induced by the inner product is complete.</i> Stringer and Pachitariu specifically refer to <i>separable</i> Hilbert spaces.
-            Also, if you are comfortable with the definitions, it is an important exercise to prove that $L^2$ is indeed a
-            Hilbert space. Also, its important to be certain that the application of Mercer's theorem was valid.
+            However, now that everything is in place, we are about to see why talking about these kernels and their eigenvalues is so
+            important!
         </p>
     <div align="center">
         <canvas id="freq2dCanvas" style="height:480px;width:720px"/>

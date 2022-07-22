@@ -164,22 +164,22 @@ coeff1dGeometry4.setAttribute('position',
 let coeff1dPosArray4 = coeff1dGeometry4.getAttribute('position').array;
 for(let i = 0; i < linePoints; i++) {
 
-	let x = 2*(i - 0.5*(linePoints - 1))/(linePoints - 1);
+	let x = 1.9*(i - 0.5*(linePoints - 1))/(linePoints - 1);
 
 	x *= 0.25;
 	x += 0.75;
 	coeff1dPosArray1[3*i] = x;
-	coeff1dPosArray1[3*i + 1] = 0.45*Math.sin(4*Math.PI*(1 - x));
+	coeff1dPosArray1[3*i + 1] = 0.45*Math.sin(4*Math.PI*(1.04 - 2*x/1.9));
 	coeff1dPosArray1[3*i + 2] = 0;
 
 	x -= 0.5;
 	coeff1dPosArray2[3*i] = x;
-	coeff1dPosArray2[3*i + 1] = 0.45*Math.sin(12*Math.PI*(0.5 + x));
+	coeff1dPosArray2[3*i + 1] = 0.45*Math.sin(12*Math.PI*(0.485 + 2*x/1.9));
 	coeff1dPosArray2[3*i + 2] = 0;
 
 	x -= 0.5;
 	coeff1dPosArray3[3*i] = x;
-	coeff1dPosArray3[3*i + 1] = 0.45*Math.sin(36*Math.PI*(-x));
+	coeff1dPosArray3[3*i + 1] = 0.45*Math.sin(36*Math.PI*(0.0125 - 2*x/1.9));
 	coeff1dPosArray3[3*i + 2] = 0;
 
 	x -= 0.5;
