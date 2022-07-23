@@ -142,7 +142,22 @@
             <br><br>
             $$\Delta=\frac{d}{dx^2}$$
             <br>
-            That is, $\Delta$ is simply the second derivative operator. If we turn the interval into a prism, $[0,a]^N$,
+            That is, $\Delta$ is simply the second derivative operator. In this case, $\Delta$ measures the <i>concavity</i>,
+            of its input function, or how much the function is curving up or down. In the same way we can define an <i>eigenvector
+            equation</i> in a finite-dimensional space, we can define an <i>eigenfunction</i> equation for an operator on an
+            infinite-dimensional space:
+            <br><br>
+            $$\Delta v_{\lambda}=\lambda v_{\lambda}$$
+            <br>
+            In words, this equation is saying that the concavity of $v_{\lambda}(x)$ at $x$ is proportional to $x$  for all $x$. The $sin$
+            function is, by construction, the solution to this equation:
+            <br><br>
+            $$v_{\lambda}(x)=\sin\big(\lambda\sqrt{\frac{\pi}{a}}x\big)$$
+            <br>
+            Since we are enforcing the condition that $v_{\lambda}$ is $0$ both at $x=0$ and $x=a$, we must have that all eigenvalues are
+            of the form $\lambda=n\sqrt{\frac{\pi}{a}}$, where $n$ is an integer.
+            <br><br>
+            If we turn the interval into a prism, $[0,a]^N$,
             then $\Delta$ is a sum of second derivative operators:
             <br><br>
             $$\Delta=\sum_{k=1}^N \frac{d^2}{dx^2_k}$$
