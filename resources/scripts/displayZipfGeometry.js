@@ -51,16 +51,22 @@ var coeff2dRes = new THREE.Vector2(coeff2dCanvas.clientWidth, coeff2dCanvas.clie
 var inp2dCoeff1 = document.getElementById('inp2dCoeff1');
 var inp2dCoeff2 = document.getElementById('inp2dCoeff2');
 var inp2dCoeff3 = document.getElementById('inp2dCoeff3');
+var val2dCoeff1 = document.getElementById('val2dCoeff1');
+var val2dCoeff2 = document.getElementById('val2dCoeff2');
+var val2dCoeff3 = document.getElementById('val2dCoeff3');
 
 var coeffs2d = new THREE.Vector3(inp2dCoeff1.value/20, inp2dCoeff2.value/20, inp2dCoeff3.value/20);
 inp2dCoeff1.oninput = function () {
     coeffs2d.x = this.value/20;
+	val2dCoeff1.textContent = "A = " + coeffs2d.x;
 }
 inp2dCoeff2.oninput = function () {
     coeffs2d.y = this.value/20;
+	val2dCoeff2.textContent = "A = " + coeffs2d.y;
 }
 inp2dCoeff3.oninput = function () {
     coeffs2d.z = this.value/20;
+	val2dCoeff3.textContent = "A = " + coeffs2d.z;
 }
 
 var coeff2dShader = new THREE.ShaderMaterial({
@@ -164,22 +170,22 @@ coeff1dGeometry4.setAttribute('position',
 let coeff1dPosArray4 = coeff1dGeometry4.getAttribute('position').array;
 for(let i = 0; i < linePoints; i++) {
 
-	let x = 1.9*(i - 0.5*(linePoints - 1))/(linePoints - 1);
+	let x = 1.9*(i - 0.5*linePoints)/linePoints;
 
 	x *= 0.25;
 	x += 0.75;
 	coeff1dPosArray1[3*i] = x;
-	coeff1dPosArray1[3*i + 1] = 0.45*Math.sin(4*Math.PI*(1.04 - 2*x/1.9));
+	coeff1dPosArray1[3*i + 1] = 0.45*Math.sin(2*Math.PI*i/(linePoints - 1));
 	coeff1dPosArray1[3*i + 2] = 0;
 
 	x -= 0.5;
 	coeff1dPosArray2[3*i] = x;
-	coeff1dPosArray2[3*i + 1] = 0.45*Math.sin(12*Math.PI*(0.485 + 2*x/1.9));
+	coeff1dPosArray2[3*i + 1] = 0.45*Math.sin(6*Math.PI*i/(linePoints - 1));
 	coeff1dPosArray2[3*i + 2] = 0;
 
 	x -= 0.5;
 	coeff1dPosArray3[3*i] = x;
-	coeff1dPosArray3[3*i + 1] = 0.45*Math.sin(36*Math.PI*(0.0125 - 2*x/1.9));
+	coeff1dPosArray3[3*i + 1] = 0.45*Math.sin(18*Math.PI*i/(linePoints - 1));
 	coeff1dPosArray3[3*i + 2] = 0;
 
 	x -= 0.5;
@@ -214,6 +220,9 @@ var coeff1d3 = 1/2;
 var inp1dCoeff1 = document.getElementById('inp1dCoeff1');
 var inp1dCoeff2 = document.getElementById('inp1dCoeff2');
 var inp1dCoeff3 = document.getElementById('inp1dCoeff3');
+var val1dCoeff1 = document.getElementById('val1dCoeff1');
+var val1dCoeff2 = document.getElementById('val1dCoeff2');
+var val1dCoeff3 = document.getElementById('val1dCoeff3');
 inp1dCoeff1.oninput = function () {
 
 	coeff1d1 = this.value/40;
@@ -234,6 +243,8 @@ inp1dCoeff1.oninput = function () {
 		  + coeff1d3*coeff1dPosArray3[3*i + 1];
 	}
 	posAttr4.needsUpdate = true;
+
+	val1dCoeff1.textContent = "A = " + coeff1d1;
 }
 
 inp1dCoeff2.oninput = function () {
@@ -256,6 +267,8 @@ inp1dCoeff2.oninput = function () {
 		  + coeff1d3*coeff1dPosArray3[3*i + 1];
 	}
 	posAttr4.needsUpdate = true;
+
+	val1dCoeff2.textContent = "A = " + coeff1d2;
 }
 
 inp1dCoeff3.oninput = function () {
@@ -278,6 +291,8 @@ inp1dCoeff3.oninput = function () {
 		  + coeff1d3*coeff1dPosArray3[3*i + 1];
 	}
 	posAttr4.needsUpdate = true;
+
+	val1dCoeff3.textContent = "A = " + coeff1d3;
 }
 
 

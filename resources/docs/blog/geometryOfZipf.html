@@ -147,22 +147,113 @@
             equation</i> in a finite-dimensional space, we can define an <i>eigenfunction</i> equation for an operator on an
             infinite-dimensional space:
             <br><br>
-            $$\Delta v_{\lambda}=\lambda v_{\lambda}$$
+            $$\Delta v_{\lambda}=-\lambda v_{\lambda}$$
             <br>
             In words, this equation is saying that the concavity of $v_{\lambda}(x)$ at $x$ is proportional to $x$  for all $x$. The $sin$
             function is, by construction, the solution to this equation:
             <br><br>
-            $$v_{\lambda}(x)=\sin\big(\lambda\sqrt{\frac{\pi}{a}}x\big)$$
+            $$v_{\lambda}(x)=\sqrt{\frac{2}{a}}\sin\big(\sqrt{\lambda}x\big)$$
             <br>
             Since we are enforcing the condition that $v_{\lambda}$ is $0$ both at $x=0$ and $x=a$, we must have that all eigenvalues are
-            of the form $\lambda=n\sqrt{\frac{\pi}{a}}$, where $n$ is an integer.
+            of the form $\lambda=sqrt{\frac{\pi^2 n^2}{a}}$, where $n$ is an integer. $\sqrt{\frac{2}{a}}$ is normalizing factor such that
+            the integral of each eigenfunction is 1.
             <br><br>
-            If we turn the interval into a prism, $[0,a]^N$,
-            then $\Delta$ is a sum of second derivative operators:
+            An essential result which we will be using is that the eigenfunctions $v_{\lambda}$ form an orthonormal basis for the
+            entire vector space $L^2([0,a])$!
             <br><br>
-            $$\Delta=\sum_{k=1}^N \frac{d^2}{dx^2_k}$$
+            In order to prove orthonormality, you can simply compute the integrals $\int v_{\lambda}(x)v_{\mu}(x)dx$. When $\lambda=\mu$,
+            you should find that the integral evaluates to $1$, otherwise you should find that its value is $0$.
+            <br><br>
+            When we say $\{v_{\lambda}\}$ is a basis for $L^2([0,a])$, we mean that for any function $f\in L^2([0,a])$ there is a
+            coefficient $c_{\lambda}$ (called the <i>Foureir coefficients</i>) for each eigenvalue $\lambda$, such that we have
+            the following decomposition:
+            <br><br>
+            $$f(x)=\sum_{\lambda}c_{\lambda}v_{\lambda}(x)$$
             <br>
+            In order to persuade you that the set of eigenfunctions also forms a basis for the space of all square-integrable function,
+            I sketched below the functions $\sin(2\pi x)$, $\sin(6\pi x)$, and $\sin(18\pi x)$  on the interval $[0,1]$ in the first 3 panels.
+            In the fourth panel, I sketched a sum:
+            <br><br>
+            $$A\sin(2\pi x) + B\sin(6\pi x) + C\sin(18\pi x)$$
+            <br>
+            where the coefficients $A$, $B$, and $C$ can be adjust with the sliders!
         </p>
+            <div align="center">
+                <canvas id="coeff1dCanvas" style="height:360px;width:1440px"/>
+            </div>
+            <div align="center">
+                <input type="range" min="-20" max="20" value="-20" id="inp1dCoeff1"></input>
+                <input type="range" min="-20" max="20" value="-20" id="inp1dCoeff2"></input>
+                <input type="range" min="-20" max="20" value="20" id="inp1dCoeff3"></input>
+            </div>
+            <div align="center">
+            <p id="val1dCoeff1" class="input">A = -1</p>
+            <p id="val1dCoeff2" class="input">B = -1</p>
+            <p id="val1dCoeff3" class="input">C = 1</p>
+            </div>
+        <p class="textContent">
+            The goal here is to illustrate that with only 3 basis functions, we can achieve a wide diversity
+            of differently-shaped functions. The overarching idea is that the low-eigenvalue functions (i.e.
+            $\sin(2\pi x)$) define the broad features of the function while the high-eigenvalue functions
+            (i.e. $\sin(18\pi x)$) define the precise details of the function. It turns out that this intuition
+            is central for our reasoning for why Zipf's law is in some way expected. However, in order to further
+            develop our theory we need to generalize this principle to higher dimensions.
+            <br><br>
+            If we turn the interval into a prism, $[0,a]^N$, then $\Delta$ is a sum of second derivative operators:
+            <br><br>
+            $$\Delta=-\sum_{k=1}^N \frac{\partial^2}{\partial x^2_k}$$
+            <br>
+            Where each $\frac{\partial^2}{\partial x_k^2}$ is a second derivative with respect to the particular
+            variable $x_k$. Think of a function of two variables $f(x, y)$ evaluated at $x=x_0$ and $y=y_0$,
+            then $\Delta f$ at $(x_0, y_0)$ can be thought of as the concavity of the curve $(x, f(x,y_0))$ at
+            $x_0$ plus the concavity of the curve $(y,f(x_0,y))$ at $y_0$.
+            <br><br>
+            It turns out that the eigenfunctions of $\Delta$ form an orthonormal basis for $L^2(\mathbb{R}^2)$ as
+            well! If our domain is $[0,1]\times[0,1]$ then, enforcing our boundary condition of zero, the eigenfunctions
+            of $\Delta$ are given by:
+            <br><br>
+            $$v_{m,n}(x,y)=\sin(\pi m x)\sin(\pi n y)$$
+            <br>
+            Whose corresponding eigenvalue is given by $\pi^2(m^2+n^2)$.
+            <br><br>
+            To convince you in a similar manner that these functions do indeed form a basis, I've created a similar
+            visualization. This time, however, I plot colors on the 2D plane with purple representing positive values
+            of the function and green representing negative values. From left to right we have $\sin(\pi x)\sin(2\pi y)$,
+            $\sin(3\pi x)\sin(5\pi y)$, $\sin(7\pi x)\sin(11\pi y)$, and finally their sum weighted again by $A$, $B$, and $C$.
+        </p>
+        <br>
+        <div align="center">
+            <canvas id="coeff2dCanvas" style="height:360px;width:1440px"/>
+        </div>
+        <div align="center">
+            <input type="range" min="-20" max="20" value="-20" id="inp2dCoeff1"></input>
+            <input type="range" min="-20" max="20" value="-20" id="inp2dCoeff2"></input>
+            <input type="range" min="-20" max="20" value="20" id="inp2dCoeff3"></input>
+        </div>
+        <div align="center">
+        <p id="val2dCoeff1" class="input">A = -1</p>
+        <p id="val2dCoeff2" class="input">B = -1</p>
+        <p id="val2dCoeff3" class="input">C = 1</p>
+        </div>
+        <br>
+        <p class="textContent">
+            It turns out that, whenever a space $M$ is <i>Riemannian</i>, meaning it has tangent spaces and a way to transport
+            vectors between tangent spaces, it has a corresponding Laplace operator $\Delta_M$. Whenever the space is compact,
+            meaning it doesn't go on forever, a countable set of eigenfunctions of $\Delta_M$ will form an orthonormal basis
+            for $L^2(M)$. Examples of Riemannian spaces include $\mathbb{R}^n$ for any $n$, as well as many of its subsets such
+            as a double torus, Klein bottle, or projective space, which we will not visualize here.
+            <br><br>
+            If we are willing to except some hand-waving, it is reasonable to expect that the set of all images of natural scenes form a Riemannian
+            space. Consider that all $100\times 100$ images exist in $\mathbb{R}^{100\times\100\times 3}$, for $100\times 100$ pixels and
+            3 channels (red, green, blue) at each pixel. Most points in this space would look like chaotic nonsense to us, the space of natural images
+            is "small," in some sense. For one thing, it does not go on forever, because if it did the brightness or darkness of some pixel could go to
+            infinity, which makes no real sense.
+            <br><br>
+            Although it may seem bizarre, it is a natural assumption to make in theoretical data science that a dataset sampled within Euclidean space
+            has Riemannian geometry. Although we aren't going to delve into the intricacies of Riemannian geometry here, we are going to demand that the
+            space of natural images has some Laplace operator $\Delta$. The eigenfunctions of this operator are defined <i>on the space of stimuli</i> which
+            Stringer and Pachitariu showed to the mouse. In order to understand why Zipf's law emerges in neural activity, we are going to relate the eigenvalues
+            of this operator on stimulus space to the activity which the stimuli evoke.
         </p>
         <p class="textContent" id="Kernels">
             <big><u><b>Kernels</b></u></big>
@@ -246,23 +337,10 @@
         <input type="range" min="-12" max="12" value="2" id="inpxFreq"></input>
         <input type="range" min="-12" max="12" value="-3" id="inpyFreq"></input>
     </div>
-    <br>
-    <div align="center">
-        <canvas id="coeff2dCanvas" style="height:360px;width:1440px"/>
-    </div>
     <div align="center">
         <input type="range" min="-20" max="20" value="-20" id="inp2dCoeff1"></input>
         <input type="range" min="-20" max="20" value="-20" id="inp2dCoeff2"></input>
         <input type="range" min="-20" max="20" value="20" id="inp2dCoeff3"></input>
-    </div>
-    <br>
-    <div align="center">
-        <canvas id="coeff1dCanvas" style="height:360px;width:1440px"/>
-    </div>
-    <div align="center">
-        <input type="range" min="-20" max="20" value="-20" id="inp1dCoeff1"></input>
-        <input type="range" min="-20" max="20" value="-20" id="inp1dCoeff2"></input>
-        <input type="range" min="-20" max="20" value="20" id="inp1dCoeff3"></input>
     </div>
     <br>
     <div align="center">
