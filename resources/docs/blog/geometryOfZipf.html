@@ -244,22 +244,23 @@
             as a double torus, Klein bottle, or projective space, which we will not visualize here.
             <br><br>
             If we are willing to except some hand-waving, it is reasonable to expect that the set of all images of natural scenes form a Riemannian
-            space. Consider that all $100\times 100$ images exist in $\mathbb{R}^{100\times\100\times 3}$, for $100\times 100$ pixels and
+            space. Consider that all $100\times 100$ images exist in $\mathbb{R}^{100\times100\times 3}$, for $100\times 100$ pixels and
             3 channels (red, green, blue) at each pixel. Most points in this space would look like chaotic nonsense to us, the space of natural images
-            is "small," in some sense. For one thing, it does not go on forever, because if it did the brightness or darkness of some pixel could go to
+            (natural meaning photographed, not computer-generated)
+            is "small," in some sense. For one thing, it is compact, because if it did go on forever the brightness or darkness of some pixel could go to
             infinity, which makes no real sense.
             <br><br>
-            Although it may seem bizarre, it is a natural assumption to make in theoretical data science that a dataset sampled within Euclidean space
-            has Riemannian geometry. Although we aren't going to delve into the intricacies of Riemannian geometry here, we are going to demand that the
+            Although it may initially seem bizarre, it is a natural assumption to make in theoretical data science that a dataset sampled within Euclidean space
+            has Riemannian geometry. We aren't going to delve into the intricacies of Riemannian geometry here, but we are going to demand that the
             space of natural images has some Laplace operator $\Delta$. The eigenfunctions of this operator are defined <i>on the space of stimuli</i> which
-            Stringer and Pachitariu showed to the mouse. In order to understand why Zipf's law emerges in neural activity, we are going to relate the eigenvalues
+            Stringer and Pachitariu showed to the mouse. In order to understand how and why Zipf's law emerges in neural activity, we are going to relate the eigenvalues
             of this operator on stimulus space to the activity which the stimuli evoke.
         </p>
         <p class="textContent" id="Kernels">
             <big><u><b>Kernels</b></u></big>
             <br><br>
-            Now that we have defined an inner product for functions, we should think about what it means to have a
-            matrix product for functions. Suppose we have a function of two variables $K(x,y)$, we could
+            In the first section, we discussed what it means to have an inner product for functions. Now we should think about what it means to have a
+            <i>matrix product</i> for functions. Suppose we have a function of two variables $K(x,y)$, we could
             think of $K$ as an infinite-dimensional matrix, with indices $x$ and $y$, in which case matrix
             multiplication of $f$ by $K$ would be defined as:
             <br>
@@ -325,10 +326,33 @@
             With $\alpha\simeq1$, which is exactly the same relationship appearing in Zipf's law! If you're anything like me, the fact
             that this distribution re-occurs in such an obscure setting is even more confusing than the original phenomenon itself.
             Originally, we were just talking about the frequency of words, but now we're talking about the eigenvalues of some
-            infinite-dimensional matrix.
+            infinite-dimensional matrix? It turns out that the eigenvalues of $K$ can be related to the eigenvalues of $\Delta$ on $S$:
+            the reason we see this decay pattern is because the brain must balance between the broad abstract features, analogous to the
+            low-frequency eigenfunctions of $\Delta$, and the fine detailed features of the stimulus, encapsulated by the high-frequency
+            eigenfunctions of $\Delta$. To see this in a more precise way, we will need two more theorems.
+        </p>
+        <p class="textContent" id="Greens_Theorem">
+            <big><b><u>Green's Theorem</u></b></big>
             <br><br>
-            However, now that everything is in place, we are about to see why talking about these kernels and their eigenvalues is so
-            important!
+            This is the simpler of the two theorems, and some version of this you will have learned in a calculus class. Consider the
+            integral involving a single variable function $y(x)$:
+            <br><br>
+            $$\int_a^b \Big( \frac{dy}{dx} \Big)^2dx$$
+            <br>
+            By the product rule, we have
+            <br><br>
+            $$\int_a^b \Big( \frac{dy}{dx} \Big)^2dx=\int_a^b \frac{dy}{dx}\frac{dy}{dx}dx=y(x)\frac{dy}{dx}\Bigg|_a^b-\int_a^b y(x)\frac{d^2y}{dx^2}dx$$
+            <br>
+            In the second section we assumed boundary conditions of zero, meaning $y(a)=y(b)=0$, and we will do the same here. Bringing it all
+            together we have
+            <br><br>
+            $$\int_a^b \Big( \frac{dy}{dx} \Big)^2dx=-\int_a^b y(x)\frac{d^2y}{dx^2}dx$$
+            <br>
+            Remember that in one dimension, $\Delta=-\frac{d^2}{dx^2}$. In higher dimensions, our theorem generalizes nicely:
+            <br><br>
+            $$\int_S ( \del y )^2dx=\int_S y\Delta y dx$$
+            <br>
+            In this context we will refer to this equation as <b>Green's theorem</b>.
         </p>
     <div align="center">
         <canvas id="freq2dCanvas" style="height:480px;width:720px"/>
