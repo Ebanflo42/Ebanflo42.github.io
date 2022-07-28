@@ -11,13 +11,20 @@ var freq2dRes = new THREE.Vector2(freq2dCanvas.clientWidth, freq2dCanvas.clientH
 
 var inpxFreq = document.getElementById('inpxFreq');
 var inpyFreq = document.getElementById('inpyFreq');
+var freq2d1 = document.getElementById('freq2d1');
+var freq2d2 = document.getElementById('freq2d2');
+var eig2d = document.getElementById('eig2d');
 
 var freqs2d = new THREE.Vector2(inpxFreq.value, inpyFreq.value);
 inpxFreq.oninput = function () {
     freqs2d.x = this.value;
+	freq2d1.innerHTML = "n = " + freqs2d.x;
+	eig2d.innerHTML = "λ = " + (freqs2d.x*freqs2d.x + freqs2d.y*freqs2d.y) + "π<sup>2</sup>";
 }
 inpyFreq.oninput = function () {
     freqs2d.y = this.value;
+	freq2d2.innerHTML = "m = " + freqs2d.y;
+	eig2d.innerHTML = "λ = " + (freqs2d.x*freqs2d.x + freqs2d.y*freqs2d.y) + "π<sup>2</sup>";
 }
 
 var freq2dShader = new THREE.ShaderMaterial({
@@ -127,6 +134,8 @@ var freq1dLine = new THREE.Line(freq1dGeometry, lineMaterial);
 freq1dScene.add(freq1dLine);
 
 var inpFreq = document.getElementById('inpFreq');
+var freq1d = document.getElementById('freq1d');
+var eig1d = document.getElementById('eig1d');
 inpFreq.oninput = function () {
 	let posAttr = freq1dGeometry.getAttribute('position');
 	let freq1dPosArray = posAttr.array;
@@ -135,6 +144,8 @@ inpFreq.oninput = function () {
 		freq1dPosArray[3*i + 1] = 0.45*Math.sin(this.value*Math.PI*(x + 0.5));
 	}
 	posAttr.needsUpdate = true;
+	freq1d.textContent = "n = " + this.value;
+	eig1d.innerHTML = "λ = " + this.value*this.value + "π<sup>2</sup>";
 }
 
 

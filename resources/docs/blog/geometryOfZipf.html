@@ -329,7 +329,7 @@
             infinite-dimensional matrix? It turns out that the eigenvalues of $K$ can be related to the eigenvalues of $\Delta$ on $S$:
             the reason we see this decay pattern is because the brain must balance between the broad abstract features, analogous to the
             low-frequency eigenfunctions of $\Delta$, and the fine detailed features of the stimulus, encapsulated by the high-frequency
-            eigenfunctions of $\Delta$. To see this in a more precise way, we will need two more theorems.
+            eigenfunctions of $\Delta$. To see this in a more precise way, we will need two more theorems about the Laplace operator.
         </p>
         <p class="textContent" id="Greens_Theorem">
             <big><b><u>Green's Theorem</u></b></big>
@@ -341,18 +341,56 @@
             <br>
             By the product rule, we have
             <br><br>
-            $$\int_a^b \Big( \frac{dy}{dx} \Big)^2dx=\int_a^b \frac{dy}{dx}\frac{dy}{dx}dx=y(x)\frac{dy}{dx}\Bigg|_a^b-\int_a^b y(x)\frac{d^2y}{dx^2}dx$$
+            $$\int_a^b \Big( \frac{dy}{dx} \Big)^2dx=\int_a^b \frac{dy}{dx}\frac{dy}{dx}dx=y\frac{dy}{dx}\Bigg|_a^b-\int_a^b y\frac{d^2y}{dx^2}dx$$
             <br>
             In the second section we assumed boundary conditions of zero, meaning $y(a)=y(b)=0$, and we will do the same here. Bringing it all
             together we have
             <br><br>
-            $$\int_a^b \Big( \frac{dy}{dx} \Big)^2dx=-\int_a^b y(x)\frac{d^2y}{dx^2}dx$$
+            $$\int_a^b \Big( \frac{dy}{dx} \Big)^2dx=-\int_a^b y\frac{d^2y}{dx^2}\;dx$$
             <br>
             Remember that in one dimension, $\Delta=-\frac{d^2}{dx^2}$. In higher dimensions, our theorem generalizes nicely:
             <br><br>
-            $$\int_S ( \del y )^2dx=\int_S y\Delta y dx$$
+            $$\int_S ( \nabla y )^2dx=\int_S y\Delta y dx$$
             <br>
             In this context we will refer to this equation as <b>Green's theorem</b>.
+        </p>
+        <p class="textContent" >
+            <big><b><u>Weyl's Law</u></b></big>
+            <br><br>
+            With this theorem, it will become a lot more clear why Zipf's law might emerge with the setup we have so far.
+            When I first read its statement, it seemed simultaneously somewhat vague but also too convenient to be true.
+            However, it turns out there is a very straightforward intuition for this theorem which can be turned into a proof
+            for Euclidean spaces!
+            <br><br>
+            Suppose $M$ is a Riemannian space with dimension $d$ and Laplace operator $\Delta$. Denote by $N(\lambda)$ the number of eigenfunctions
+            of $\Delta$ which have eigenvalue less than $\lambda$. Then there exists a constant $K$ such that
+            <br><br>
+            $$\lim_{\lambda\rightarrow\infty}N(\lambda)=K\lambda^{d/2}$$
+            <br>
+            Which could also be written as $N(\lambda)=O(\lambda^{d/2}$, which could be said in English as "$N(\lambda)$ grows
+            asymnptotically as fast as $\lambda^{d/2}$".
+            <br><br>
+            Although this may intially seem arcane, it is actually very clear when our space $M$ is an interval $[0,1]$ or a
+            square $[0,1]\times[0,1]$. Starting with the interval $[0,1]$, recall that the eigenfunctions are given by
+            $\sin(\pi nx)$, which I will plot below:
+        </p>
+        <div align="center">
+            <canvas id="freq1dCanvas" style="height:480px;width:720px"/>
+        </div>
+        <div align="center">
+        <input type="range" min="-12" max="12" value="2" id="inpFreq"></input>
+        </div>
+        <div align="center">
+        <p id="freq1d" class="input">n = 2</p>
+        <p id="eig1d" class="input">λ = 4π<sup>2</sup></p>
+        </div>
+        <p class="textContent">
+            Let's think about what $N(\lambda)$ would be in this 1-dimensional case. If we have an eigenfunction with eigenvalue
+            $\lambda'<\lambda$, then just by subsitution we have $\pi^2 n^2< \lambda$, which immediately tells us that $|\pi n|<\sqrt{\lambda}$.
+            Since $n$ can be any integer, we immediately see that $N(\lambda)=O(\sqrt{\lambda})$ in dimension 1!
+            <br><br>
+            In dimension 2, for the square $[0,1]\times[0,1]$, we have that the eigenfunctions are $\sin(\pi nx)\sin(\pi my)$. I'll
+            plot these below in the same way as before:
         </p>
     <div align="center">
         <canvas id="freq2dCanvas" style="height:480px;width:720px"/>
@@ -362,15 +400,10 @@
         <input type="range" min="-12" max="12" value="-3" id="inpyFreq"></input>
     </div>
     <div align="center">
-        <input type="range" min="-20" max="20" value="-20" id="inp2dCoeff1"></input>
-        <input type="range" min="-20" max="20" value="-20" id="inp2dCoeff2"></input>
-        <input type="range" min="-20" max="20" value="20" id="inp2dCoeff3"></input>
+        <p id="freq2d1" class="input">n = 2</p>
+        <p id="freq2d2" class="input">m = -3</p>
+        <p id="eig2d" class="input">λ = 13π<sup>2</sup></p>
     </div>
-    <br>
-    <div align="center">
-        <canvas id="freq1dCanvas" style="height:480px;width:720px"/>
-    </div>
-    <input type="range" min="-12" max="12" value="2" id="inpFreq"></input>
     <br>
     <div align="center">
         <canvas id="highdCanvas" style="height:480px;width:720px"/>
