@@ -367,7 +367,7 @@
             <br><br>
             $$\lim_{\lambda\rightarrow\infty}N(\lambda)=K\lambda^{d/2}$$
             <br>
-            Which could also be written as $N(\lambda)=O(\lambda^{d/2}$, which could be said in English as "$N(\lambda)$ grows
+            Which could also be written as $N(\lambda)=O(\lambda^{d/2})$, which could be said in English as "$N(\lambda)$ grows
             asymnptotically as fast as $\lambda^{d/2}$".
             <br><br>
             Although this may intially seem arcane, it is actually very clear when our space $M$ is an interval $[0,1]$ or a
@@ -405,6 +405,40 @@
         <p id="eig2d" class="input">λ = 13π<sup>2</sup></p>
     </div>
     <br>
+    <p class="textContent">
+        In this case, we have that $\lambda=(m^2+n^2)\pi^2$, meaning $N(\lambda)$ counts all integer pairs $(n,m)$
+        such that $n^2+m^2\leq\frac{\lambda}{\pi^2}$. A simple way of thinking about this inequality is that it measures
+        the number of integer grid points inside a disk of radius $\frac{\sqrt{\lambda}}{\pi}$. We know that as the disk
+        grows larger, the number of grid points becomes closer and closer to its area, and since the area of the disk is
+        proportional to the square radius, $\frac{\lambda}{\pi^2}$, implying that $N(\lambda)$ is eventually approximately
+        proportional to $\lambda$!
+        <br><br>
+        This very nice way to reason about Weyl's law generalizes to higher dimensions in a straightforward way. Suppose we have
+        an $d$-cube specified by $d$ variables $x_k$ with $0\leq x_k\leq 1$. Then the eigenfunctions of $\Delta$, with our boundary
+        conditions enforced will be specified by some integer frequency variables $n_1,n_2,\cdots,n_d$:
+        <br><br>
+        $$\prod_{i=1}^d \sin(n_i \pi x_i)$$
+        <br>
+        The eigenvalue of such a function will be $\pi^2\sum_i n_i^2$. Once again, the function $N(\lambda)$ will count the
+        number of integer tuples $(n_1,n_2,\cdots,n_d)$ satisfying $n_1^2+n_2^2 + \cdots n_d^2\leq \frac{\lambda}{\pi^2}$.
+        This inequality defines all integer grid-points within a $d$-ball of radius $\frac{\lambda^{1/2}}{\pi}$. The amount
+        of $d$-space that a $d$-ball with radius $\frac{\lambda^{1/2}}{\pi}$ takes up is proportional to $\lambda^{d/2}$!
+        <br><br>
+        To recap: let's say $\textrm{Int}_d(r)$ is the number of integer grid points contained within a $d$-ball of radius $r$.
+        Let's also define $\textrm{Vol}_d(r)$ to be the volume of a $d$-ball with radius $r$. If we accept that
+        <br><br>
+        $$\lim_{r\rightarrow\infty}\frac{\textrm{Int}_d(r)}{\textrm{Vol}_d(r)}=1$$
+        <br>
+        and that
+        <br><br>
+        $$\textrm{Vol}_d(r)=Ar^d$$
+        for some constant $A$. Finally, we also note that, for a Laplace operator on a $d$-cube,
+        $$N(\lambda)=\textrm{Int}_d\Big(\frac{\lambda^{1/2}}{\pi}\Big)$$
+        Putting this altogether suggest that this is indeed a constant $K$ such that
+        $$\lim_{\lambda\rightarrow\infty}\frac{N(\lambda)}{\lambda^{d/2}}=K$$
+        Every step of this proof sketch should be checked carefully, but in essence we have proven what we have set
+        out to prove about the Laplace operator on a $d$-cube!
+    </p>
     <div align="center">
         <canvas id="highdCanvas" style="height:480px;width:720px"/>
     </div>
