@@ -438,6 +438,104 @@
         $$\lim_{\lambda\rightarrow\infty}\frac{N(\lambda)}{\lambda^{d/2}}=K$$
         Every step of this proof sketch should be checked carefully, but in essence we have proven what we have set
         out to prove about the Laplace operator on a $d$-cube!
+        <br><br>
+        Our overall goal for this section is to show that Weyl's law holds for Riemannian spaces in general, which we have yet to do.
+        The argument in the general case becomes much more difficult, so we will only think about it intuitively. Even for the most
+        complicated Riemannian space, like a Klein bottle, triple torus, or the space of natural images, if we zoom in far enough we
+        will see that the space <i>locally</i> looks like a square (or some higher dimensional cube). When we consider the <i>very</i>
+        high frequency eigenfunctions on one of these spaces, on each square-like neighborhood they will actually look a lot like the
+        eigenfunctions on the square, and the overall eigenfunction will look like a patchwork or these local eigenfunctions! Therefore,
+        as the eigenvalues become asymptotically larger, the Euclidean argument becomes increasingly close to being correct, and the eigenvalue
+        count $N(\lambda)$ goes asymptotically to $\lambda^{d/2}$!
+        <br><br>
+        You should retain some skepticism around this argument, but hopefully I've at least convinced you that Weyl's law is worth believing in,
+        because now it's time to explain why we see Zipf's law in the brain.
+    </p>
+    <p class="textContent" id="Tying_it_All_Together">
+        <big><b><u>Tying it All Together</u></b></big>
+        <br><br>
+        Remember that our mathematical setup for explaining Stringer and Pachitariu's findings is that $S$ is a Riemannian space of dimension $d$ consisting of
+        every image which is shown to the mouse, $\mathbb{H}$ is a Hilbert space representing the activity of every neuron in the mouse visual
+        cortex, and a representation $\Phi:S\rightarrow\mathbb{H}$ defining the response of the brain to a given stimulus. What we are interested
+        in is the covariance kernel $K(s,s')=\langle \Phi(s),\Phi(s')\rangle$ and we have found that its eigenvalues approximately follow the law
+        $\lambda_n\propto n^{-1}$. Let's make two observations based on what an ideal mouse brain might use for the representation $\Phi$.
+        <br><br>
+        First of all, $\Phi(s)$ should retain as much information about the stimulus $s$ as possible. This means that if $s$ and $s'$ are different
+        stimulus, $\Phi(s)$ and $\Phi(s')$ should be very different, meaning $K(s,s')$ should be near zero. In this case the kernel $K$ is almost
+        like and infinite-dimensional diagonal matrix, and we can find its eigenvalues along the diagonal $K(s,s)$. Naturally, we expect
+        $\Phi(s)$ and $\Phi(s')$ to have a similar <i>magnitude</i> (the brain's overall level of activity isn't changing that much), so
+        $K(s,s)\simeq K(s',s')$, meaning we expect that $\lambda_n\simeq K$ for some constant $K$.
+        <br><br>
+        This is not the case, however, and the reason ultimately comes from a second observation. Let $\nabla$ be a derivative operator on the stimulus
+        space. At a given stimulus $s$, $\nabla\Phi(s)$ gives a value in the Hilbert space $\mathbb{H}$ for how much the representation changes around $s$
+        due to some perturbation (for advanced readers: the argument does not depend on which vector field is used to assign perturbations to stimuli).
+        Mice need to be able to recognize a visual stimulus regardless of small perturbations: a deadly snake with a missing scale is still a deadly snake,
+        a family member with discolored fur is still a family member. Given an infinitesimal change in a stimulus, there should only be an infinitesimal change
+        in representation. In mathematical terms, the expected derivative magnitude must be finite:
+        <br><br>
+        $$\int_S ||\nabla \Phi(s)||^2 dS<\infty$$
+        <br><br>
+        Starting from this assumption, we will show that if $\lambda_n$ are the eigenvalues of $K$ in decreasing order, we must have
+        <br><br>
+        $$\lim_{n\rightarrow\infty}\frac{\lambda_n}{n^{-1-2/d}}=0$$
+        <br>
+        Before we officially start, let's first define $v_i$ as the eigenfunction of $K$ with eigenvalue $\lambda_i$ and $w_i$ as the eigenfunction of $\Delta$
+        with eigenvalue $\eta_i$, and note that since both $\{v_i\}$ and $\{w_i\}$ are orthonormal bases we must have an infinite orthogonal matrix $A$ trasnforming
+        one basis into the other, i.e. $v_i=\sum_j A_{ij} w_j$ and $w_i=\sum_j A_{ji} v_j$.
+        <br><br>
+        Second, note that since $\{v_i\}$ forms a basis of $L^2(S)$, we can write
+        our representation as $\Phi(s)=\sum_i u_i v_i(s)$, where each $u_i\in\mathbb{H}$ can be computed simply by projecting $\Phi$ onto
+        the eigenvector $v_i$:
+        <br><br>
+        $$u_i=\int_S \Phi(s) v_i(s) dS$$
+        <br>
+        This definition makes it easy to compute the inner product of $u_i$ with itself:
+        $$\langle u_i,u_i\rangle = \int_{S\times S}\langle\Phi(s),\Phi(s')\rangle v_i(s)v_i(s')\; dS dS'=\int_{S\times S}K(s,s') v_i(s)v_i(s')\; dS dS'=\int_S \lambda_i v_i(s)\; dS=\lambda_i$$
+        <br>
+        These equalities follow from the definition of $u_i$, the definition of $K$, the definition of $\lambda_i$, and the fact that $v_i$ has norm 1, respectively.
+        <br><br>
+        Now we are ready to start toying with the expected magnitude of the derivative of $\Phi$. First, we will use the decomposition of $\Phi$ we just discovered:
+        <br><br>
+        $$\int_S |\nabla\Phi|^2 \; dS=\int_S \sum_i |u_i|^2|\nabla v_i|^2 \; dS=\int_S \sum_i \lambda_i|\nabla v_i|^2 \; dS$$
+        <br>
+        Now we get to use Green's theorem on each $v_i$ to transform the equation into a form which allows an analysis of the Laplace operator!
+        <br><br>
+        $$\int_S \sum_i \lambda_i |\nabla v_i|^2 \; dS=\int_S \sum_i \lambda_i v_i \Delta v_i \; dS$$
+        <br>
+        Next, we will use our first observation about transforming the basis $\{v_i\}$ into the basis $\{w_i\}$:
+        <br><br>
+        $$\int_S \sum_i \lambda_i v_i \Delta v_i \; dS=\int_S \lambda_i \Bigg(\sum_j A_{ij}w_j\Bigg)\Delta \Bigg(\sum_k A_{ik}w_k\Bigg) \; dS$$
+        <br>
+        Rewriting the sum we obtain:
+        <br><br>
+        $$\int_S \lambda_i \Bigg(\sum_j A_{ij}w_j\Bigg)\Delta \Bigg(\sum_k A_{ik}w_k\Bigg) \; dS = \int_S \Bigg(\sum_{i,j,k}\lambda_i A_{ij}A_{jk} w_{j}\Delta w_k \Bigg)\; dS$$
+        <br>
+        Remember that $\Delta w_k =\eta_k w_k$! Also, the only two quantities in this integral which actually depend on a point $s$ in the stimulus space are the
+        Laplace eigenfunctions $w_j$ and $w_k$, so we are allowed to bring the sum outside the integral:
+        <br><br>
+        $$\int_S \Bigg(\sum_{i,j,k}\lambda_i A_{ij}A_{jk} w_{j}\Delta w_k \Bigg)\; dS=\sum_{i,j,k}\lambda_i \eta_k A_{ij}A_{ik}\int_S w_j(s)w_k(s) dS$$
+        <br>
+        We can now apply the fact that $\{w_j\}$ is an <i>orthonormal</i> basis, $\int_S w_j(s)w_k(s)\;dS$ is $1$ if $j=k$ and $0$ otherwise. This means we can simply eliminate
+        the $k$ index from our sum, and finally arrive at:
+        <br><br>
+        $$\int_S |\nabla\Phi|^2 \; dS = \sum_{i,j}\lambda_i \eta_j A_{ij}^2$$
+        <br>
+        And now we see the fundamental relation from which our Zipfian distribution arose! Due to Weyl's law, as $j$ grows large $\eta_j$ grows like $j^{2/d}$. Therefore,
+        $\lambda_i$ must shrink at least as fast $i^{-1-2/d}$: $i^{-2/d}$ cancels the growth of $eta_j$, and shrinking faster than $i^{-1}$ ensures that the series will not
+        diverge because any geometric series shrinking faster than $i^{-1}$ does not diverge.
+        <br><br>
+        Of course, this last paragraph is not a rigorous argument. Stringer and Pachitariu do make this into a rigorous argument in their supplemental material. Although the rigorous
+        version is short, I will not reproduce it here because it is somewhat technical and would mainly distract from the spirit of the proof. If I've caught your attention so far,
+        I really encourage you to read their paper.
+        <br><br>
+        Another thing you will probably be wondering is why the power law turns out to be $n^{-1-2/d}$ instead of $n^{-1}$ as promised. With the dataset of natural images which Stringer
+        and Pachitariu showed to the mice, the intrinsic dimensionality of the data is very large, meaning $\frac{2}{d}\rightarrow 0$. Furthermore, remember our first observation: a representation
+        which preservers a maximal amount of information will have a covariance eigenspectrum which is approximately constant, or flat. Our theorem shows that the decay of the eigenspectrum must be
+        <i>at least</i> as fast as $n^{-1}$, so decaying barely faster indicates a balance between preserving information and preserving differentiability. What Stringer and Pachitariu's experiments show is that, the
+        mouse brain is preserving as much detail about what it sees as possible, while still retaining a representation which is stable to small perturbations! What's even more incredible about their
+        paper is that they actually tried a set of experiments where the projected the images onto their first two principal axes, and found a decay of $n^{-2}$; projecting the images onto four axes
+        showed a power law of $n^{-1.5}$, and eight axes showed a power law of approximately $n^{-1.25}$. The mouse brain is very robust! If this does not convince you to read the paper, I don't know
+        what will.
     </p>
     <div align="center">
         <canvas id="highdCanvas" style="height:480px;width:720px"/>
