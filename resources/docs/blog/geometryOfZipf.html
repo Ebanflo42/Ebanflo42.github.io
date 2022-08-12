@@ -521,26 +521,61 @@
         $$\int_S |\nabla\Phi|^2 \; dS = \sum_{i,j}\lambda_i \eta_j A_{ij}^2$$
         <br>
         And now we see the fundamental relation from which our Zipfian distribution arose! Due to Weyl's law, as $j$ grows large $\eta_j$ grows like $j^{2/d}$. Therefore,
-        $\lambda_i$ must shrink at least as fast $i^{-1-2/d}$: $i^{-2/d}$ cancels the growth of $eta_j$, and shrinking faster than $i^{-1}$ ensures that the series will not
+        $\lambda_i$ must shrink at least as fast $i^{-1-2/d}$ because $i^{-2/d}$ cancels the growth of $\eta_j$, and shrinking faster than $i^{-1}$ ensures that the series will not
         diverge because any geometric series shrinking faster than $i^{-1}$ does not diverge.
         <br><br>
-        Of course, this last paragraph is not a rigorous argument. Stringer and Pachitariu do make this into a rigorous argument in their supplemental material. Although the rigorous
+        Of course, this last paragraph is not a rigorous argument because $\lambda_i$ and $\eta_j$ are coupled through $A_{ij}$, which is probably not the identity matrix.
+        Stringer and Pachitariu do make this into a rigorous argument in their supplemental material. Although the rigorous
         version is short, I will not reproduce it here because it is somewhat technical and would mainly distract from the spirit of the proof. If I've caught your attention so far,
         I really encourage you to read their paper.
         <br><br>
         Another thing you will probably be wondering is why the power law turns out to be $n^{-1-2/d}$ instead of $n^{-1}$ as promised. With the dataset of natural images which Stringer
         and Pachitariu showed to the mice, the intrinsic dimensionality of the data is very large, meaning $\frac{2}{d}\rightarrow 0$. Furthermore, remember our first observation: a representation
         which preservers a maximal amount of information will have a covariance eigenspectrum which is approximately constant, or flat. Our theorem shows that the decay of the eigenspectrum must be
-        <i>at least</i> as fast as $n^{-1}$, so decaying barely faster indicates a balance between preserving information and preserving differentiability. What Stringer and Pachitariu's experiments show is that, the
+        <i>at least</i> as fast as $n^{-1}$, so decaying barely faster indicates a balance between preserving information and preserving differentiability.
+        <br><br>
+        What Stringer and Pachitariu's experiments show is that, the
         mouse brain is preserving as much detail about what it sees as possible, while still retaining a representation which is stable to small perturbations! What's even more incredible about their
         paper is that they actually tried a set of experiments where the projected the images onto their first two principal axes, and found a decay of $n^{-2}$; projecting the images onto four axes
         showed a power law of $n^{-1.5}$, and eight axes showed a power law of approximately $n^{-1.25}$. The mouse brain is very robust! If this does not convince you to read the paper, I don't know
         what will.
+        <br><br>
+        Most of this section has been sketching a rigorous analytical proof of why we expect to see Zipf's law in the brain. I hope you found the argument as beautiful as I did! However, we have deviated
+        somewhat from the intuitive geometrical spirit of this article. Thus, we need an example.
+        <br><br>
+        Suppose we uniformly sample a point $s$ on the circle, with its angle scaled to be within $[0,1)$. We can construct $\Phi(s)$ as a real-valued sequence like so:
+        <br><br>
+        $$\Phi_{2n-1}(s)=\frac{\cos(2\pi s)}{n^{\alpha/2}}\;\;\;\Phi_{2n}(s)=\frac{\sin(2\pi s)}{n^{\alpha/2}}$$
+        <br>
+        Where $\alpha>1$. First, check that $\Phi$ always produces a sequence whose squared elements form a convergent series.
+        Then it can be checked that the covariance kernel of this representation has an eigenspectrum decaying as $n^{-\alpha}$.
+        Intuitively, this function of a circle extracts every single frequency of the data sampled on the circle, and represents each
+        one in inverse proportion to its frequency.
+        <br><br>
+        To understand the meaning of our theorem, let's look at a random projection of this map into 3 dimensions. Below, I've taken the first 300 components of $\Phi$
+        and projected them onto 3 completely random axes. You can zoom in and out with the mouse and adjust $\alpha$ with the slider.
     </p>
     <div align="center">
         <canvas id="highdCanvas" style="height:480px;width:720px"/>
     </div>
-    <input type="range" min="0" max="80" value="20" id="expInput"></input>
+    <div align="center">
+        <input type="range" min="20" max="100" value="60" id="expInput"></input>
+    </div>
+    <div align="center">
+        <p id="alphaVal" class="input">α = 3</p>
+    </div>
+    <p class="textContent">
+        The circle is a Riemannian space with dimension $d=1$.
+        According to our theorem, we expect the derivative $\nabla \Phi$ to be finite whenever $\alpha\geq 1+\frac{2}{d}=3$.
+        Although I can't illustrate it precisely since computers can only handle finitely many line segments, we can clearly
+        see that when $\alpha>3$ we have a smoother curve and when $\alpha< 3$ we have a more fractal curve.
+        That's because a fractal is fundamentally defined as an object which has non-trivial high-frequency structure, and
+        a smooth object is defined as one which has trivial high-frequency structure. Adjusting $\alpha$ adjusts the weight given
+        to higher frequencies.
+        <br><br>
+        What Stringer and Pachitariu have shown is that representations with a Zipf law, including the one found in the mouse brain,
+        are perfectly on the boarder between smooth and fractal!
+    </p>
     <script src="../../scripts/three.min.js"></script>
     <script src="../../scripts/OrbitControls.js"></script>
     <script id="1d_vs" type="glsl">
@@ -645,7 +680,7 @@
         varying vec3 fragCol;
         void main(){
             vec3 col = fragCol/(fragCol.r + fragCol.g + fragCol.b);
-            col = pow(col, vec3(-4.0 - p));
+            col = pow(col, vec3(-5.0 - p));
             float m = max(col.r, max(col.g, col.b));
             col /= m;
             gl_FragColor = vec4(col, 1);

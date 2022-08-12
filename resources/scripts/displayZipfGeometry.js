@@ -343,17 +343,21 @@ for(let i = 0; i < 300; i++) {
 	axis3[i] /= Math.sqrt(norm);
 }
 
-var exponent = -1;
+var exponent = -3;
+var normalizer = 0;
+for(let i = 0; i < 300; i++) {
+	normalizer += Math.pow(i + 1, exponent/2);
+}
 
 var highdPoints = new Array();
 for(let i = 0; i < highdLinePoints + 1; i++) {
 	let point = new Array();
 	for(let j = 0; j < 150; j++) {
 		let wav1 = Math.sin(2*Math.PI*(j + 1)*i/highdLinePoints);
-		let amp1 = Math.pow(j + 1, exponent/2);
+		let amp1 = Math.pow(j + 1, exponent/2)/normalizer;
 		point.push(amp1*wav1);
 		let wav2 = Math.cos(2*Math.PI*(j + 1)*i/highdLinePoints);
-		let amp2 = Math.pow(j + 1, exponent/2);
+		let amp2 = Math.pow(j + 1, exponent/2)/normalizer;
 		point.push(amp2*wav2);
 	}
 	//*/
@@ -363,7 +367,7 @@ for(let i = 0; i < highdLinePoints + 1; i++) {
 var highdCanvas = document.getElementById('highdCanvas');
 var highdCamera = new THREE.PerspectiveCamera(60, highdCanvas.clientWidth / highdCanvas.clientHeight, 0.01, 20);
 var cameraControl = new THREE.OrbitControls(highdCamera, highdCanvas);
-highdCamera.position.set(0, 0, 1);
+highdCamera.position.set(0, 0, 0.1);
 highdCamera.lookAt(new THREE.Vector3(0, 0, 0));
 
 var highdGeometry = new THREE.BufferGeometry();
@@ -385,7 +389,7 @@ let vertCol = new Float32Array(3*(highdLinePoints + 1));
 for (let i = 0; i < highdLinePoints + 1; i++) {
 	vertCol[3*i] = 0.5 + 0.5*Math.sin(2*Math.PI*i/highdLinePoints);
 	vertCol[3*i + 1] = 0.5 + 0.5*Math.sin(2*Math.PI*i/highdLinePoints + 0.333*Math.PI);
-	vertCol[3*i + 2] = 0.5 + 0.5*Math.sin(2*Math.PI*i/highdLinePoints + 0.66*Math.PI);
+	vertCol[3*i + 2] = 0.5 + 0.5*Math.sin(2*Math.PI*i/highdLinePoints + 0.666*Math.PI);
 }
 highdGeometry.setAttribute('vertCol', new THREE.BufferAttribute(vertCol, 3));
 highdGeometry.setDrawRange(0, highdLinePoints + 1);
@@ -408,17 +412,24 @@ var highdRenderer = new THREE.WebGLRenderer({ canvas: highdCanvas, antialias: tr
 highdRenderer.setSize(highdCanvas.clientWidth, highdCanvas.clientHeight);
 
 var expInput = document.getElementById("expInput");
+var alphaVal = document.getElementById("alphaVal");
 expInput.oninput = function() {
 
 	exponent = -this.value/20;
+	alphaVal.innerHTML = "α = " + (-exponent);
+
+	normalizer = 0;
+	for(let i = 0; i < 300; i++) {
+		normalizer += Math.pow(i + 1, exponent/2);
+	}
 
 	for(let i = 0; i < highdLinePoints + 1; i++) {
 		for(let j = 0; j < 150; j++) {
 			let wav1 = Math.sin(2*Math.PI*(j + 1)*i/highdLinePoints);
-			let amp1 = Math.pow(j + 1, exponent/2);
+			let amp1 = Math.pow(j + 1, exponent/2)/normalizer;
 			highdPoints[i][2*j] = amp1*wav1;
 			let wav2 = Math.cos(2*Math.PI*(j + 1)*i/highdLinePoints);
-			let amp2 = Math.pow(j + 1, exponent/2);
+			let amp2 = Math.pow(j + 1, exponent/2)/normalizer;
 			highdPoints[i][2*j + 1] = amp2*wav2;
 		}
 	}
