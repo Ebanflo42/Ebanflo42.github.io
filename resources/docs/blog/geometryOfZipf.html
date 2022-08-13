@@ -576,6 +576,31 @@
         What Stringer and Pachitariu have shown is that representations with a Zipf law, including the one found in the mouse brain,
         are perfectly on the boarder between smooth and fractal!
     </p>
+    <p class="textContent" id="Conclusions">
+        <big><b><u>Conclusions and Outlook</u></b></big>
+        <br><br>
+        I started this article by talking about the occurrences of words in text, and then I completely shifted gears to talk about
+        the eigenspectrum of some kernel derived from neurological experiments. Is there any relation between these things? Zipf's law
+        is the most common "hook" for people to start learning about general "power-law" phenomena, which are very ubiquitous and occur
+        for a number of reasons. However, I do think that the explanation for Zipf's law in the brain can be tied back to the original
+        Zipf's law.
+        <br><br>
+        Eigenfunctions of the covariance kernel can sort of be thought of as the atoms of the representation, in that they are all completely
+        distinct from one another and the representation can be decomposed as a combination of them. Individual words in a language carry a
+        very similar purpose. In this case, the "stimulus space" would actually be the space of human thought, which is, by some witchcraft,
+        mapped into the space of text in some language. The frequency of a certain word then corresponds to its "coefficient" in the decomposition,
+        which would be analogous to the eigenvalue of a given eigenfunction.
+        <br><br>
+        This is a very hand-wavy explanation of the original Zipf's law. However, if we accept the analogy then we notice that Benoit Mandelbrot's
+        idea, that Zipf's law emerges because language-users want to maximize the entropy of the language while keeping the energy consumption within
+        reasonable bounds, appears a lot like Stringer and Pachitariu's argument!
+        <br><br>
+        Another interesting aspect of these findings is that the properties of the mouse brain's representation are very sought-after in machine learning.
+        It often happens that, simply by adding imperceptible noise to an image, we can cause a neural network to classify an image of a car as an image
+        of a panda. This anomaly, known broadly as adversarial attacks, is caused by a large jump in the representation of the image despite only a very
+        small perturbation to the input. A power-law representation would be able to avoid this kind of catastrophe the vast majority of the time (in the
+        same way animals do), while still extracting all relevant features from the image!
+    </p>
     <script src="../../scripts/three.min.js"></script>
     <script src="../../scripts/OrbitControls.js"></script>
     <script id="1d_vs" type="glsl">
