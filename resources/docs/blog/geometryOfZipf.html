@@ -31,6 +31,19 @@
         <a class="navItem" href="../../../Blog.html">Blog</a>
         <a class="navItem" style="border-top-right-radius:15px;border-bottom-right-radius:15px;" href="../../../Research.html">Research</a>
     </div>
+    <br>
+    <p class="textContent">
+        Jump to:<br>
+        <span style="margin-left:2em" /><a href="#Introduction">Introduction</a><br>
+        <span style="margin-left:2em" /><a href="#Hilbert_Spaces">Hilbert Spaces</a><br>
+        <span style="margin-left:2em" /><a href="#The_Laplace_Operator">The Laplace Operator</a><br>
+        <span style="margin-left:2em" /><a href="#Kernels">Kernels</a><br>
+        <span style="margin-left:2em" /><a href="#Greens_Theorem">Green's Theorem</a><br>
+        <span style="margin-left:2em" /><a href="#Weyls_Law">Weyl's Law</a><br>
+        <span style="margin-left:2em" /><a href="#Tying_it_All_Together">Tying it All Together</a><br>
+        <span style="margin-left:2em" /><a href="#Conclusions_and_Outlook">Conclusions and Outlook</a>
+    </p>
+    <br>
     <p class="textContent" id="Introduction">
         <big><u><b>Introduction</b>></u></big>
         <br><br>
@@ -41,11 +54,11 @@
         common word for some language. Then we have the following approximate equation:
         <br>
         $$f_n=\frac{f_1}{n}$$
-        <br><br>
+        <br>
         Or, taking the logarithm for a more convenient form:
         <br>
         $$\log(f_n)=-\log(n)+\log(f_1)$$
-        <br><br>
+        <br>
         For example, the most common word in English is "the," the second most common word is "be,"
         and the third most common word is "to." If this law holds, we would expect "be" to
         occur 1/2 as often as "the," and "to" to occur 1/3 as often as "the."
@@ -61,7 +74,7 @@
             To represent the phenomenon in a very straightforward way, I have plotted on the left a curve proportional to
             $\frac{1}{x}$ as a green dotted line, and shown that it aligns roughly with the frequency of each word with respect
             to its rank. However, this way of plotting a power-law phenonenon is very limited, as it shows us only a few orders
-            magnitude of the data. The more common way to plot this is shown on the right, where the logarithm of the number of
+            magnitude. The more common way to plot this is shown on the right, where the logarithm of the number of
             occurrences is plotted with respect to the logarithm of the rank of each word. Transformed to these coordinates,
             the data nearly follows a straight line for 3 orders of magnitude!
             <br><br>
@@ -73,7 +86,7 @@
             <br><br>
             Something which probably stands out at this point is that the many authors of the Bible most
             probably had no idea about exponents, logarithms, lines of best fit, or even equations.
-            Indeed, this distribution of words is something that arose completely naturally, and has been
+            Indeed, this distribution of words is something that arose completely naturally, and it has been
             observed across many different corpuses of text in many different languages. Not only that,
             this distribution has been observed in the
             <a href="https://ieeexplore.ieee.org/abstract/document/4325473" target="_blank">the noise spectrum of
@@ -89,7 +102,7 @@
             deep consequences for machine learning. The main paper which I'll be referring to is
             <a href="https://www.nature.com/articles/s41586-019-1346-5" target="_blank">Stringer and Pachitariu et al.</a>.
             The main body of this paper shows empirically that the visual cortex of the mouse is exhibiting Zipf's in a
-            way which I'll elaborate on in the next section. Contained in the supplement of the paper is a very elegant and
+            way which I'll elaborate on later in the article. Contained in the supplement of the paper is a very elegant and
             insightful proof for why we actually <i>expect</i> this distribution to emerge.
             <br><br>
             In order to understand the reasoning of Stringer and Pachitariu, we are going to have to introduce
@@ -112,13 +125,14 @@
             This subspace is defined such that for all $f\in L^2(\mathbb{R})$, we have that the quantitity
             <br>
             $$\langle f,f \rangle =\int_{-\infty}^{\infty}|f(x)|^2dx$$
-            <br><br>
+            <br>
             is well defined. For general $f,g\in L^2(\mathbb{R})$, we define
             <br>
             $$\langle f,g \rangle =\int_{-\infty}^{\infty}f(x)g(x)dx$$
             <br>
             The operation $\langle\cdot,\cdot\rangle$ is referred to as the inner product on this
-            space. A vector space supporting such an operation is referred to as a <b>Hilbert space</b>.
+            space. A vector space supporting such an operation is referred to as a <b>Hilbert space</b>
+            (note for advanced readers: actually, the metric induced by the inner product must be complete for it to be defined as a Hilbert space).
             <br><br>
             To see the intuition for this definition: we might want to think of the value $f(x)$ as the
             entry of the vector at index $x$. We might also want to (very intuitively) think of the integral sign $\int$
@@ -139,24 +153,24 @@
             <br><br>
             One of the most important linear operators which we can define on $L^2(S)$ is the Laplace operator $\Delta$.
             If $S$ is an interval, $[0,a]$, then we have the following definition:
-            <br><br>
-            $$\Delta=\frac{d}{dx^2}$$
+            <br>
+            $$\Delta=-\frac{d}{dx^2}$$
             <br>
             That is, $\Delta$ is simply the second derivative operator. In this case, $\Delta$ measures the <i>concavity</i>,
-            of its input function, or how much the function is curving up or down. In the same way we can define an <i>eigenvector
+            of its input function: how much the function is curving up or down. In the same way we can define an <i>eigenvector
             equation</i> in a finite-dimensional space, we can define an <i>eigenfunction</i> equation for an operator on an
             infinite-dimensional space:
-            <br><br>
-            $$\Delta v_{\lambda}=-\lambda v_{\lambda}$$
             <br>
-            In words, this equation is saying that the concavity of $v_{\lambda}(x)$ at $x$ is proportional to $x$  for all $x$. The $sin$
-            function is, by construction, the solution to this equation:
-            <br><br>
+            $$\Delta v_{\lambda}=\lambda v_{\lambda}$$
+            <br>
+            In words, this equation is saying that the concavity of $v_{\lambda}(x)$ at $x$ is proportional to $x$  for all $x$. The $\sin$
+            function is the solution to this equation:
+            <br>
             $$v_{\lambda}(x)=\sqrt{\frac{2}{a}}\sin\big(\sqrt{\lambda}x\big)$$
             <br>
             Since we are enforcing the condition that $v_{\lambda}$ is $0$ both at $x=0$ and $x=a$, we must have that all eigenvalues are
-            of the form $\lambda=sqrt{\frac{\pi^2 n^2}{a}}$, where $n$ is an integer. $\sqrt{\frac{2}{a}}$ is normalizing factor such that
-            the integral of each eigenfunction is 1.
+            of the form $\lambda=\sqrt{\frac{\pi^2 n^2}{a}}$, where $n$ is an integer. $\sqrt{\frac{2}{a}}$ is normalizing factor such that
+            the norm of each function is $1$ (you can check this by computing the integral of the eigenfunction squared).
             <br><br>
             An essential result which we will be using is that the eigenfunctions $v_{\lambda}$ form an orthonormal basis for the
             entire vector space $L^2([0,a])$!
@@ -164,19 +178,19 @@
             In order to prove orthonormality, you can simply compute the integrals $\int v_{\lambda}(x)v_{\mu}(x)dx$. When $\lambda=\mu$,
             you should find that the integral evaluates to $1$, otherwise you should find that its value is $0$.
             <br><br>
-            When we say $\{v_{\lambda}\}$ is a basis for $L^2([0,a])$, we mean that for any function $f\in L^2([0,a])$ there is a
-            coefficient $c_{\lambda}$ (called the <i>Foureir coefficients</i>) for each eigenvalue $\lambda$, such that we have
+            When we say $\{v_{\lambda}\}$ is a basis for $L^2([0,a])$, we mean that for any function $f\in L^2([0,a])$ there are
+            coefficients $c_{\lambda}$ (called the <i>Foureir coefficients</i>) for each eigenvalue $\lambda$, such that we have
             the following decomposition:
-            <br><br>
+            <br>
             $$f(x)=\sum_{\lambda}c_{\lambda}v_{\lambda}(x)$$
             <br>
             In order to persuade you that the set of eigenfunctions also forms a basis for the space of all square-integrable function,
             I sketched below the functions $\sin(2\pi x)$, $\sin(6\pi x)$, and $\sin(18\pi x)$  on the interval $[0,1]$ in the first 3 panels.
             In the fourth panel, I sketched a sum:
-            <br><br>
+            <br>
             $$A\sin(2\pi x) + B\sin(6\pi x) + C\sin(18\pi x)$$
             <br>
-            where the coefficients $A$, $B$, and $C$ can be adjust with the sliders!
+            where the coefficients $A$, $B$, and $C$ can be adjusted with the sliders!
         </p>
             <div align="center">
                 <canvas id="coeff1dCanvas" style="height:360px;width:1440px"/>
@@ -195,23 +209,23 @@
             The goal here is to illustrate that with only 3 basis functions, we can achieve a wide diversity
             of differently-shaped functions. The overarching idea is that the low-eigenvalue functions (i.e.
             $\sin(2\pi x)$) define the broad features of the function while the high-eigenvalue functions
-            (i.e. $\sin(18\pi x)$) define the precise details of the function. It turns out that this intuition
-            is central for our reasoning for why Zipf's law is in some way expected. However, in order to further
-            develop our theory we need to generalize this principle to higher dimensions.
+            (i.e. $\sin(18\pi x)$) define the precise details of the function.
+            <br><br>
+            This decomposition is known as <i>Fourier decomposition</i>, and its fundametally about projecting
+            square-integrable functions onto the orthonormal eigenbasis of $\Delta$
             <br><br>
             If we turn the interval into a prism, $[0,a]^N$, then $\Delta$ is a sum of second derivative operators:
-            <br><br>
+            <br>
             $$\Delta=-\sum_{k=1}^N \frac{\partial^2}{\partial x^2_k}$$
             <br>
             Where each $\frac{\partial^2}{\partial x_k^2}$ is a second derivative with respect to the particular
-            variable $x_k$. Think of a function of two variables $f(x, y)$ evaluated at $x=x_0$ and $y=y_0$,
-            then $\Delta f$ at $(x_0, y_0)$ can be thought of as the concavity of the curve $(x, f(x,y_0))$ at
-            $x_0$ plus the concavity of the curve $(y,f(x_0,y))$ at $y_0$.
+            variable $x_k$. If we have the graph of a function $f(x_1,...,x_N)$ then its $N$ perpendicular cross sections
+            with respect to the axes define $N$ curves, and $\Delta$ can be thought of as summing the concavities of those curves.
             <br><br>
             It turns out that the eigenfunctions of $\Delta$ form an orthonormal basis for $L^2(\mathbb{R}^2)$ as
             well! If our domain is $[0,1]\times[0,1]$ then, enforcing our boundary condition of zero, the eigenfunctions
             of $\Delta$ are given by:
-            <br><br>
+            <br>
             $$v_{m,n}(x,y)=\sin(\pi m x)\sin(\pi n y)$$
             <br>
             Whose corresponding eigenvalue is given by $\pi^2(m^2+n^2)$.
@@ -219,7 +233,7 @@
             To convince you in a similar manner that these functions do indeed form a basis, I've created a similar
             visualization. This time, however, I plot colors on the 2D plane with purple representing positive values
             of the function and green representing negative values. From left to right we have $\sin(\pi x)\sin(2\pi y)$,
-            $\sin(3\pi x)\sin(5\pi y)$, $\sin(7\pi x)\sin(11\pi y)$, and finally their sum weighted again by $A$, $B$, and $C$.
+            $\;\sin(3\pi x)\sin(5\pi y)$, $\;\sin(7\pi x)\sin(11\pi y)$, and finally their sum weighted again by $A$, $B$, and $C$.
         </p>
         <br>
         <div align="center">
@@ -237,24 +251,27 @@
         </div>
         <br>
         <p class="textContent">
+            If you tweak the sliders long enough, you will come up with a wide variety of configurations in the 4th panel.
+            Just imagine what could be created with infinitely many basis functions!
+            <br><br>
             It turns out that, whenever a space $M$ is <i>Riemannian</i>, meaning it has tangent spaces and a way to transport
             vectors between tangent spaces, it has a corresponding Laplace operator $\Delta_M$. Whenever the space is compact,
-            meaning it doesn't go on forever, a countable set of eigenfunctions of $\Delta_M$ will form an orthonormal basis
+            meaning it doesn't go on forever, a countable set of eigenfunctions From $\Delta_M$ will form an orthonormal basis
             for $L^2(M)$. Examples of Riemannian spaces include $\mathbb{R}^n$ for any $n$, as well as many of its subsets such
-            as a double torus, Klein bottle, or projective space, which we will not visualize here.
+            as the double torus, Klein bottle, or projective space, which we will unfortunately not visualize here.
             <br><br>
             If we are willing to except some hand-waving, it is reasonable to expect that the set of all images of natural scenes form a Riemannian
             space. Consider that all $100\times 100$ images exist in $\mathbb{R}^{100\times100\times 3}$, for $100\times 100$ pixels and
-            3 channels (red, green, blue) at each pixel. Most points in this space would look like chaotic nonsense to us, the space of natural images
+            3 channels (red, green, blue) at each pixel. Most points in this space would look like chaotic nonsense to us, but the space of natural images
             (natural meaning photographed, not computer-generated)
-            is "small," in some sense. For one thing, it is compact, because if it did go on forever the brightness or darkness of some pixel could go to
+            is "small" in some sense. For one thing, it is compact, because if it did go on forever the brightness or darkness of some pixel could go to
             infinity, which makes no real sense.
             <br><br>
             Although it may initially seem bizarre, it is a natural assumption to make in theoretical data science that a dataset sampled within Euclidean space
             has Riemannian geometry. We aren't going to delve into the intricacies of Riemannian geometry here, but we are going to demand that the
             space of natural images has some Laplace operator $\Delta$. The eigenfunctions of this operator are defined <i>on the space of stimuli</i> which
-            Stringer and Pachitariu showed to the mouse. In order to understand how and why Zipf's law emerges in neural activity, we are going to relate the eigenvalues
-            of this operator on stimulus space to the activity which the stimuli evoke.
+            Stringer and Pachitariu showed to the mouse. In order to understand how and why the neural activity of the mouse exhibits Zipf's law in response to the stimulus,
+            we are going to relate the eigenvalues of this $\Delta$ operator to the response of the mouse brain.
         </p>
         <p class="textContent" id="Kernels">
             <big><u><b>Kernels</b></u></big>
@@ -270,25 +287,25 @@
             $x$, so we can't just throw any old $K$ into this equation. However, if we are careful, the operation
             described above is called an <b>integral operator</b> and $K$ is referred to as its <b>kernel</b>.
             <br><br>
-            Stringer and Pachitariu's theory rests on the assumption that their calcium images record so many
-            neurons (over ten thousand) in the mouse visual cortex, that the activity space can be thought of as
+            Stringer and Pachitariu's theory rests on the assumption that their data of the mouse visual cortex record so many
+            neurons (over ten thousand)= that the activity space can be thought of as
             infinite-dimensional. That is, we can choose a Hilbert space $\mathbb{H}$ for which $f\in\mathbb{H}$
             represents the overall activity of the cortex and the domain of the function indexes the neurons.
-            This means that $f(x)$ should be thought of as representing the activity of neuron $x$. Remember
-            that their experiments involved showing the mice videos and images, which should be primarily
-            responsible for the variance in the activity of the neurons. Suppose we have a finite-dimensional
+            This means that $f(x)$ should be thought of as representing the activity of neuron $x$. Their experiments
+            involved showing the mice videos and images, which should be primarily
+            responsible for the variance in the activity of the neurons. Suppose we have a finite-dimensional Riemannian
             space $S$ with points $s\in S$ representing specific stimuli shown to the mouse. Then, assuming the
             brain has some degree of consistency, we automatically have a <b>representation</b>
-            $\Phi:M\rightarrow \mathbb{H}$ which takes stimuli and returns cortex activity.
+            $\Phi:S\rightarrow \mathbb{H}$ which takes stimuli and returns cortex activity.
             <br><br>
             The central object required for developing a theory of how Zipf's law occurs in the brain is a kernel
             $K$ defined on the stimulus space $S$. The definition for $s,s'\in S$ is straightforward:
             <br>
             $$K(s,s')=\langle \Phi(s),\Phi(s') \rangle$$
             <br>
-            <br><br>
-            To understand this definition, remember that the dot product of two finite-dimensional vectors $\rangle u,v\langle$ can be thought of as a product including
-            their mangitudes and their similarity. This still applies in infinite dimensions: $K(s,s')=\langle\Phi(s),\Phi(s')\rangle$
+            To understand this definition, remember that the dot product of two finite-dimensional vectors $\langle u,v\rangle$ can be thought of as a product including
+            their mangitudes and their similarity. This still applies in infinite dimensions: since we expect each stimulus to evoke a similar <i>magnitude</i> of activity,
+            $K(s,s')=\langle\Phi(s),\Phi(s')\rangle$
             can be thought of as the similarity of the responses $\Phi(s)$, $\Phi(s')$ of stimuli of $s$ and $s'$.
             <br><br>
             From now on, I will use $K$ to denote specifically this kernel for whatever representation $\Phi$ might be in question.
@@ -302,6 +319,7 @@
             <br>
             Where I used the notation $\int_{S}\cdot dS$ to denote integration over $S$.
             <br><br>
+            <!--
             There are two important properties of $K$ to note, which directly follow from the properties of $\langle\cdot ,\cdot\rangle$:
             $\;K(s,s')$ is always non-negative when $s=s'$, and $K(s,s')=K(s',s)$. In finite dimensional spaces, this would allow us to
             say that 1) the eigenvalues are all non-negative and 2) the eigenvectors form an orthonormal basis. It turns out,
@@ -316,18 +334,19 @@
             <br>
             This will be an important aspect of our proof later on.
             <br><br>
+            -->
             Underlining the fact that $S$ is supposed to be a space representing natural images, $\mathbb{H}$ is the space of visual
             cortex activity, and $\Phi$ is the map taking an image and returning brain activity, what Stringer and Pachitariu found
-            <b>empirically</b> is that the eigenvalues $\lambda_n$ of the kernel $K$ (which can be computed from sampled data)
+            <b>empirically</b> is that the eigenvalues $\lambda_n$, in decreasing order, of the kernel $K$ (which can be computed from sampled data)
             have the following approximate relationship:
             <br>
             $$\lambda_n=\lambda_1 n^{-\alpha}$$
             <br>
-            With $\alpha\simeq1$, which is exactly the same relationship appearing in Zipf's law! If you're anything like me, the fact
+            With $\alpha\simeq1$, this is exactly the same relationship appearing in Zipf's law! If you're anything like me, the fact
             that this distribution re-occurs in such an obscure setting is even more confusing than the original phenomenon itself.
-            Originally, we were just talking about the frequency of words, but now we're talking about the eigenvalues of some
+            Before, we were just talking about the frequency of words, but now we're talking about the eigenvalues of some
             infinite-dimensional matrix? It turns out that the eigenvalues of $K$ can be related to the eigenvalues of $\Delta$ on $S$:
-            the reason we see this decay pattern is because the brain must balance between the broad abstract features, analogous to the
+            the reason we see this decay pattern is because the brain must balance between the broad, abstract features analogous to the
             low-frequency eigenfunctions of $\Delta$, and the fine detailed features of the stimulus, encapsulated by the high-frequency
             eigenfunctions of $\Delta$. To see this in a more precise way, we will need two more theorems about the Laplace operator.
         </p>
@@ -336,25 +355,25 @@
             <br><br>
             This is the simpler of the two theorems, and some version of this you will have learned in a calculus class. Consider the
             integral involving a single variable function $y(x)$:
-            <br><br>
+            <br>
             $$\int_a^b \Big( \frac{dy}{dx} \Big)^2dx$$
             <br>
             By the product rule, we have
-            <br><br>
+            <br>
             $$\int_a^b \Big( \frac{dy}{dx} \Big)^2dx=\int_a^b \frac{dy}{dx}\frac{dy}{dx}dx=y\frac{dy}{dx}\Bigg|_a^b-\int_a^b y\frac{d^2y}{dx^2}dx$$
             <br>
             In the second section we assumed boundary conditions of zero, meaning $y(a)=y(b)=0$, and we will do the same here. Bringing it all
             together we have
-            <br><br>
+            <br>
             $$\int_a^b \Big( \frac{dy}{dx} \Big)^2dx=-\int_a^b y\frac{d^2y}{dx^2}\;dx$$
             <br>
             Remember that in one dimension, $\Delta=-\frac{d^2}{dx^2}$. In higher dimensions, our theorem generalizes nicely:
-            <br><br>
+            <br>
             $$\int_S ( \nabla y )^2dx=\int_S y\Delta y dx$$
             <br>
             In this context we will refer to this equation as <b>Green's theorem</b>.
         </p>
-        <p class="textContent" >
+        <p class="textContent" id="Weyls_Law">
             <big><b><u>Weyl's Law</u></b></big>
             <br><br>
             With this theorem, it will become a lot more clear why Zipf's law might emerge with the setup we have so far.
@@ -364,8 +383,8 @@
             <br><br>
             Suppose $M$ is a Riemannian space with dimension $d$ and Laplace operator $\Delta$. Denote by $N(\lambda)$ the number of eigenfunctions
             of $\Delta$ which have eigenvalue less than $\lambda$. Then there exists a constant $K$ such that
-            <br><br>
-            $$\lim_{\lambda\rightarrow\infty}N(\lambda)=K\lambda^{d/2}$$
+            <br>
+            $$\lim_{\lambda\rightarrow\infty}\frac{N(\lambda)}{\lambda^{d/2}}=K$$
             <br>
             Which could also be written as $N(\lambda)=O(\lambda^{d/2})$, which could be said in English as "$N(\lambda)$ grows
             asymnptotically as fast as $\lambda^{d/2}$".
@@ -410,13 +429,13 @@
         such that $n^2+m^2\leq\frac{\lambda}{\pi^2}$. A simple way of thinking about this inequality is that it measures
         the number of integer grid points inside a disk of radius $\frac{\sqrt{\lambda}}{\pi}$. We know that as the disk
         grows larger, the number of grid points becomes closer and closer to its area, and since the area of the disk is
-        proportional to the square radius, $\frac{\lambda}{\pi^2}$, implying that $N(\lambda)$ is eventually approximately
+        proportional to the square radius, $\frac{\lambda}{\pi^2}$, this implies that $N(\lambda)$ is eventually approximately
         proportional to $\lambda$!
         <br><br>
         This very nice way to reason about Weyl's law generalizes to higher dimensions in a straightforward way. Suppose we have
         an $d$-cube specified by $d$ variables $x_k$ with $0\leq x_k\leq 1$. Then the eigenfunctions of $\Delta$, with our boundary
         conditions enforced will be specified by some integer frequency variables $n_1,n_2,\cdots,n_d$:
-        <br><br>
+        <br>
         $$\prod_{i=1}^d \sin(n_i \pi x_i)$$
         <br>
         The eigenvalue of such a function will be $\pi^2\sum_i n_i^2$. Once again, the function $N(\lambda)$ will count the
@@ -426,16 +445,21 @@
         <br><br>
         To recap: let's say $\textrm{Int}_d(r)$ is the number of integer grid points contained within a $d$-ball of radius $r$.
         Let's also define $\textrm{Vol}_d(r)$ to be the volume of a $d$-ball with radius $r$. If we accept that
-        <br><br>
+        <br>
         $$\lim_{r\rightarrow\infty}\frac{\textrm{Int}_d(r)}{\textrm{Vol}_d(r)}=1$$
         <br>
         and that
-        <br><br>
+        <br>
         $$\textrm{Vol}_d(r)=Ar^d$$
-        for some constant $A$. Finally, we also note that, for a Laplace operator on a $d$-cube,
+        <br>
+        for some constant $A$, and we observe as above that for a Laplace operator on a $d$-cube,
+        <br>
         $$N(\lambda)=\textrm{Int}_d\Big(\frac{\lambda^{1/2}}{\pi}\Big)$$
+        <br>
         Putting this altogether suggest that this is indeed a constant $K$ such that
+        <br>
         $$\lim_{\lambda\rightarrow\infty}\frac{N(\lambda)}{\lambda^{d/2}}=K$$
+        <br>
         Every step of this proof sketch should be checked carefully, but in essence we have proven what we have set
         out to prove about the Laplace operator on a $d$-cube!
         <br><br>
@@ -444,7 +468,7 @@
         complicated Riemannian space, like a Klein bottle, triple torus, or the space of natural images, if we zoom in far enough we
         will see that the space <i>locally</i> looks like a square (or some higher dimensional cube). When we consider the <i>very</i>
         high frequency eigenfunctions on one of these spaces, on each square-like neighborhood they will actually look a lot like the
-        eigenfunctions on the square, and the overall eigenfunction will look like a patchwork or these local eigenfunctions! Therefore,
+        eigenfunctions on the square, and the overall eigenfunction will look like a patchwork of these local eigenfunctions! Therefore,
         as the eigenvalues become asymptotically larger, the Euclidean argument becomes increasingly close to being correct, and the eigenvalue
         count $N(\lambda)$ goes asymptotically to $\lambda^{d/2}$!
         <br><br>
@@ -456,13 +480,13 @@
         <br><br>
         Remember that our mathematical setup for explaining Stringer and Pachitariu's findings is that $S$ is a Riemannian space of dimension $d$ consisting of
         every image which is shown to the mouse, $\mathbb{H}$ is a Hilbert space representing the activity of every neuron in the mouse visual
-        cortex, and a representation $\Phi:S\rightarrow\mathbb{H}$ defining the response of the brain to a given stimulus. What we are interested
+        cortex, and a representation $\Phi:S\rightarrow\mathbb{H}$ defines the response of the brain to a given stimulus. What we are interested
         in is the covariance kernel $K(s,s')=\langle \Phi(s),\Phi(s')\rangle$ and we have found that its eigenvalues approximately follow the law
         $\lambda_n\propto n^{-1}$. Let's make two observations based on what an ideal mouse brain might use for the representation $\Phi$.
         <br><br>
         First of all, $\Phi(s)$ should retain as much information about the stimulus $s$ as possible. This means that if $s$ and $s'$ are different
         stimulus, $\Phi(s)$ and $\Phi(s')$ should be very different, meaning $K(s,s')$ should be near zero. In this case the kernel $K$ is almost
-        like and infinite-dimensional diagonal matrix, and we can find its eigenvalues along the diagonal $K(s,s)$. Naturally, we expect
+        like an infinite-dimensional diagonal matrix, and we can find its eigenvalues along the diagonal $K(s,s)$. Naturally, we expect
         $\Phi(s)$ and $\Phi(s')$ to have a similar <i>magnitude</i> (the brain's overall level of activity isn't changing that much), so
         $K(s,s)\simeq K(s',s')$, meaning we expect that $\lambda_n\simeq K$ for some constant $K$.
         <br><br>
@@ -472,11 +496,11 @@
         Mice need to be able to recognize a visual stimulus regardless of small perturbations: a deadly snake with a missing scale is still a deadly snake,
         a family member with discolored fur is still a family member. Given an infinitesimal change in a stimulus, there should only be an infinitesimal change
         in representation. In mathematical terms, the expected derivative magnitude must be finite:
-        <br><br>
+        <br>
         $$\int_S ||\nabla \Phi(s)||^2 dS<\infty$$
-        <br><br>
+        <br>
         Starting from this assumption, we will show that if $\lambda_n$ are the eigenvalues of $K$ in decreasing order, we must have
-        <br><br>
+        <br>
         $$\lim_{n\rightarrow\infty}\frac{\lambda_n}{n^{-1-2/d}}=0$$
         <br>
         Before we officially start, let's first define $v_i$ as the eigenfunction of $K$ with eigenvalue $\lambda_i$ and $w_i$ as the eigenfunction of $\Delta$
@@ -486,7 +510,7 @@
         Second, note that since $\{v_i\}$ forms a basis of $L^2(S)$, we can write
         our representation as $\Phi(s)=\sum_i u_i v_i(s)$, where each $u_i\in\mathbb{H}$ can be computed simply by projecting $\Phi$ onto
         the eigenvector $v_i$:
-        <br><br>
+        <br>
         $$u_i=\int_S \Phi(s) v_i(s) dS$$
         <br>
         This definition makes it easy to compute the inner product of $u_i$ with itself:
@@ -495,34 +519,34 @@
         These equalities follow from the definition of $u_i$, the definition of $K$, the definition of $\lambda_i$, and the fact that $v_i$ has norm 1, respectively.
         <br><br>
         Now we are ready to start toying with the expected magnitude of the derivative of $\Phi$. First, we will use the decomposition of $\Phi$ we just discovered:
-        <br><br>
-        $$\int_S |\nabla\Phi|^2 \; dS=\int_S \sum_i |u_i|^2|\nabla v_i|^2 \; dS=\int_S \sum_i \lambda_i|\nabla v_i|^2 \; dS$$
+        <br>
+        $$\int_S ||\nabla\Phi||^2 \; dS=\int_S \sum_i ||u_i||^2||\nabla v_i||^2 \; dS=\int_S \sum_i \lambda_i||\nabla v_i||^2 \; dS$$
         <br>
         Now we get to use Green's theorem on each $v_i$ to transform the equation into a form which allows an analysis of the Laplace operator!
-        <br><br>
-        $$\int_S \sum_i \lambda_i |\nabla v_i|^2 \; dS=\int_S \sum_i \lambda_i v_i \Delta v_i \; dS$$
+        <br>
+        $$\int_S \sum_i \lambda_i ||\nabla v_i||^2 \; dS=\int_S \sum_i \lambda_i v_i \Delta v_i \; dS$$
         <br>
         Next, we will use our first observation about transforming the basis $\{v_i\}$ into the basis $\{w_i\}$:
-        <br><br>
+        <br>
         $$\int_S \sum_i \lambda_i v_i \Delta v_i \; dS=\int_S \lambda_i \Bigg(\sum_j A_{ij}w_j\Bigg)\Delta \Bigg(\sum_k A_{ik}w_k\Bigg) \; dS$$
         <br>
         Rewriting the sum we obtain:
-        <br><br>
+        <br>
         $$\int_S \lambda_i \Bigg(\sum_j A_{ij}w_j\Bigg)\Delta \Bigg(\sum_k A_{ik}w_k\Bigg) \; dS = \int_S \Bigg(\sum_{i,j,k}\lambda_i A_{ij}A_{jk} w_{j}\Delta w_k \Bigg)\; dS$$
         <br>
-        Remember that $\Delta w_k =\eta_k w_k$! Also, the only two quantities in this integral which actually depend on a point $s$ in the stimulus space are the
+        Remember that, because theory are eigenfunctions of $\Delta$, $\Delta w_k =\eta_k w_k$! Also, the only two quantities in this integral which actually depend on a point $s$ in the stimulus space are the
         Laplace eigenfunctions $w_j$ and $w_k$, so we are allowed to bring the sum outside the integral:
-        <br><br>
+        <br>
         $$\int_S \Bigg(\sum_{i,j,k}\lambda_i A_{ij}A_{jk} w_{j}\Delta w_k \Bigg)\; dS=\sum_{i,j,k}\lambda_i \eta_k A_{ij}A_{ik}\int_S w_j(s)w_k(s) dS$$
         <br>
         We can now apply the fact that $\{w_j\}$ is an <i>orthonormal</i> basis, $\int_S w_j(s)w_k(s)\;dS$ is $1$ if $j=k$ and $0$ otherwise. This means we can simply eliminate
         the $k$ index from our sum, and finally arrive at:
-        <br><br>
-        $$\int_S |\nabla\Phi|^2 \; dS = \sum_{i,j}\lambda_i \eta_j A_{ij}^2$$
+        <br>
+        $$\int_S ||\nabla\Phi||^2 \; dS = \sum_{i,j}\lambda_i \eta_j A_{ij}^2$$
         <br>
         And now we see the fundamental relation from which our Zipfian distribution arose! Due to Weyl's law, as $j$ grows large $\eta_j$ grows like $j^{2/d}$. Therefore,
         $\lambda_i$ must shrink at least as fast $i^{-1-2/d}$ because $i^{-2/d}$ cancels the growth of $\eta_j$, and shrinking faster than $i^{-1}$ ensures that the series will not
-        diverge because any geometric series shrinking faster than $i^{-1}$ does not diverge.
+        diverge because any series shrinking faster than $i^{-1}$ does not diverge.
         <br><br>
         Of course, this last paragraph is not a rigorous argument because $\lambda_i$ and $\eta_j$ are coupled through $A_{ij}$, which is probably not the identity matrix.
         Stringer and Pachitariu do make this into a rigorous argument in their supplemental material. Although the rigorous
@@ -544,7 +568,7 @@
         somewhat from the intuitive geometrical spirit of this article. Thus, we need an example.
         <br><br>
         Suppose we uniformly sample a point $s$ on the circle, with its angle scaled to be within $[0,1)$. We can construct $\Phi(s)$ as a real-valued sequence like so:
-        <br><br>
+        <br>
         $$\Phi_{2n-1}(s)=\frac{\cos(2\pi s)}{n^{\alpha/2}}\;\;\;\Phi_{2n}(s)=\frac{\sin(2\pi s)}{n^{\alpha/2}}$$
         <br>
         Where $\alpha>1$. First, check that $\Phi$ always produces a sequence whose squared elements form a convergent series.
@@ -576,7 +600,7 @@
         What Stringer and Pachitariu have shown is that representations with a Zipf law, including the one found in the mouse brain,
         are perfectly on the boarder between smooth and fractal!
     </p>
-    <p class="textContent" id="Conclusions">
+    <p class="textContent" id="Conclusions_and_Outlook">
         <big><b><u>Conclusions and Outlook</u></b></big>
         <br><br>
         I started this article by talking about the occurrences of words in text, and then I completely shifted gears to talk about
@@ -585,9 +609,9 @@
         for a number of reasons. However, I do think that the explanation for Zipf's law in the brain can be tied back to the original
         Zipf's law.
         <br><br>
-        Eigenfunctions of the covariance kernel can sort of be thought of as the atoms of the representation, in that they are all completely
+        Eigenfunctions of the covariance kernel can sort of be thought of as the atoms of the representation: they are all completely
         distinct from one another and the representation can be decomposed as a combination of them. Individual words in a language carry a
-        very similar purpose. In this case, the "stimulus space" would actually be the space of human thought, which is, by some witchcraft,
+        very similar purpose. In this case, the "stimulus space" would actually be the space of human thought, which is, through the process of expresssion,
         mapped into the space of text in some language. The frequency of a certain word then corresponds to its "coefficient" in the decomposition,
         which would be analogous to the eigenvalue of a given eigenfunction.
         <br><br>
@@ -596,10 +620,10 @@
         reasonable bounds, appears a lot like Stringer and Pachitariu's argument!
         <br><br>
         Another interesting aspect of these findings is that the properties of the mouse brain's representation are very sought-after in machine learning.
-        It often happens that, simply by adding imperceptible noise to an image, we can cause a neural network to classify an image of a car as an image
+        It often happens that, simply by adding imperceptible noise to an image of a car, we can cause a neural network to classify it as an image
         of a panda. This anomaly, known broadly as adversarial attacks, is caused by a large jump in the representation of the image despite only a very
-        small perturbation to the input. A power-law representation would be able to avoid this kind of catastrophe the vast majority of the time (in the
-        same way animals do), while still extracting all relevant features from the image!
+        small perturbation to the input. If an artificial neural network were to use a power-law representation out-of-the-box, in the same way animals do,
+        it would be almost completely free of adversarial attacks while still being able to extract all relevant features of the data!
     </p>
     <script src="../../scripts/three.min.js"></script>
     <script src="../../scripts/OrbitControls.js"></script>
