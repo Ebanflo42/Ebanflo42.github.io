@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="keywords" content="Eben,Kadile,Cowley,Graphics,Mathematics,Math,Digital,Art,Particle,Simulation" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="../../style.css" />
+  <!--link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"-->
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+  	  tex2jax: {inlineMath: [["$", "$"],["\\(","\\)"]]},
+	    errorSetting: {message: undefined}
+    });
+  </script>
+  <script type="text/javascript" src="https://cdn.rawgit.com/mathjax/MathJax/2.7.6/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <script>
+    interactive = true;
+  </script>
+  <title>
+    Cell Forming Particles - Eben Kadile
+  </title>
+</head>
+
+<body>
+  <div class="heading">
+    <h1>Cell Forming Particles</h1>
+    <h2>Emergence of Micelles from Simple Physics.</h2>
+    <h3>eben.kadile24@gmail.com</h3>
+  </div>
+  <br>
+  <div align="center" style="width:100%">
+    <a class="navItem" style="border-top-left-radius:15px;border-bottom-left-radius:15px;" href="../../../index.html">Home</a>
+    <a class="navItem" href="../../../Art.html">Art</a>
+    <a class="navItem" href="../../../Software.html">Software</a>
+    <a class="navItem" href="../../../Blog.html">Blog</a>
+    <a class="navItem" style="border-top-right-radius:15px;border-bottom-right-radius:15px;" href="../../../Research.html">Research</a>
+  </div>
+  <br>
+  <div align="center">
+  <canvas id="canvas" onmousemove="if(interactive) readMouse(event);" onclick="interactive = !interactive" style="height:668px;width:972px" />
+  </div>
+  <div align="center">
+    <button type="button" id="pause" align="center">Pause</button>
+  </div>
+  <br>
+  <div align="center">
+    <input type="range" min="-99" max="99" value="1" id="orientation0"></input>
+    <input type="range" min="-99" max="99" value="2" id="orientation1"></input>
+    <input type="range" min="-99" max="99" value="3" id="orientation2"></input>
+    <br>
+    <input type="range" min="-99" max="99" value="4" id="orientation3"></input>
+    <input type="range" min="-99" max="99" value="5" id="orientation4"></input>
+    <input type="range" min="-99" max="99" value="6" id="orientation5"></input>
+    <br>
+    <input type="range" min="-99" max="99" value="7" id="orientation6"></input>
+    <input type="range" min="-99" max="99" value="8" id="orientation7"></input>
+    <input type="range" min="-99" max="99" value="9" id="orientation8"></input>
+    <br><br>
+    <input type="range" min="-99" max="99" value="0" id="offset0"></input>
+    <input type="range" min="-99" max="99" value="0" id="offset1"></input>
+    <input type="range" min="-99" max="99" value="0" id="offset2"></input>
+    <br>
+    <input type="range" min="-99" max="99" value="0" id="offset3"></input>
+    <input type="range" min="-99" max="99" value="0" id="offset4"></input>
+    <input type="range" min="-99" max="99" value="0" id="offset5"></input>
+    <br><br>
+    <input type="range" min="100" max="500" value="300" id="zoom"></input>
+  </div>
+  <script src="../../scripts/three.min.js"></script>
+  <script type="glsl" id="vs">
+        void main() {
+            gl_Position = vec4(position, 1.0);
+        }
+  </script>
+
+    <script id="simulation_vert_shader" type="glsl">
+
+    	varying vec2 vUv;
+    	varying vec3 vOffset;
+
+    	uniform vec3 offset;
+    	uniform mat4 inverseModelViewMatrix;
+
+    	void main() {
+
+    		vOffset = ( inverseModelViewMatrix * vec4( offset, 1. ) ).xyz;
+    		vUv = vec2(uv.x, 1.0 - uv.y);
+    		gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+
+    	}
+
+    </script>
+
+  <script type="glsl" id="simulation_frag_shader">
+        // This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
+        // Copyright © 2024 Eben Kadile
+        uniform vec2 m;
+        uniform vec2 res;
+        uniform float time;
+        uniform sampler2D tPositions;
+        uniform sampler2D oPositions;
+
+        #define PI 4.0*atan(1.0)
+        #define ASPECT iResolution.xy/iResolution.y
+        #define MOUSE iMouse.xy/iResolution.y
+        #define MOUSE_RADIUS 0.3
+
+        #define N_ATOMS_0 1024
+        #define N_ATOMS_1 1024
+        #define N_ATOMS_2 1024
+        #define N_ATOMS_3 1024
+        #define TOT_ATOMS N_ATOMS_0 + N_ATOMS_1 + N_ATOMS_2 + N_ATOMS_3
+
+        const float max_init_speed = 1e-5;
+        const float max_speed = 3e-3;
+
+        // green, cyan, violet, magenta
+        // radius at which forces switch from attractive to repulsive
+        const mat4x4 close = mat4x4(0.05, 0.1, 0.05, 0.1,
+                                    0.1, 0.1, 0.1, 0.2,
+                                    0.05, 0.1, 0.05, 0.2,
+                                    0.1, 0.2, 0.2, 0.1);
+        const mat4x4 attraction = -mat4x4(0.3, 0.3, 0.1, 0.03,
+                                          0.3, 1, 0.3, 0.1,
+                                          0.1, 0.3, 0.3, 0.03,
+                                          0.03, 0.1, 0.03, 0.1);
+        const mat4x4 repulsion = mat4x4(1, 3, 1, 3,
+                                        3, 1, 1, 3,
+                                        1, 1, 1, 1,
+                                        3, 3, 1, 1);
+        const mat4x4 range = mat4x4(0.1, 0.2, 0.1, 0.2,
+                                    0.2, 0.2, 0.2, 0.4,
+                                    0.1, 0.2, 0.1, 0.4,
+                                    0.2, 0.4, 0.4, 0.2);
+        const vec4 masses = vec4(1e3, 1e3, 1e3, 1e3);
+
+        int get_atom_type(int i) {
+            return 3 - int(i < N_ATOMS_0)
+                     - int(i < N_ATOMS_0 + N_ATOMS_1)
+                     - int(i < N_ATOMS_0 + N_ATOMS_1 + N_ATOMS_2);
+        }
+
+        float potential(int t1, int t2, float d2) {
+            float d = sqrt(d2);
+            float close_potential = mix(repulsion[t1][t2], attraction[t1][t2], d/close[t1][t2])
+                                  * step(0.0, close[t1][t2] - d);
+            float far_potential = attraction[t1][t2]
+                                * (1.0 - (d - close[t1][t2])/(range[t1][t2] - close[t1][t2]))
+                                * step(0.0, range[t1][t2] - d)*step(0.0, d - range[t2][t1]);
+            return close_potential + far_potential;
+        }
+
+        vec4 get_atom(sampler2D buf, int id) {
+            ivec2 res = textureSize(buf, 0);
+            ivec2 uv = ivec2(
+                (id/4)%res.x,
+                id%4 + 4*((id/4)/res.x)
+            );
+
+            return texelFetch(buf, uv, 0);
+        }
+
+
+        vec2 perp(vec2 v) {
+            return vec2(-v.y,v.x);
+        }
+
+        vec2 wrap(vec2 v, vec2 size) {
+            return mod(v + size/2.0, size) - size/2.0;
+        }
+
+        vec2 cmul(vec2 a, vec2 b) {
+            return vec2(a.x*b.x - a.y*b.y, a.x*b.y + a.y*b.x);
+        }
+
+        vec2 expi(float t) {
+            return vec2(cos(t), sin(t));
+        }
+
+        vec2 rotate(vec2 x, float t) {
+            return cmul(x, expi(t));
+        }
+
+
+        // Dave Hoskin's hash
+        float hash13(vec3 p3)
+        {
+            p3  = fract(p3 * .1031);
+            p3 += dot(p3, p3.zyx + 31.32);
+            return fract((p3.x + p3.y) * p3.z);
+        }
+
+        void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
+
+            ivec2 pixel = ivec2(fragCoord.xy);
+            int pixel_id = pixel.y%4 + 4*pixel.x + 4*int(iResolution.x)*(pixel.y/4);
+            vec4 pixel_atom = get_atom(iChannel0, pixel_id);
+            int pixel_type = get_atom_type(pixel_id);
+            vec2 pixel_velocity = pixel_atom.zw;
+
+            if(pixel_id < TOT_ATOMS) {
+                vec2 force = vec2(0);
+
+                for(int i = 0; i < TOT_ATOMS; i++) {
+                    vec4 i_atom = get_atom(iChannel0, i);
+                    int i_type = get_atom_type(i);
+                    float factor = float(i != pixel_id);
+
+                    vec2 dir = pixel_atom.xy - i_atom.xy;
+                    dir = wrap(dir, ASPECT);
+                    float d2 = dot(dir, dir);
+
+                    force += factor*potential(pixel_type, i_type, d2)*dir;
+                }
+                pixel_velocity += force/masses[pixel_type];
+
+                float pixel_speed = length(pixel_velocity);
+                pixel_velocity *= pixel_speed < max_speed ? 1.0 : max_speed/pixel_speed;
+            }
+            pixel_atom.zw = pixel_velocity;
+            pixel_atom.xy += pixel_velocity;
+            pixel_atom.xy = mod(pixel_atom.xy, ASPECT);
+            fragColor = pixel_atom;
+        }
+</script>
+<script type="text/javascript" , src="../../scripts/displayBrieskorn.js"></script>
+</body>
+
+</html>
