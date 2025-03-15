@@ -38,7 +38,7 @@
   </div>
   <br>
   <div align="center">
-  <canvas id="canvas" onmousemove="if(interactive) readMouse(event);" onclick="interactive = !interactive" style="height:668px;width:972px" />
+  <canvas id="canvas" onmousemove="if(interactive) readMouse(event);" onclick="interactive = !interactive" style="height:720px;width:1296px" />
   </div>
   <div align="center">
     <button type="button" id="pause" align="center">Pause</button>
@@ -98,8 +98,8 @@
         uniform vec2 m;
         uniform vec2 res;
         uniform float time;
-        uniform sampler2D tPositions;
-        uniform sampler2D oPositions;
+        uniform sampler2D renderTarget;
+        uniform sampler2D simTexture;
 
         #define PI 4.0*atan(1.0)
         #define ASPECT iResolution.xy/iResolution.y

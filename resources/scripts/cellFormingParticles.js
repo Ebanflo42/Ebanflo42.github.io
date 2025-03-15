@@ -18,6 +18,7 @@ function readMouse(event) {
 	                          (event.clientY - rect.bottom)*scaleY);
 }
 
+// position x, position y, velocity x, velocity y
 var simulationData = new Float32Array(4096*4);
 for(var i = 0; i < 4096; i++) {
     simulationData[4*i] = 1296*Math.random();
@@ -30,9 +31,9 @@ simulationTexture.minFilter = THREE.NearestFilter;
 simulationTexture.magFilter = THREE.NearestFilter;
 simulationTexture.needsUpdate = true;
 
-var rtTexturePos = new THREE.WebGLRenderTarget( this.width, this.height, {
-    wrapS: THREE.ClampToEdgeWrapping,
-    wrapT: THREE.ClampToEdgeWrapping,
+var rtTexturePos = new THREE.WebGLRenderTarget( 64, 64, {
+    wrapS: THREE.RepeatWrapping,
+    wrapT: THREE.RepeatWrapping,
     minFilter: THREE.NearestFilter,
     magFilter: THREE.NearestFilter,
     format: THREE.RGBAFormat,
@@ -41,15 +42,18 @@ var rtTexturePos = new THREE.WebGLRenderTarget( this.width, this.height, {
     depthBuffer: false,
     generateMipmaps: false
 });
-var targets = [rtTexturePos, rtTexturePos.clone()];
+// I guess one is previous state the other is next time state?
+var renderTargets = [rtTexturePos, rtTexturePos.clone()];
+var currentRenderTarget = 0;
 
 var simulationShader = new THREE.ShaderMaterial({
-
+    // more uniforms go here
     uniforms: {
 		res: { type: "v2", value: resolution },
 		m: { type: "v2", value: mouse },
+    simTexture: { type: "t", value: simulationTexture },
+    renderTarget: { type: "t", value: null },
     },
-
     vertexShader: document.getElementById('simulation_vert_shader').textContent,
     fragmentShader:  document.getElementById('simulation_frag_shader').textContent,
     side: THREE.DoubleSide
@@ -57,71 +61,59 @@ var simulationShader = new THREE.ShaderMaterial({
 });
 simulationShader.uniforms.tPositions.value = simulationTexture;
 
-this.simulationShader.uniforms.tPositions.value = this.texture;
+simulationShader.uniforms.tPositions.value = texture;
 
-var rtScene = new THREE.Scene();
-var rtCamera = new THREE.OrthographicCamera( -this.width / 2, this.width / 2, -this.height / 2, this.height / 2, -500, 1000 );
-var rtQuad = new THREE.Mesh(
+var simulationScene = new THREE.Scene();
+var simulationCamera = new THREE.OrthographicCamera(-32, 32, -32, 32, -500, 1000);
+var simulationQuad = new THREE.Mesh(
     new THREE.PlaneBufferGeometry( this.width, this.height ),
-    this.simulationShader
+    simulationShader
 );
-rtScene.add( this.rtQuad );
-simulate( this.rtScene, this.rtCamera, this.rtTexturePos );
+simulationScene.add(simulationQuad);
+var simulationRenderer = new THREE.WebGLRenderer({'antialias': false});
 
-this.plane = new THREE.Mesh( new THREE.PlaneGeometry( 64, 64 ), new THREE.MeshBasicMaterial( { map: this.rtTexturePos, side: THREE.DoubleSide } ) );
-//scene.add( this.plane );
+// stuff for actual graphics
+var canvas = document.getElementById("canvas");
+var scene = new THREE.Scene();
+var renderer = new THREE.WebGLRenderer({canvas: canvas, antialias: true});
+var camera = new THREE.OrthographicCamera(-canvas.clientWidth/2, canvas.clientWidth/2, -canvas.clientHeight/2, canvas.clientHeight/2, -500, 1000);
 
-simulate = function( time, delta ) {
-
-	this.simulationShader.uniforms.timer.value = time;
-	this.simulationShader.uniforms.delta.value = delta;
-
-	this.simulationShader.uniforms.tPositions.value = this.targets[ this.targetPos ];
-	this.targetPos = 1 - this.targetPos;
-	this.renderer.render( this.rtScene, this.rtCamera, this.targets[ this.targetPos ] );
-
+// for drawing particles
+const geometry = new THREE.CircleGeometry(2, 16);
+const material1 = new THREE.MeshBasicMaterial({'color': 0xff0000})
+const material2 = new THREE.MeshBasicMaterial({'color': 0x00ff00})
+const material3 = new THREE.MeshBasicMaterial({'color': 0x0000ff})
+const material4 = new THREE.MeshBasicMaterial({'color': 0xffff00})
+var particleMeshes = new Array();
+for(var i = 0; i++; i < 1024) {
+  particleMeshes.push(new THREE.Mesh(geometry, material1));
+  scene.add(particleMeshes[particleMeshes.length - 1]);
+}
+for(var i = 0; i++; i < 1024) {
+  particleMeshes.push(new THREE.Mesh(geometry, material2));
+  scene.add(particleMeshes[particleMeshes.length - 1]);
+}
+for(var i = 0; i++; i < 1024) {
+  particleMeshes.push(new THREE.Mesh(geometry, material3));
+  scene.add(particleMeshes[particleMeshes.length - 1]);
+}
+for(var i = 0; i++; i < 1024) {
+  particleMeshes.push(new THREE.Mesh(geometry, material4));
+  scene.add(particleMeshes[particleMeshes.length - 1]);
 }
 
 render();
+
 function render() {
 
   if(!paused){
 	  requestAnimationFrame(render);
-	  if (canvas.width !== canvas.clientWidth || canvas.height !== canvas.clientHeight) {
-	  	renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
-	  	camera.aspect = canvas.clientWidth / canvas.clientHeight;
-	  	camera.updateProjectionMatrix();
-	  	resolution = new THREE.Vector2(canvas.clientWidth, canvas.clientHeight);
-	  }
 
-    if (!clicked) {
+    simulationShader.uniforms.renderTarget.value = renderTargets[currentRenderTarget];
+    currentRenderTarget = 1 - currentRenderTarget;
+    simulationRenderer.render(simulationScene, simulationCamera, renderTargets[currentRenderTarget]);
 
-      var t = clock.getElapsedTime();
-
-      for (var i = 0; i < 6; i++) {
-        offsetVars[i] = offsetAmps[i]*Math.sin(offsetFreqs[i]*t + offsetPhases[i]);
-      }
-
-      for (var i = 0; i < 9; i++) {
-        orientationVars[i] = orientationAmps[i]*Math.sin(orientationFreqs[i]*i + orientationPhases[i]);
-        projection = getProjectionMatrix(6, orientationVars);
-      }
-    }
-
-	  shader.uniforms["res"].value = resolution;
-	  shader.uniforms["m"].value = mouse;
-
-    shader.uniforms["proj11"].value = new THREE.Vector3(projection[0][0], projection[0][1], projection[0][2]);
-	  shader.uniforms["proj12"].value = new THREE.Vector3(projection[0][3], projection[0][4], projection[0][5]);
-	  shader.uniforms["proj21"].value = new THREE.Vector3(projection[1][0], projection[1][1], projection[1][2]);
-	  shader.uniforms["proj22"].value = new THREE.Vector3(projection[1][3], projection[1][4], projection[1][5]);
-	  shader.uniforms["proj31"].value = new THREE.Vector3(projection[2][0], projection[2][1], projection[2][2]);
-    shader.uniforms["proj32"].value = new THREE.Vector3(projection[2][3], projection[2][4], projection[2][5]);
-
-	  shader.uniforms["offset1"].value = new THREE.Vector3(offsetVars[0], offsetVars[1], offsetVars[2]);
-    shader.uniforms["offset2"].value = new THREE.Vector3(offsetVars[3], offsetVars[4], offsetVars[5]);
-
-    shader.uniforms["zoom"].value = zoom
+    // update scene here
 
 	  renderer.render(scene, camera);
   }
